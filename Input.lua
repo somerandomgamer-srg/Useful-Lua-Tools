@@ -1,7 +1,9 @@
 ---Cleans a string to ensure it's a valid number format
+---
+---
 ---Removes non-numeric characters, handles decimals and negative signs
----@param input string The string to clean
----@return string cleaned The cleaned number string
+---@param input string
+---@return string cleaned
 ---@nodiscard
 function CleanNumber(input)
   local cleaned = input:gsub("[^0-9%.%-]", "")
