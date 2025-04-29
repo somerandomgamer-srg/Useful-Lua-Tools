@@ -1,3 +1,5 @@
+---@param input string The input string to clean
+---@return string cleaned The string with only valid number characters
 local function cleanNum(input)
   local cleaned = input:gsub("[^0-9%.%-]", "")
 
@@ -13,11 +15,16 @@ local function cleanNum(input)
   return cleaned
 end
 
+---@param message string The prompt message to display
+---@return string input The user's input
 function _G.Input(message)
   io.write(message .. ": ")
   return io.read()
 end
 
+---@param message string The prompt message to display
+---@param numberOfInputs number The number of inputs to collect
+---@return table inputs Table containing the user's inputs
 function _G.InputTable(message, numberOfInputs)
   io.write(message)
 
@@ -29,6 +36,8 @@ function _G.InputTable(message, numberOfInputs)
   return inputs
 end
 
+---@param message string The prompt message to display
+---@return number input The user's numeric input (returns 0 if invalid)
 function _G.InputNumber(message)
   io.write(message .. ": ")
   local num = tonumber(cleanNum(io.read()))
@@ -36,6 +45,9 @@ function _G.InputNumber(message)
   return num and tonumber(num) or 0
 end
 
+---@param message string The prompt message to display
+---@param numberOfInputs number The number of numeric inputs to collect
+---@return table inputs Table containing the user's numeric inputs
 function _G.InputNumberTable(message, numberOfInputs)
   io.write(message)
 
@@ -49,6 +61,8 @@ function _G.InputNumberTable(message, numberOfInputs)
   return inputs
 end
 print
+---@param message string The prompt message to display
+---@return table inputs Table containing all inputs until empty input
 function _G.InputLoop(message)
   local inputs = {}
   local current = 1
@@ -65,6 +79,8 @@ function _G.InputLoop(message)
   return inputs or {}
 end
 
+---@param message string The prompt message to display
+---@return table inputs Table containing all numeric inputs until empty input
 function _G.InputNumberLoop(message)
 
   local inputs = {}
