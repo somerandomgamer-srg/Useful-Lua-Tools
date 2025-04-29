@@ -1,7 +1,6 @@
 ---@param input string
 ---@return string cleaned
 ---@nodiscard
---#region
 function CleanNumber(input)
   local cleaned = input:gsub("[^0-9%.%-]", "")
 
