@@ -1,5 +1,4 @@
----@param input string The input string to clean
----@return string cleaned The string with only valid number characters
+---Cleans a string to contain only valid number characters
 local function cleanNum(input)
   local cleaned = input:gsub("[^0-9%.%-]", "")
 
@@ -15,8 +14,7 @@ local function cleanNum(input)
   return cleaned
 end
 
----@param message string The prompt message to display
----@return string input The user's input
+---Gets a string input from the user
 function _G.Input(message)
   io.write(message .. ": ")
   return io.read()
