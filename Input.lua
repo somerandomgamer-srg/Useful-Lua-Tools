@@ -1,9 +1,17 @@
 ---Cleans a string to ensure it's a valid number format
 ---
+---Features:
+---- Removes all non-numeric characters except decimal points and minus signs
+---- Handles multiple decimal points by keeping only the first one
+---- Preserves negative sign only if it's at the start
 ---
----Removes non-numeric characters, handles decimals and negative signs
----@param input string
----@return string cleaned
+---Example usage:
+---- CleanNumber("abc-123.45.6") -> "-123.456"
+---- CleanNumber("12.34.56") -> "12.3456"
+---- CleanNumber("ab12cd") -> "12"
+---
+---@param input string The string to be cleaned
+---@return string cleaned The resulting valid number string
 ---@nodiscard
 function CleanNumber(input)
   local cleaned = input:gsub("[^0-9%.%-]", "")
