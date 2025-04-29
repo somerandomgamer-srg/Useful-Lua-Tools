@@ -29,18 +29,43 @@ function CleanNumber(input)
   return cleaned
 end
 
----@param message string
----@return table inputs
+---Gets a single string input from the user
+---
+---Features:
+---- Displays a custom prompt message
+---- Returns the raw input as a string
+---- No input validation or cleaning
+---
+---Example usage:
+---- Input("Enter your name") -> Prompts "Enter your name: "
+---- Returns exactly what the user types
+---
+---@param message string The prompt message to show
+---@return string input The user's raw input
 ---@nodiscard
----Gets a string input from the user
 function Input(message)
   io.write(message .. ": ")
   return io.read()
 end
 
----@param message string
----@param number_of_inputs number
----@return table inputs
+---Collects multiple string inputs from the user
+---
+---Features:
+---- Displays a main message followed by numbered prompts
+---- Collects a specified number of inputs
+---- Returns all inputs in a table
+---
+---Example usage:
+---- InputTable("Enter 3 names", 3)
+---- Will show:
+----   Enter 3 names
+----   input 1: (user types)
+----   input 2: (user types)
+----   input 3: (user types)
+---
+---@param message string The main prompt message
+---@param number_of_inputs number How many inputs to collect
+---@return table inputs Table containing all user inputs
 ---@nodiscard
 function InputTable(message, number_of_inputs)
   io.write(message)
@@ -53,6 +78,18 @@ function InputTable(message, number_of_inputs)
   return inputs
 end
 
+---Gets a single numeric input from the user with validation
+---
+---Features:
+---- Displays a custom prompt message
+---- Automatically cleans and validates the input
+---- Returns 0 if input is invalid
+---- Handles decimal numbers and negative values
+---
+---Example usage:
+---- InputNumber("Enter your age") -> Prompts and returns a number
+---- Invalid inputs like "abc" return 0
+---
 ---@param message string The prompt message to display
 ---@return number input The user's numeric input (returns 0 if invalid)
 function InputNumber(message)
@@ -62,6 +99,22 @@ function InputNumber(message)
   return num and tonumber(num) or 0
 end
 
+---Collects multiple numeric inputs from the user
+---
+---Features:
+---- Displays a main message followed by numbered prompts
+---- Validates and cleans each input
+---- Replaces invalid numbers with 0
+---- Handles decimals and negative numbers
+---
+---Example usage:
+---- InputNumberTable("Enter 3 scores", 3)
+---- Will show:
+----   Enter 3 scores
+----   input 1: (user types)
+----   input 2: (user types)
+----   input 3: (user types)
+---
 ---@param message string The prompt message to display
 ---@param number_of_inputs number The number of numeric inputs to collect
 ---@return table inputs Table containing the user's numeric inputs
@@ -78,6 +131,22 @@ function InputNumberTable(message, number_of_inputs)
   return inputs
 end
 
+---Collects string inputs until the user submits an empty input
+---
+---Features:
+---- Displays a main message with instructions
+---- Keeps collecting inputs until empty submission
+---- Numbers each input prompt automatically
+---- Returns all inputs in a table
+---
+---Example usage:
+---- InputLoop("Enter names")
+---- Will show:
+----   (press enter with nothing typed to submit)Enter names
+----   Input 1: John
+----   Input 2: Jane
+----   Input 3: (empty to finish)
+---
 ---@param message string The prompt message to display
 ---@return table inputs Table containing all inputs until empty input
 function InputLoop(message)
@@ -96,6 +165,24 @@ function InputLoop(message)
   return inputs or {}
 end
 
+---Collects numeric inputs until the user submits an empty input
+---
+---Features:
+---- Displays a main message with instructions
+---- Validates and cleans each number input
+---- Skips invalid numbers (doesn't add them to table)
+---- Continues until empty submission
+---- Handles decimals and negative numbers
+---
+---Example usage:
+---- InputNumberLoop("Enter scores")
+---- Will show:
+----   (press enter with nothing typed to submit)Enter scores
+----   Input 1: 95.5
+----   Input 2: abc (invalid number message)
+----   Input 2: 87
+----   Input 3: (empty to finish)
+---
 ---@param message string The prompt message to display
 ---@return table inputs Table containing all numeric inputs until empty input
 function InputNumberLoop(message)
