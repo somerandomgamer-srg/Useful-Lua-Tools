@@ -1,12 +1,12 @@
 --- `input` - The string to be cleaned <br> `cleaned` - The resulting valid number string
----Cleans a string to ensure it's a valid number format
+--- Cleans a string to ensure it's a valid number format
 ---
----Features:
+--- Features:
 ---- Removes all non-numeric characters except decimal points and minus signs
 ---- Handles multiple decimal points by keeping only the first one
 ---- Preserves negative sign only if it's at the start
 ---
----Example usage:
+--- Example usage:
 ---- CleanNumber("abc-123.45.6") -> "-123.456"
 ---- CleanNumber("12.34.56") -> "12.3456"
 ---- CleanNumber("ab12cd") -> "12"
@@ -29,6 +29,7 @@ function CleanNumber(input)
   return cleaned
 end
 
+--- `message` - The prompt message to display <
 ---Gets a single string input from the user
 ---
 ---Features:
@@ -40,7 +41,7 @@ end
 ---- Input("Enter your name") -> Prompts "Enter your name: "
 ---- Returns exactly what the user types
 ---
----@param message string The prompt message to show
+---@param message string
 ---@return string input The user's raw input
 ---@nodiscard
 function Input(message)
@@ -90,7 +91,7 @@ end
 ---- InputNumber("Enter your age") -> Prompts and returns a number
 ---- Invalid inputs like "abc" return 0
 ---
----@param message string The prompt message to display
+---@param message string
 ---@return number input The user's numeric input (returns 0 if invalid)
 function InputNumber(message)
   io.write(message .. ": ")
