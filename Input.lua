@@ -1,3 +1,4 @@
+--- `input` - The string to be cleaned <br> `cleaned` - The resulting valid number string
 ---Cleans a string to ensure it's a valid number format
 ---
 ---Features:
@@ -10,8 +11,8 @@
 ---- CleanNumber("12.34.56") -> "12.3456"
 ---- CleanNumber("ab12cd") -> "12"
 ---
----@param input string The string to be cleaned
----@return string cleaned The resulting valid number string
+---@param input string
+---@return string cleaned 
 ---@nodiscard
 function CleanNumber(input)
   local cleaned = input:gsub("[^0-9%.%-]", "")
