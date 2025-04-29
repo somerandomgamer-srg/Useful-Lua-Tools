@@ -11,6 +11,7 @@
 ---- CleanNumber("12.34.56") -> "12.3456"
 ---- CleanNumber("ab12cd") -> "12"
 ---
+--- `input` - The string to be cleaned <br> `cleaned` - The resulting valid number string
 ---@param input string
 ---@return string cleaned 
 ---@nodiscard
@@ -41,6 +42,7 @@ end
 ---- Input("Enter your name") -> Prompts "Enter your name: "
 ---- Returns exactly what the user types
 ---
+--- `message` - The prompt message to display <br> `input` - The user's raw input string
 ---@param message string
 ---@return string input The user's raw input
 ---@nodiscard
@@ -64,6 +66,7 @@ end
 ----   input 2: (user types)
 ----   input 3: (user types)
 ---
+--- `message` - The main prompt message <br> `number_of_inputs` - How many inputs to collect <br> `inputs` - Table containing all user inputs
 ---@param message string The main prompt message
 ---@param number_of_inputs number How many inputs to collect
 ---@return table inputs Table containing all user inputs
@@ -91,6 +94,7 @@ end
 ---- InputNumber("Enter your age") -> Prompts and returns a number
 ---- Invalid inputs like "abc" return 0
 ---
+--- `message` - The prompt message to display <br> `input` - The user's numeric input (returns 0 if invalid)
 ---@param message string
 ---@return number input The user's numeric input (returns 0 if invalid)
 function InputNumber(message)
@@ -116,6 +120,7 @@ end
 ----   input 2: (user types)
 ----   input 3: (user types)
 ---
+--- `message` - The prompt message to display <br> `number_of_inputs` - The number of numeric inputs to collect <br> `inputs` - Table containing the user's numeric inputs
 ---@param message string The prompt message to display
 ---@param number_of_inputs number The number of numeric inputs to collect
 ---@return table inputs Table containing the user's numeric inputs
@@ -148,6 +153,7 @@ end
 ----   Input 2: Jane
 ----   Input 3: (empty to finish)
 ---
+--- `message` - The prompt message to display <br> `inputs` - Table containing all inputs until empty input
 ---@param message string The prompt message to display
 ---@return table inputs Table containing all inputs until empty input
 function InputLoop(message)
@@ -184,6 +190,7 @@ end
 ----   Input 2: 87
 ----   Input 3: (empty to finish)
 ---
+--- `message` - The prompt message to display <br> `inputs` - Table containing all numeric inputs until empty input
 ---@param message string The prompt message to display
 ---@return table inputs Table containing all numeric inputs until empty input
 function InputNumberLoop(message)
