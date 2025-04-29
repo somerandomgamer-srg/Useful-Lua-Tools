@@ -1,5 +1,8 @@
----Cleans a string to contain only valid number characters
-local function cleanNum(input)
+---@param input string
+---@return string cleaned
+---@nodiscard
+--#region
+function CleanNumber(input)
   local cleaned = input:gsub("[^0-9%.%-]", "")
 
   local firstDecimal = cleaned:find("%.")
@@ -14,20 +17,24 @@ local function cleanNum(input)
   return cleaned
 end
 
+---@param message string
+---@return table inputs
+---@nodiscard
 ---Gets a string input from the user
-function _G.Input(message)
+function Input(message)
   io.write(message .. ": ")
   return io.read()
 end
 
----@param message string The prompt message to display
----@param numberOfInputs number The number of inputs to collect
----@return table inputs Table containing the user's inputs
-function _G.InputTable(message, numberOfInputs)
+---@param message string
+---@param number_of_inputs number
+---@return table inputs
+---@nodiscard
+function InputTable(message, number_of_inputs)
   io.write(message)
 
   local inputs = {}
-  for i = 1, numberOfInputs do
+  for i = 1, number_of_inputs do
     io.write(string.format("\ninput %d:", i))
     inputs[i] = io.read()
   end
@@ -36,32 +43,32 @@ end
 
 ---@param message string The prompt message to display
 ---@return number input The user's numeric input (returns 0 if invalid)
-function _G.InputNumber(message)
+function InputNumber(message)
   io.write(message .. ": ")
-  local num = tonumber(cleanNum(io.read()))
+  local num = tonumber(CleanNumber(io.read()))
   if not num then print("Invalid number input") end
   return num and tonumber(num) or 0
 end
 
 ---@param message string The prompt message to display
----@param numberOfInputs number The number of numeric inputs to collect
+---@param number_of_inputs number The number of numeric inputs to collect
 ---@return table inputs Table containing the user's numeric inputs
-function _G.InputNumberTable(message, numberOfInputs)
+function InputNumberTable(message, number_of_inputs)
   io.write(message)
 
   local inputs = {}
-  for i = 1, numberOfInputs do
+  for i = 1, number_of_inputs do
     io.write(string.format("\ninput %d:", i))
-    local num = tonumber(cleanNum(io.read()))
+    local num = tonumber(CleanNumber(io.read()))
     if not num then print(string.format("Invalid number at input %d", i)) end
     inputs[i] = num and tonumber(num) or 0
   end
   return inputs
 end
-print
+
 ---@param message string The prompt message to display
 ---@return table inputs Table containing all inputs until empty input
-function _G.InputLoop(message)
+function InputLoop(message)
   local inputs = {}
   local current = 1
 
@@ -79,7 +86,7 @@ end
 
 ---@param message string The prompt message to display
 ---@return table inputs Table containing all numeric inputs until empty input
-function _G.InputNumberLoop(message)
+function InputNumberLoop(message)
 
   local inputs = {}
   local current = 1
@@ -90,7 +97,7 @@ function _G.InputNumberLoop(message)
     local input = io.read()
     if input == "" then break end
 
-    local num = tonumber(cleanNum(input))
+    local num = tonumber(CleanNumber(input))
     if not num then print(string.format("Invalid number at input %d", current))
     else
       inputs[current] = num and tonumber(num) or 0
