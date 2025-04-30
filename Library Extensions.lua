@@ -94,6 +94,14 @@ function math.sum(table)
 end
 
 
+---SRG Custom Function
+---
+---Calculates the inverse hyperbolic sine of x
+---
+---`x` - The input value <br> `result` - The inverse hyperbolic sine of x
+---@param x number
+---@return number result
+---@nodiscard
 function math.asinh(x) return math.log(x + math.sqrt(x^2 + 1)) end
 
 ---SRG Custom Function
