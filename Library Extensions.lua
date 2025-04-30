@@ -93,12 +93,7 @@ function math.sum(table)
   return sum
 end
 
----SRG Custom Function
----
----Calculates the mode from a table of numbers
----@param table table
----@return number
----@nodiscard
+
 function math.asinh(x) return math.log(x + math.sqrt(x^2 + 1)) end
 
 ---SRG Custom Function
