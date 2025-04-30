@@ -1,36 +1,3 @@
---- `input` - The string to be cleaned <br> `cleaned` - The resulting valid number string
---- Cleans a string to ensure it's a valid number format
----
---- Features:
----- Removes all non-numeric characters except decimal points and minus signs
----- Handles multiple decimal points by keeping only the first one
----- Preserves negative sign only if it's at the start
----
---- Example usage:
----- CleanNumber("abc-123.45.6") -> "-123.456"
----- CleanNumber("12.34.56") -> "12.3456"
----- CleanNumber("ab12cd") -> "12"
----
---- `input` - The string to be cleaned <br> `cleaned` - The resulting valid number string
----@param input string
----@return string cleaned 
----@nodiscard
-function CleanNumber(input)
-  local cleaned = input:gsub("[^0-9%.%-]", "")
-
-  local firstDecimal = cleaned:find("%.")
-  if firstDecimal then cleaned = cleaned:sub(1, firstDecimal)..cleaned:sub(firstDecimal + 1):gsub("%.", "") end
-
-  local hasHyphen = cleaned:find("%-")
-  if hasHyphen then
-    cleaned = cleaned:gsub("%-", "")
-    if hasHyphen == 1 then cleaned = "-" .. cleaned end
-  end
-
-  return cleaned
-end
-
---- `message` - The prompt message to display <
 ---Gets a single string input from the user
 ---
 ---Features:
@@ -42,9 +9,9 @@ end
 ---- Input("Enter your name") -> Prompts "Enter your name: "
 ---- Returns exactly what the user types
 ---
---- `message` - The prompt message to display <br> `input` - The user's raw input string
+---`message` - The prompt message to display <br> `input` - The user's raw input string
 ---@param message string
----@return string input The user's raw input
+---@return string input
 ---@nodiscard
 function Input(message)
   io.write(message .. ": ")
@@ -66,10 +33,10 @@ end
 ----   input 2: (user types)
 ----   input 3: (user types)
 ---
---- `message` - The main prompt message <br> `number_of_inputs` - How many inputs to collect <br> `inputs` - Table containing all user inputs
----@param message string The main prompt message
----@param number_of_inputs number How many inputs to collect
----@return table inputs Table containing all user inputs
+---`message` - The prompt message to display <br> `number_of_inputs` - How many inputs to collect <br> `inputs` - Table containing all user inputs
+---@param message string
+---@param number_of_inputs number
+---@return table inputs
 ---@nodiscard
 function InputTable(message, number_of_inputs)
   io.write(message)
@@ -94,9 +61,10 @@ end
 ---- InputNumber("Enter your age") -> Prompts and returns a number
 ---- Invalid inputs like "abc" return 0
 ---
---- `message` - The prompt message to display <br> `input` - The user's numeric input (returns 0 if invalid)
+---`message` - The prompt message to display <br> `input` - The user's numeric input (returns 0 if invalid)
 ---@param message string
----@return number input The user's numeric input (returns 0 if invalid)
+---@return number input
+---@nodiscard
 function InputNumber(message)
   io.write(message .. ": ")
   local num = tonumber(CleanNumber(io.read()))
@@ -120,10 +88,11 @@ end
 ----   input 2: (user types)
 ----   input 3: (user types)
 ---
---- `message` - The prompt message to display <br> `number_of_inputs` - The number of numeric inputs to collect <br> `inputs` - Table containing the user's numeric inputs
----@param message string The prompt message to display
----@param number_of_inputs number The number of numeric inputs to collect
----@return table inputs Table containing the user's numeric inputs
+---`message` - The prompt message to display <br> `number_of_inputs` - The number of numeric inputs to collect <br> `inputs` - Table containing the user's numeric inputs
+---@param message string
+---@param number_of_inputs number
+---@return table inputs
+---@nodiscard
 function InputNumberTable(message, number_of_inputs)
   io.write(message)
 
@@ -153,9 +122,10 @@ end
 ----   Input 2: Jane
 ----   Input 3: (empty to finish)
 ---
---- `message` - The prompt message to display <br> `inputs` - Table containing all inputs until empty input
----@param message string The prompt message to display
----@return table inputs Table containing all inputs until empty input
+---`message` - The prompt message to display <br> `inputs` - Table containing all inputs until empty input
+---@param message string
+---@return table inputs
+---@nodiscard
 function InputLoop(message)
   local inputs = {}
   local current = 1
@@ -190,9 +160,10 @@ end
 ----   Input 2: 87
 ----   Input 3: (empty to finish)
 ---
---- `message` - The prompt message to display <br> `inputs` - Table containing all numeric inputs until empty input
----@param message string The prompt message to display
----@return table inputs Table containing all numeric inputs until empty input
+---`message` - The prompt message to display <br> `inputs` - Table containing all numeric inputs until empty input
+---@param message string
+---@return table inputs
+---@nodiscard
 function InputNumberLoop(message)
 
   local inputs = {}
