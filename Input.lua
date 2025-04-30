@@ -1,3 +1,5 @@
+require("String Manipulation")
+
 ---Gets a single string input from the user
 ---
 ---Features:
