@@ -242,5 +242,3 @@ function input.number_loop(message)
 
   return inputs or {}
 end
-
-return input

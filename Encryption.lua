@@ -1,14 +1,3 @@
-local hexTable = {}
-local binaryTable = {}
-
-for i = 32, 126 do 
-  local char = string.char(i)
-  local hex = string.format("%02X", i)
-  local binary = string.format("%08b", i)
-  hexTable[char] = hex
-  binaryTable[char] = binary
-end
-
 encryption = {}
 
 ---***SRG Custom Function***
@@ -20,7 +9,7 @@ encryption = {}
 function encryption.to_ascii(s)
   local asciiCode = ""
   for i in s do asciiCode = asciiCode .. s[i]:byte() .. " " end
-  return asciiCode
+  return string.trim(asciiCode)
 end
 
 ---***SRG Custom Function***
@@ -29,11 +18,9 @@ end
 ---@param s string
 ---@return string
 ---@nodiscard
-function encryption.to_hex(s)
+function text_to_hex(s)
   local hexCode = ""
-  for i in s do
-    if hexTable[i] then hexCode = hexCode .. hexTable[i] end
-  end
+  for i = 1, #s do hexCode = hexCode .. string.format("%02X", s[i]:byte()) end
   return hexCode
 end
 
@@ -45,68 +32,35 @@ end
 ---@nodiscard
 function encryption.to_binary(s)
   local binaryCode = ""
-  for i in s do
-    if binaryTable[i] then binaryCode = binaryCode .. binaryTable[i] .. " " end
-  end
-  return binaryCode
-end
-
----***SRG Custom Function***
----
----Performs ROT13 encryption/decryption on a string
----@param s string
----@return string
----@nodiscard
-
-local function rot13SubFunc(s)
-  local base = s <= 'Z' and 65 or 97
-  return string.char(((s:byte() - base + 13) % 26) + base)
-end
-
-function encryption.rot13(s)
-  return s:gsub('[A-Za-z]', 
-end
-
----***SRG Custom Function***
----
----Simple XOR encryption/decryption with a key
----@param s string
----@param key string
----@return string
----@nodiscard
-function encryption.xor(s, key)
-  local result = {}
   for i = 1, #s do
-    local keyByte = key:byte((i-1) % #key + 1)
-    local byte = s:byte(i)
-    -- Manual XOR implementation
-    local xored = 0
-    for b = 0, 7 do
-      local bit1 = (byte >> b) & 1
-      local bit2 = (keyByte >> b) & 1
-      xored = xored | ((bit1 ~ bit2) << b)
-    end
-    result[i] = string.char(xored)
+    local charCode = string.byte(s, i)
+    local binary = string.format("%08b", charCode)
+    binaryCode = binaryCode .. binary .. " "
   end
-  return table.concat(result)
+  return string.trim(binaryCode)
 end
 
----***SRG Custom Function***
----
----Base64 encoding
----@param s string
----@return string
----@nodiscard
-function encryption.base64_encode(s)
-  local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-  return ((s:gsub('.', function(x) 
-    local r,b='',x:byte()
-    for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
-    return r
-  end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
-    if (#x < 6) then return '' end
-    local c=0
-    for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
-    return b:sub(c+1,c+1)
-  end)..({ '', '==', '=' })[#s%3+1])
+function encryption.from_ascii(s)
+  local text = ""
+  for ascii in string.split(s, " ") do text = text .. string.char(tonumber(ascii)) end
+  return text
+end
+
+---Converts a string (`s`) from hexadecimal to plaintext
+function encryption.from_hex(s)
+  local text = ""
+  for hexPair in s:gmatch("%x%x") do
+    local char = string.char(tonumber(hexPair, 16))
+    text = text .. char
+  end
+  return text
+end
+
+function encryption.from_binary(s)
+  local text = ""
+  for binary in s:gmatch("%S+") do
+      local ascii = tonumber(binary, 2)
+      text = text .. string.char(ascii)
+  end
+  return text
 end
