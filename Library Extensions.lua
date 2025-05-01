@@ -189,6 +189,13 @@ function string.trim(s)
 end
 
 
+---***SRG Custom Function***
+---
+---Splits a string into a table based on a pattern
+---@param s string The string to split
+---@param pattern string The pattern to split on
+---@return table List of split strings
+---@nodiscard
 function string.split(s, pattern)
   toReturn = {}
   local start = 1
@@ -200,9 +207,24 @@ function string.split(s, pattern)
       start = i + 1
     end
   end
+  return toReturn
 end
 
+---***SRG Custom Function***
+---
+---Checks if a string starts with a specific letter
+---@param s string The string to check
+---@param letter string The letter to check for
+---@return boolean True if string starts with letter
+---@nodiscard
 function string.starts_with(s, letter) return s[1] == letter end
 
+---***SRG Custom Function***
+---
+---Checks if a string ends with a specific letter
+---@param s string The string to check
+---@param letter string The letter to check for
+---@return boolean True if string ends with letter
+---@nodiscard
 function string.ends_with(s, letter) return s[1] == letter end
 
