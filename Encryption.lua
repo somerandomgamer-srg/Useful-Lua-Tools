@@ -57,11 +57,14 @@ end
 ---@param s string
 ---@return string
 ---@nodiscard
+
+local function rot13SubFunc(s)
+  local base = s <= 'Z' and 65 or 97
+  return string.char(((s:byte() - base + 13) % 26) + base)
+end
+
 function encryption.rot13(s)
-  return s:gsub('[A-Za-z]', function(c)
-    local base = c <= 'Z' and 65 or 97
-    return string.char(((c:byte() - base + 13) % 26) + base)
-  end)
+  return s:gsub('[A-Za-z]', 
 end
 
 ---***SRG Custom Function***
@@ -99,30 +102,3 @@ function encryption.base64_encode(s)
     return b:sub(c+1,c+1)
   end)..({ '', '==', '=' })[#s%3+1])
 end
-
----***SRG Custom Function***
----
----Vigenère cipher encryption
----@param s string
----@param key string
----@return string
----@nodiscard
-function encryption.vigenere_encrypt(s, key)
-  local result = {}
-  for i = 1, #s do
-    local c = s:byte(i)
-    if c >= 65 and c <= 90 then
-      local shift = key:byte((i-1) % #key + 1) - 65
-      result[i] = string.char(((c - 65 + shift) % 26) + 65)
-    elseif c >= 97 and c <= 122 then
-      local shift = key:byte((i-1) % #key + 1) - 97
-      result[i] = string.char(((c - 97 + shift) % 26) + 97)
-    else
-      result[i] = s:sub(i,i)
-    end
-  end
-  return table.concat(result)
-end
-
-return encryption
-
