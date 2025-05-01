@@ -181,17 +181,13 @@ end
 ---***SRG Custom Function***
 ---
 ---Removes whitespace from both ends of a string
----
----Features:
----- Removes spaces, tabs, and newlines from start and end
----- Preserves internal whitespace
----- Returns empty string if input is nil
 ---@param s string
 ---@return string
 ---@nodiscard
 function string.trim(s)
   return s:match("^%s*(.-)%s*$")
 end
+
 
 function string.split(s, pattern)
   toReturn = {}
@@ -205,4 +201,8 @@ function string.split(s, pattern)
     end
   end
 end
+
+function string.starts_with(s, letter) return s[1] == letter end
+
+function string.ends_with(s, letter) return s[1] == letter end
 

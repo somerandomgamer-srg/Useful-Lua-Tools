@@ -1,5 +1,7 @@
 require("Library Extensions")
 
+local input = {}
+
 ---***SRG Custom Function***
 ---
 ---Gets a single string input from the user
@@ -17,20 +19,21 @@ require("Library Extensions")
 ---@param message string
 ---@return string input
 ---@nodiscard
-function Input(message)
-  if type(message) ~= "string" then 
+function input.string(message)
+  if type(message) ~= "string" then
     print("Input message must be a string")
     return ""
   end
 
   io.write(message .. ": ")
-  local input = io.read()
-  if not input then 
+  local inp = io.read()
+  if not inp then
     print("Failed to read input")
     return ""
   end
-  return input
+  return inp
 end
+
 ---***SRG Custom Function***
 ---
 ---Collects multiple string inputs from the user
@@ -53,7 +56,7 @@ end
 ---@param number_of_inputs number
 ---@return table inputs
 ---@nodiscard
-function InputTable(message, number_of_inputs)
+function input.table(message, number_of_inputs)
   if type(message) ~= "string" then
     print("Input message must be a string")
     return {}
@@ -66,17 +69,17 @@ function InputTable(message, number_of_inputs)
     print("Number of inputs must be positive")
     return {}
   end
-  
+
   io.write(message)
   local inputs = {}
   for i = 1, number_of_inputs do
     io.write(string.format("\ninput %d:", i))
-    local input = io.read()
-    if not input then
+    local inp = io.read()
+    if not inp then
       print("Failed to read input #" .. i)
       return {}
     end
-    inputs[i] = input
+    inputs[i] = inp
   end
   return inputs
 end
@@ -99,20 +102,20 @@ end
 ---@param message string
 ---@return number input
 ---@nodiscard
-function InputNumber(message)
+function input.number(message)
   if type(message) ~= "string" then
     print("Input message must be a string")
     return 0
   end
-  
+
   io.write(message .. ": ")
-  local input = io.read()
-  if not input then
+  local inp = io.read()
+  if not inp then
     print("Failed to read input")
     return 0
   end
-  
-  local num = tonumber(string.clean_number(input))
+
+  local num = tonumber(string.clean_number(inp))
   if not num then
     print("Invalid number input")
     return 0
@@ -143,13 +146,13 @@ end
 ---@param number_of_inputs number
 ---@return table inputs
 ---@nodiscard
-function InputNumberTable(message, number_of_inputs)
+function input.number_table(message, number_of_inputs)
   io.write(message)
 
   local inputs = {}
   for i = 1, number_of_inputs do
     io.write(string.format("\ninput %d:", i))
-    local num = tonumber(CleanNumber(io.read()))
+    local num = tonumber(string.clean_number(io.read()))
     if not num then print(string.format("Invalid number at input %d", i)) end
     inputs[i] = num and tonumber(num) or 0
   end
@@ -178,16 +181,16 @@ end
 ---@param message string
 ---@return table inputs
 ---@nodiscard
-function InputLoop(message)
+function input.loop(message)
   local inputs = {}
   local current = 1
 
   io.write("(press enter with nothing typed to submit)" .. message)
   while true do
     io.write(string.format("\nInput %d:", current))
-    local input = io.read()
-    if input == "" then break end
-    inputs[current] = tostring(input)
+    local inp = io.read()
+    if inp == "" then break end
+    inputs[current] = tostring(inp)
     current = current + 1
   end
 
@@ -218,19 +221,19 @@ end
 ---@param message string
 ---@return table inputs
 ---@nodiscard
-function InputNumberLoop(message)
-
+function input.number_loop(message)
   local inputs = {}
   local current = 1
 
   io.write("(press enter with nothing typed to submit)" .. message)
   while true do
     io.write(string.format("\nInput %d:", current))
-    local input = io.read()
-    if input == "" then break end
+    local inp = io.read()
+    if inp == "" then break end
 
-    local num = tonumber(CleanNumber(input))
-    if not num then print(string.format("Invalid number at input %d", current))
+    local num = tonumber(string.clean_number(inp))
+    if not num then
+      print(string.format("Invalid number at input %d", current))
     else
       inputs[current] = num and tonumber(num) or 0
       current = current + 1
@@ -239,3 +242,5 @@ function InputNumberLoop(message)
 
   return inputs or {}
 end
+
+return input
