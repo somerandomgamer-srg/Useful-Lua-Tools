@@ -11,7 +11,7 @@ require("Library Extensions")
 ---
 ---Example usage:
 ---- Input("Enter your name") -> Prompts "Enter your name: "
----- Returns exactly what the user types
+---Returns exactly what the user types
 ---
 ---`message` - The prompt message to display <br> `input` - The user's raw input string
 ---@param message string
@@ -19,17 +19,14 @@ require("Library Extensions")
 ---@nodiscard
 function Input(message)
   local status, result = pcall(function()
-    if type(message) ~= "string" then
-      error("Input message must be a string")
-    end
+    if type(message) ~= "string" then error("Input message must be a string") end
+
     io.write(message .. ": ")
     local input = io.read()
-    if not input then
-      error("Failed to read input")
-    end
-    return input
+    if not input then print("Failed to read input") end
+    return input or ""
   end)
-  
+
   if not status then
     print("Error in Input: " .. tostring(result))
     return ""
