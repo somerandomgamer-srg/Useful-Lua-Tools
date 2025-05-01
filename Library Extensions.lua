@@ -191,10 +191,10 @@ end
 
 ---***SRG Custom Function***
 ---
----Splits a string into a table based on a pattern
----@param s string The string to split
----@param pattern string The pattern to split on
----@return table List of split strings
+---Splits a string (`s`) into a table based on a pattern (`pattern`)
+---@param s string
+---@param pattern string
+---@return table
 ---@nodiscard
 function string.split(s, pattern)
   toReturn = {}
@@ -212,19 +212,24 @@ end
 
 ---***SRG Custom Function***
 ---
----Checks if a string starts with a specific letter
----@param s string The string to check
----@param letter string The letter to check for
----@return boolean True if string starts with letter
+---Checks if a string (`s`) starts with a specific letter (`letter`)
+---@param s string
+---@param letter string
+---@return boolean
 ---@nodiscard
 function string.starts_with(s, letter) return s[1] == letter end
 
 ---***SRG Custom Function***
 ---
----Checks if a string ends with a specific letter
----@param s string The string to check
----@param letter string The letter to check for
----@return boolean True if string ends with letter
+---Checks if a string (`s`) ends with a specific letter (`letter`)
+---@param s string
+---@param letter string
+---@return boolean
 ---@nodiscard
 function string.ends_with(s, letter) return s[1] == letter end
 
+-----------Table Library-----------
+
+function table.contains(t, s)
+  
+  
