@@ -180,13 +180,11 @@ end
 
 ---***SRG Custom Function***
 ---
----Removes whitespace from both ends of a string
+---Removes whitespace from both ends of a string (`s`)
 ---@param s string
 ---@return string
 ---@nodiscard
-function string.trim(s)
-  return s:match("^%s*(.-)%s*$")
-end
+function string.trim(s) return s:match("^%s*(.-)%s*$") end
 
 
 ---***SRG Custom Function***
@@ -226,42 +224,28 @@ function string.starts_with(s, letter) return s[1] == letter end
 ---@param letter string
 ---@return boolean
 ---@nodiscard
-function string.ends_with(s, letter) return s[1] == letter end
+function string.ends_with(s, letter) return s[#s] == letter end
 
 -----------Table Library-----------
 
 ---***SRG Custom Function***
 ---
----Recursively checks if a table contains a specific value
+---Recursively checks if a table (`t`) contains a specific value (`value`)
 ---
----Features:
----- Searches through all values in the table and nested tables
----- Works with any value type (numbers, strings, tables, etc.)
----- Recursively searches nested tables
----- Returns true if found, false if not
----
----Example usage:
----- local t = {1, 2, {3, 4, {5}}, "hello"}
----- table.contains(t, 2) -> true
----- table.contains(t, 5) -> true
----- table.contains(t, "hello") -> true
----- table.contains(t, 6) -> false
----
----`t` - The table to search in <br> `value` - The value to search for <br> `found` - Whether the value was found
+---Returns (`true`, `number of instances`) or (`false`, `0`)
 ---@param t table
 ---@param value any
----@return boolean found
+---@return boolean
+---@return number instances
 ---@nodiscard
 function table.contains(t, value)
+  local amount = 0
   for _, v in pairs(t) do
-    if v == value then
-      return true
+    if v == value then amount = amount + 1
     elseif type(v) == "table" then
-      if table.contains(v, value) then
-        return true
-      end
+      if table.contains(v, value) then amount = amount + 1 end
     end
   end
-  return false
+  return amount > 0, amount
 end
 

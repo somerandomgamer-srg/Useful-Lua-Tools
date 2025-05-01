@@ -1,6 +1,6 @@
 require("Library Extensions")
 
-local input = {}
+input = {}
 
 ---***SRG Custom Function***
 ---
