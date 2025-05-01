@@ -186,14 +186,8 @@ end
 ---- Removes spaces, tabs, and newlines from start and end
 ---- Preserves internal whitespace
 ---- Returns empty string if input is nil
----
----Example usage:
----- "  hello  ":trim() -> "hello"
----- "\t\ntest\n  ":trim() -> "test"
----
----`input` - The string to trim <br> `result` - The trimmed string
----@param input string
----@return string result
+---@param s string
+---@return string
 ---@nodiscard
 function string.trim(s)
   return s:match("^%s*(.-)%s*$")
