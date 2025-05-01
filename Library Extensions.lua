@@ -230,6 +230,33 @@ function string.ends_with(s, letter) return s[1] == letter end
 
 -----------Table Library-----------
 
-function table.contains(t, s)
+---***SRG Custom Function***
+---
+---Checks if a table contains a specific value
+---
+---Features:
+---- Searches through all values in the table
+---- Works with any value type (numbers, strings, etc.)
+---- Returns true if found, false if not
+---
+---Example usage:
+---- local t = {1, 2, 3, "hello"}
+---- table.contains(t, 2) -> true
+---- table.contains(t, "hello") -> true
+---- table.contains(t, 5) -> false
+---
+---`t` - The table to search in <br> `value` - The value to search for <br> `found` - Whether the value was found
+---@param t table
+---@param value any
+---@return boolean found
+---@nodiscard
+function table.contains(t, value)
+  for _, v in pairs(t) do
+    if v == value then
+      return true
+    end
+  end
+  return false
+end
   
   
