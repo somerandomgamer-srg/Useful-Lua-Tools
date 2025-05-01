@@ -232,18 +232,20 @@ function string.ends_with(s, letter) return s[1] == letter end
 
 ---***SRG Custom Function***
 ---
----Checks if a table contains a specific value
+---Recursively checks if a table contains a specific value
 ---
 ---Features:
----- Searches through all values in the table
----- Works with any value type (numbers, strings, etc.)
+---- Searches through all values in the table and nested tables
+---- Works with any value type (numbers, strings, tables, etc.)
+---- Recursively searches nested tables
 ---- Returns true if found, false if not
 ---
 ---Example usage:
----- local t = {1, 2, 3, "hello"}
+---- local t = {1, 2, {3, 4, {5}}, "hello"}
 ---- table.contains(t, 2) -> true
+---- table.contains(t, 5) -> true
 ---- table.contains(t, "hello") -> true
----- table.contains(t, 5) -> false
+---- table.contains(t, 6) -> false
 ---
 ---`t` - The table to search in <br> `value` - The value to search for <br> `found` - Whether the value was found
 ---@param t table
@@ -254,6 +256,10 @@ function table.contains(t, value)
   for _, v in pairs(t) do
     if v == value then
       return true
+    elseif type(v) == "table" then
+      if table.contains(v, value) then
+        return true
+      end
     end
   end
   return false
