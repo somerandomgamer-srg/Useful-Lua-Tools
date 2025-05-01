@@ -42,7 +42,12 @@ end
 
 function encryption.from_ascii(s)
   local text = ""
-  for ascii in string.split(s, " ") do text = text .. string.char(tonumber(ascii)) end
+  for _, ascii in ipairs(string.split(s, " ")) do
+    local number = tonumber(ascii)
+    if number then
+      text = text .. string.char(number)
+    end
+  end
   return text
 end
 
