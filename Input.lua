@@ -18,20 +18,18 @@ require("Library Extensions")
 ---@return string input
 ---@nodiscard
 function Input(message)
-  local status, result = pcall(function()
-    if type(message) ~= "string" then error("Input message must be a string") end
-
-    io.write(message .. ": ")
-    local input = io.read()
-    if not input then print("Failed to read input") end
-    return input or ""
-  end)
-
-  if not status then
-    print("Error in Input: " .. tostring(result))
+  if type(message) ~= "string" then 
+    print("Input message must be a string")
     return ""
   end
-  return result
+
+  io.write(message .. ": ")
+  local input = io.read()
+  if not input then 
+    print("Failed to read input")
+    return ""
+  end
+  return input
 end
 ---***SRG Custom Function***
 ---
@@ -56,35 +54,31 @@ end
 ---@return table inputs
 ---@nodiscard
 function InputTable(message, number_of_inputs)
-  local status, result = pcall(function()
-    if type(message) ~= "string" then
-      error("Input message must be a string")
-    end
-    if type(number_of_inputs) ~= "number" then
-      error("Number of inputs must be a number")
-    end
-    if number_of_inputs < 1 then
-      error("Number of inputs must be positive")
-    end
-    
-    io.write(message)
-    local inputs = {}
-    for i = 1, number_of_inputs do
-      io.write(string.format("\ninput %d:", i))
-      local input = io.read()
-      if not input then
-        error("Failed to read input #" .. i)
-      end
-      inputs[i] = input
-    end
-    return inputs
-  end)
-  
-  if not status then
-    print("Error in InputTable: " .. tostring(result))
+  if type(message) ~= "string" then
+    print("Input message must be a string")
     return {}
   end
-  return result
+  if type(number_of_inputs) ~= "number" then
+    print("Number of inputs must be a number")
+    return {}
+  end
+  if number_of_inputs < 1 then
+    print("Number of inputs must be positive")
+    return {}
+  end
+  
+  io.write(message)
+  local inputs = {}
+  for i = 1, number_of_inputs do
+    io.write(string.format("\ninput %d:", i))
+    local input = io.read()
+    if not input then
+      print("Failed to read input #" .. i)
+      return {}
+    end
+    inputs[i] = input
+  end
+  return inputs
 end
 
 ---***SRG Custom Function***
@@ -106,27 +100,24 @@ end
 ---@return number input
 ---@nodiscard
 function InputNumber(message)
-  local status, result = pcall(function()
-    if type(message) ~= "string" then
-      error("Input message must be a string")
-    end
-    io.write(message .. ": ")
-    local input = io.read()
-    if not input then
-      error("Failed to read input")
-    end
-    local num = tonumber(string.clean_number(input))
-    if not num then
-      error("Invalid number input")
-    end
-    return num
-  end)
-  
-  if not status then
-    print("Error in InputNumber: " .. tostring(result))
+  if type(message) ~= "string" then
+    print("Input message must be a string")
     return 0
   end
-  return result
+  
+  io.write(message .. ": ")
+  local input = io.read()
+  if not input then
+    print("Failed to read input")
+    return 0
+  end
+  
+  local num = tonumber(string.clean_number(input))
+  if not num then
+    print("Invalid number input")
+    return 0
+  end
+  return num
 end
 
 ---***SRG Custom Function***
