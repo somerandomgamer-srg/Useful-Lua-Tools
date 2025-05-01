@@ -1,3 +1,5 @@
+---***SRG Custom Function***
+---
 ---Cleans a string to ensure it's a valid number format
 ---
 ---Features:

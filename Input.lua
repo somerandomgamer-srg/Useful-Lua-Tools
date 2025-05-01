@@ -1,5 +1,7 @@
 require("String Manipulation")
 
+---***SRG Custom Function***
+---
 ---Gets a single string input from the user
 ---
 ---Features:
@@ -19,7 +21,8 @@ function Input(message)
   io.write(message .. ": ")
   return io.read()
 end
-
+---***SRG Custom Function***
+---
 ---Collects multiple string inputs from the user
 ---
 ---Features:
@@ -51,6 +54,8 @@ function InputTable(message, number_of_inputs)
   return inputs
 end
 
+---***SRG Custom Function***
+---
 ---Gets a single numeric input from the user with validation
 ---
 ---Features:
@@ -74,6 +79,8 @@ function InputNumber(message)
   return num and tonumber(num) or 0
 end
 
+---***SRG Custom Function***
+---
 ---Collects multiple numeric inputs from the user
 ---
 ---Features:
@@ -108,6 +115,8 @@ function InputNumberTable(message, number_of_inputs)
   return inputs
 end
 
+---***SRG Custom Function***
+---
 ---Collects string inputs until the user submits an empty input
 ---
 ---Features:
@@ -144,6 +153,8 @@ function InputLoop(message)
   return inputs or {}
 end
 
+---***SRG Custom Function***
+---
 ---Collects numeric inputs until the user submits an empty input
 ---
 ---Features:
