@@ -178,6 +178,27 @@ function string.clean_number(input)
   return cleaned
 end
 
+---***SRG Custom Function***
+---
+---Removes whitespace from both ends of a string
+---
+---Features:
+---- Removes spaces, tabs, and newlines from start and end
+---- Preserves internal whitespace
+---- Returns empty string if input is nil
+---
+---Example usage:
+---- "  hello  ":trim() -> "hello"
+---- "\t\ntest\n  ":trim() -> "test"
+---
+---`input` - The string to trim <br> `result` - The trimmed string
+---@param input string
+---@return string result
+---@nodiscard
+function string.trim(s)
+  return s:match("^%s*(.-)%s*$")
+end
+
 function string.split(s, pattern)
   toReturn = {}
   local start = 1
