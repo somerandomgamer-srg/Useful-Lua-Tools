@@ -78,7 +78,15 @@ function encryption.xor(s, key)
   local result = {}
   for i = 1, #s do
     local keyByte = key:byte((i-1) % #key + 1)
-    result[i] = string.char(bit32.bxor(s:byte(i), keyByte))
+    local byte = s:byte(i)
+    -- Manual XOR implementation
+    local xored = 0
+    for b = 0, 7 do
+      local bit1 = (byte >> b) & 1
+      local bit2 = (keyByte >> b) & 1
+      xored = xored | ((bit1 ~ bit2) << b)
+    end
+    result[i] = string.char(xored)
   end
   return table.concat(result)
 end
