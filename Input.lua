@@ -1,5 +1,6 @@
 require("Library Extensions")
 
+---@class inputlib
 input = {}
 
 ---***SRG Custom Function***

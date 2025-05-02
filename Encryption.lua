@@ -3,11 +3,12 @@ local morseCodeTable = {
   l=".-..", m="--", n="-.", o="---", p=".--.", q="--.-", r=".-.", s="...", t="-", u="..-", v="...-",
   w=".--", x="-..-", y="-.--", z="--..", ["1"]=".----", ["2"]="..---", ["3"]="...--", ["4"]="....-",
   ["5"]=".....", ["6"]="-....", ["7"]="--...", ["8"]="---..", ["9"]="----.", ["0"]="-----",
-  [" "] = " / ", ["!"]="-.-.--", ["@"]=".--.-.", ["&"]=".-...", ["("]="-.--.", [")"]="-.--.-",
-  ["-"]="-....-", ["="]="-...-", ["+"]=".-.-.", [":"]="---...". ["'"]=".----.", ['"']=".-..-.",
-  [","]="--..--" ["."]=".-.-.-", ["/"]="-..-.", ["?"]="..--.."
+  [" "] = "/", ["!"]="-.-.--", ["@"]=".--.-.", ["&"]=".-...", ["("]="-.--.", [")"]="-.--.-",
+  ["-"]="-....-", ["="]="-...-", ["+"]=".-.-.", [":"]="---...", ["'"]=".----.", ['"']=".-..-.",
+  [","]="--..--", ["."]=".-.-.-", ["/"]="-..-.", ["?"]="..--.."
 }
 
+---@class encryptionlib
 encryption = {}
 
 ---***SRG Custom Function***
@@ -52,20 +53,6 @@ end
 
 ---***SRG Custom Function***
 ---
----Converts a string (`s`) from plaintext to morse code
----@param s string
----@return string
----@nodiscard
-function encryption.text_to_morse(s)
-  local text = ""
-  for i = 1, #s do
-    local char = s[i]
-    if morseCodeTable[char] then text = text .. morseCodeTable[char] .. " " end
-  end
-
-
----***SRG Custom Function***
----
 ---Converts a string (`s`) from morse code to plaintext
 ---@param s string
 ---@return string
@@ -73,26 +60,13 @@ function encryption.text_to_morse(s)
 function encryption.morse_to_text(s)
   local text = ""
   local morseToText = {}
-  
-  -- Create reverse lookup table
-  for char, morse in pairs(morseCodeTable) do
-    morseToText[morse] = char
-  end
-  
-  -- Handle special case for space
+
+  for char, morse in pairs(morseCodeTable) do morseToText[morse] = char end
+
   s = s:gsub(" / ", "  ")
-  
-  -- Split morse code into individual symbols
   for symbol in s:gmatch("%S+") do
     local char = morseToText[symbol]
-    if char then
-      text = text .. char
-    end
+    if char then text = text .. char end
   end
-  
-  return text
-end
-
-
   return string.trim(text)
 end

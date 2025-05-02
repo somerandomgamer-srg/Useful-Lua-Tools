@@ -249,3 +249,30 @@ function table.contains(t, value)
   return amount > 0, amount
 end
 
+---***SRG Custom Function***
+---
+---Converts a CSV string (`s`) into a table 
+---@param s string
+---@return table
+---@nodiscard
+function table.csv_to_table(s)
+  local toReturn = {}
+  local lines = string.split(s, "\n")
+  for i = 1, #lines do
+    local line = lines[i]
+    local values = string.split(line, ",")
+    toReturn[i] = values
+    for j = 1, #values do toReturn[i][j] = string.trim(values[j]) end
+    toReturn[i] = values
+  end
+  return toReturn
+end
+
+---***SRG Custom Function***
+---
+---Converts a table (`t`) to a CSV string
+---@param t tabke
+---@return table
+---@nodiscard
+function table.to_csv(t)
+  for 
