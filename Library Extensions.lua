@@ -275,4 +275,16 @@ end
 ---@return table
 ---@nodiscard
 function table.to_csv(t)
-  for 
+  local csv = ""
+  for i = 1, #t do
+    local row = t[i]
+    if type(row) == "table" then
+      for j = 1, #row do
+        csv = csv .. tostring(row[j])
+        if j < #row then csv = csv .. "," end
+      end
+      if i < #t then csv = csv .. "\n" end
+    end
+  end
+  return csv
+end 
