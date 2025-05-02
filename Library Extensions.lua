@@ -271,8 +271,8 @@ end
 ---***SRG Custom Function***
 ---
 ---Converts a table (`t`) to a CSV string
----@param t tabke
----@return table
+---@param t table
+---@return string
 ---@nodiscard
 function table.to_csv(t)
   local csv = ""
@@ -287,4 +287,4 @@ function table.to_csv(t)
     end
   end
   return csv
-end 
+end
