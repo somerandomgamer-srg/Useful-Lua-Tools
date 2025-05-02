@@ -257,14 +257,41 @@ end
 ---@nodiscard
 function table.csv_to_table(s)
   local toReturn = {}
-  local lines = string.split(s, "\n")
-  for i = 1, #lines do
-    local line = lines[i]
-    local values = string.split(line, ",")
-    toReturn[i] = values
-    for j = 1, #values do toReturn[i][j] = string.trim(values[j]) end
-    toReturn[i] = values
+  local current_row = {}
+  local field = ""
+  local in_quotes = false
+  local i = 1
+  local row = 1
+
+  while i <= #s do
+    local char = s:sub(i,i)
+    
+    if char == '"' then
+      if in_quotes and s:sub(i+1,i+1) == '"' then
+        field = field .. '"'
+        i = i + 2
+      else
+        in_quotes = not in_quotes
+        i = i + 1
+      end
+    elseif char == ',' and not in_quotes then
+      table.insert(current_row, field)
+      field = ""
+      i = i + 1
+    elseif (char == '\n' or i == #s) and not in_quotes then
+      if i == #s and char ~= '\n' then field = field .. char end
+      table.insert(current_row, field)
+      toReturn[row] = current_row
+      current_row = {}
+      field = ""
+      row = row + 1
+      i = i + 1
+    else
+      field = field .. char
+      i = i + 1
+    end
   end
+
   return toReturn
 end
 
@@ -280,7 +307,12 @@ function table.to_csv(t)
     local row = t[i]
     if type(row) == "table" then
       for j = 1, #row do
-        csv = csv .. tostring(row[j])
+        local value = tostring(row[j])
+        -- Quote the field if it contains commas, quotes, or newlines
+        if value:find('[,"\n]') then
+          value = '"' .. value:gsub('"', '""') .. '"'
+        end
+        csv = csv .. value
         if j < #row then csv = csv .. "," end
       end
       if i < #t then csv = csv .. "\n" end
