@@ -1,3 +1,13 @@
+local morseCodeTable = {
+  a=".-", b="-...", c="-.-.", d="-..", e=".", f="..-.", g="--.", h="....", i="..", j=".---", k="-.-",
+  l=".-..", m="--", n="-.", o="---", p=".--.", q="--.-", r=".-.", s="...", t="-", u="..-", v="...-",
+  w=".--", x="-..-", y="-.--", z="--..", ["1"]=".----", ["2"]="..---", ["3"]="...--", ["4"]="....-",
+  ["5"]=".....", ["6"]="-....", ["7"]="--...", ["8"]="---..", ["9"]="----.", ["0"]="-----",
+  [" "] = " / ", ["!"]="-.-.--", ["@"]=".--.-.", ["&"]=".-...", ["("]="-.--.", [")"]="-.--.-",
+  ["-"]="-....-", ["="]="-...-", ["+"]=".-.-.", [":"]="---...". ["'"]=".----.", ['"']=".-..-.",
+  [","]="--..--" ["."]=".-.-.-", ["/"]="-..-.", ["?"]="..--.."
+}
+
 encryption = {}
 
 ---***SRG Custom Function***
@@ -6,7 +16,7 @@ encryption = {}
 ---@param s string
 ---@return string
 ---@nodiscard
-function encryption.to_ascii(s)
+function encryption.text_to_ascii(s)
   local asciiCode = ""
   for i in s do asciiCode = asciiCode .. s[i]:byte() .. " " end
   return string.trim(asciiCode)
@@ -18,7 +28,7 @@ end
 ---@param s string
 ---@return string
 ---@nodiscard
-function text_to_hex(s)
+function encryption.text_to_hex(s)
   local hexCode = ""
   for i = 1, #s do hexCode = hexCode .. string.format("%02X", s[i]:byte()) end
   return hexCode
@@ -30,7 +40,7 @@ end
 ---@param s string
 ---@return string
 ---@nodiscard
-function encryption.to_binary(s)
+function encryption.text_to_binary(s)
   local binaryCode = ""
   for i = 1, #s do
     local charCode = string.byte(s, i)
@@ -40,32 +50,17 @@ function encryption.to_binary(s)
   return string.trim(binaryCode)
 end
 
-function encryption.from_ascii(s)
+---***SRG Custom Function***
+---
+---Converts a string (`s`) from plaintext to morse code
+---@param s string
+---@return string
+---@nodiscard
+function encryption.text_to_morse(s)
   local text = ""
-  for _, ascii in ipairs(string.split(s, " ")) do
-    local number = tonumber(ascii)
-    if number then
-      text = text .. string.char(number)
-    end
+  for i = 1, #s do
+    local char = s[i]
+    if morseCodeTable[char] then text = text .. morseCodeTable[char] .. " " end
   end
-  return text
-end
-
----Converts a string (`s`) from hexadecimal to plaintext
-function encryption.from_hex(s)
-  local text = ""
-  for hexPair in s:gmatch("%x%x") do
-    local char = string.char(tonumber(hexPair, 16))
-    text = text .. char
-  end
-  return text
-end
-
-function encryption.from_binary(s)
-  local text = ""
-  for binary in s:gmatch("%S+") do
-      local ascii = tonumber(binary, 2)
-      text = text .. string.char(ascii)
-  end
-  return text
+  return string.trim(text)
 end

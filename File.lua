@@ -1,0 +1,3 @@
+---@class filelib
+file = {}
+
