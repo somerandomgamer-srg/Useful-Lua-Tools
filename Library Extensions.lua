@@ -166,11 +166,11 @@ end
 ---***SRG Custom Function***
 ---
 ---Solves a quadratic equation in the form ax² + bx + c using the quadratic formula
----@param a number Coefficient of x²
----@param b number Coefficient of x
----@param c number Constant term
----@return number? First root
----@return number? Second root
+---@param a number
+---@param b number
+---@param c number
+---@return number?
+---@return number?
 ---@nodiscard
 function math.quadratic(a, b, c)
   if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
