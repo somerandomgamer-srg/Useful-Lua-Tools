@@ -8,7 +8,7 @@ input = {}
 ---Gets a single string input from the user
 ---
 ---Features:
----- Displays a custom prompt message
+---- Displays an optional custom prompt message
 ---- Returns the raw input as a string
 ---- No input validation or cleaning
 ---
@@ -18,13 +18,10 @@ input = {}
 ---
 ---`message` - The prompt message to display <br> `input` - The user's raw input string
 ---@param message string
----@return string input
+---@return string
 ---@nodiscard
 function input.string(message)
-  if type(message) ~= "string" then
-    print("Input message must be a string")
-    return ""
-  end
+  if message and type(message) ~= "string" then error("Input message must be a string") end
 
   io.write(message .. ": ")
   local inp = io.read()
@@ -58,16 +55,13 @@ end
 ---@return table inputs
 ---@nodiscard
 function input.table(message, number_of_inputs)
-  if type(message) ~= "string" then
-    print("Input message must be a string")
-    return {}
-  end
+  if message and type(message) ~= "string" then error("Input message must be a string") end
   if type(number_of_inputs) ~= "number" then
-    print("Number of inputs must be a number")
+    error("Number of inputs must be a number")
     return {}
   end
   if number_of_inputs < 1 then
-    print("Number of inputs must be positive")
+    error("Number of inputs must be greater than 0")
     return {}
   end
 
@@ -77,7 +71,7 @@ function input.table(message, number_of_inputs)
     io.write(string.format("\ninput %d:", i))
     local inp = io.read()
     if not inp then
-      print("Failed to read input #" .. i)
+      print("Failed to read input at input #" .. i)
       return {}
     end
     inputs[i] = inp
@@ -105,7 +99,7 @@ end
 ---@nodiscard
 function input.number(message)
   if type(message) ~= "string" then
-    print("Input message must be a string")
+    error("Input message must be a string")
     return 0
   end
 
@@ -129,26 +123,28 @@ end
 ---Collects multiple numeric inputs from the user
 ---
 ---Features:
----- Displays a main message followed by numbered prompts
+---- Displays an optional main message followed by numbered prompts
 ---- Validates and cleans each input
 ---- Replaces invalid numbers with 0
 ---- Handles decimals and negative numbers
 ---
 ---Example usage:
----- InputNumberTable("Enter 3 scores", 3)
+---- input.number_table("Enter 3 scores", 3)
 ---- Will show:
 ----   Enter 3 scores
 ----   input 1: (user types)
 ----   input 2: (user types)
 ----   input 3: (user types)
+---- Will return:
+----   
 ---
----`message` - The prompt message to display <br> `number_of_inputs` - The number of numeric inputs to collect <br> `inputs` - Table containing the user's numeric inputs
+---`message` - The prompt message to display <br> `number_of_inputs` - The number of numeric inputs to collect
 ---@param message string
 ---@param number_of_inputs number
----@return table inputs
+---@return table
 ---@nodiscard
 function input.number_table(message, number_of_inputs)
-  io.write(message)
+  if message then io.write(message) end
 
   local inputs = {}
   for i = 1, number_of_inputs do
@@ -165,28 +161,34 @@ end
 ---Collects string inputs until the user submits an empty input
 ---
 ---Features:
----- Displays a main message with instructions
+---- Displays an optional main message with instructions
 ---- Keeps collecting inputs until empty submission
 ---- Numbers each input prompt automatically
 ---- Returns all inputs in a table
 ---
 ---Example usage:
----- InputLoop("Enter names")
+---- input.loop("Enter names")
 ---- Will show:
-----   (press enter with nothing typed to submit)Enter names
+----   (press enter with nothing typed to submit) Enter names
+----   Input 1: (user types)
+----   Input 2: (user types)
+----   Input 3: (user types)
+---- User types:
 ----   Input 1: John
 ----   Input 2: Jane
-----   Input 3: (empty to finish)
+----   Input 3:
+---- Will return:
+----   {"John", "Jane"}
 ---
----`message` - The prompt message to display <br> `inputs` - Table containing all inputs until empty input
+---`message` - The prompt message to display
 ---@param message string
----@return table inputs
+---@return table
 ---@nodiscard
 function input.loop(message)
   local inputs = {}
   local current = 1
 
-  io.write("(press enter with nothing typed to submit)" .. message)
+  io.write("(press enter with nothing typed to submit) " .. message)
   while true do
     io.write(string.format("\nInput %d:", current))
     local inp = io.read()
@@ -210,35 +212,39 @@ end
 ---- Handles decimals and negative numbers
 ---
 ---Example usage:
----- InputNumberLoop("Enter scores")
+---- input.number_loop("Enter scores")
 ---- Will show:
-----   (press enter with nothing typed to submit)Enter scores
-----   Input 1: 95.5
-----   Input 2: abc (invalid number message)
-----   Input 2: 87
-----   Input 3: (empty to finish)
+----   (press enter with nothing typed to submit) Enter scores
+----   input 1: (user types)
+----   input 2: (user types)
+----   input 3: (user types)
+----   input 4: (user types)
+---- User types:
+----   input 1: 95.5
+----   input 2: abc (Not a numerical input, so it will put 0 as that input)
+----   input 3: 87
+----   input 4:
+---- Will return:
+----  {95.5, 0, 87}
 ---
----`message` - The prompt message to display <br> `inputs` - Table containing all numeric inputs until empty input
+---`message` - The prompt message to display
 ---@param message string
----@return table inputs
+---@return table
 ---@nodiscard
 function input.number_loop(message)
   local inputs = {}
   local current = 1
 
-  io.write("(press enter with nothing typed to submit)" .. message)
+  io.write("(press enter with nothing typed to submit) " .. message)
   while true do
     io.write(string.format("\nInput %d:", current))
     local inp = io.read()
     if inp == "" then break end
 
     local num = tonumber(string.clean_number(inp))
-    if not num then
-      print(string.format("Invalid number at input %d", current))
-    else
-      inputs[current] = num and tonumber(num) or 0
-      current = current + 1
-    end
+    if not num then print(string.format("Invalid number at input %d", current)) end
+    inputs[current] = num and tonumber(num) or 0
+    current = current + 1
   end
 
   return inputs or {}
