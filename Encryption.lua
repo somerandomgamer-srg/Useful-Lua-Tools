@@ -79,6 +79,13 @@ function encryption.morse_to_text(s)
   return string.trim(text)
 end
 
+---***SRG Custom Function***
+---
+---Performs bitwise XOR operation between two numbers
+---@param a number First number
+---@param b number Second number
+---@return number Result of XOR operation
+---@nodiscard
 function encryption.bxor(a, b)
   if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
   if type(b) ~= "number" then error("Number expected for 'b', given: " .. type(b)) end
@@ -100,7 +107,14 @@ function encryption.bxor(a, b)
   return result
 end
 
+---***SRG Custom Function***
+---
+---Performs XOR encryption/decryption on a string using a key
 ---Note: XOR is symmetric - use the same key to decrypt
+---@param s string Text to encrypt/decrypt
+---@param key string Encryption key
+---@return string Encrypted/decrypted text
+---@nodiscard
 function encryption.xor(s, key)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
   if type(key) ~= "string" then error("String expected for 'key', given: " .. type(key)) end
@@ -117,6 +131,13 @@ function encryption.xor(s, key)
   return encrypted
 end
 
+---***SRG Custom Function***
+---
+---Applies Caesar cipher encryption to a string with specified shift
+---@param s string Text to encrypt
+---@param shift number Number of positions to shift characters
+---@return string Encrypted text
+---@nodiscard
 function encryption.caesar_cipher(s, shift)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
   if type(shift) ~= "number" then error("Number expected for 'shift', given: " .. type(shift)) end
@@ -135,6 +156,12 @@ function encryption.caesar_cipher(s, shift)
   return encrypted
 end
 
+---***SRG Custom Function***
+---
+---Applies ROT13 encryption (Caesar cipher with shift of 13)
+---@param s string Text to encrypt/decrypt
+---@return string Encrypted/decrypted text
+---@nodiscard
 function encryption.rot13(s)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
 
