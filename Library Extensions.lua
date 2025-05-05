@@ -191,6 +191,13 @@ function math.quadratic(a, b, c)
   return ans1, ans2
 end
 
+---***SRG Custom Function***
+---
+---Calculates the axis of symmetry for a quadratic function using a and b coefficients
+---@param a number The coefficient of x²
+---@param b number The coefficient of x
+---@return number The x-coordinate of the axis of symmetry
+---@nodiscard
 function math.aos(a, b)
   if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
   if type(b) ~= "number" then error("Number expected for 'b', given: " .. type(b)) end
@@ -198,6 +205,15 @@ function math.aos(a, b)
   return -b / (2 * a)
 end
 
+---***SRG Custom Function***
+---
+---Calculates the vertex point of a quadratic function using a, b, and c coefficients
+---@param a number The coefficient of x²
+---@param b number The coefficient of x
+---@param c number The constant term
+---@return number x The x-coordinate of the vertex
+---@return number y The y-coordinate of the vertex
+---@nodiscard
 function math.vertex(a, b, c)
   if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
   if type(b) ~= "number" then error("Number expected for 'b', given: " .. type(b)) end
