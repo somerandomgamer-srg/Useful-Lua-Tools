@@ -33,7 +33,7 @@ end
 ---Collects multiple string inputs from the user
 ---
 ---Features:
----- Displays a main message followed by numbered prompts
+---- Displays an optional main message followed by numbered prompts
 ---- Collects a specified number of inputs
 ---- Returns all inputs in a table
 ---
