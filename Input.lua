@@ -3,8 +3,6 @@ require("Library Extensions")
 ---@class inputlib
 input = {}
 
----***SRG Custom Function***
----
 ---Gets a single string input from the user
 ---
 ---Features:
@@ -14,9 +12,9 @@ input = {}
 ---
 ---Example usage:
 ---- Input("Enter your name") -> Prompts "Enter your name: "
----Returns exactly what the user types
+---- Returns exactly what the user types
 ---
----`message` - The prompt message to display <br> `input` - The user's raw input string
+---`message` - The prompt message to display
 ---@param message string
 ---@return string
 ---@nodiscard
@@ -32,8 +30,6 @@ function input.string(message)
   return inp
 end
 
----***SRG Custom Function***
----
 ---Collects multiple string inputs from the user
 ---
 ---Features:
@@ -48,8 +44,10 @@ end
 ----   input 1: (user types)
 ----   input 2: (user types)
 ----   input 3: (user types)
+---- Returns a table with all inputs
 ---
----`message` - The prompt message to display <br> `number_of_inputs` - How many inputs to collect <br> `inputs` - Table containing all user inputs
+---`message` - The prompt message to display
+---`number_of_inputs` - How many inputs to collect
 ---@param message string
 ---@param number_of_inputs number
 ---@return table inputs
@@ -79,8 +77,6 @@ function input.table(message, number_of_inputs)
   return inputs
 end
 
----***SRG Custom Function***
----
 ---Gets a single numeric input from the user with validation
 ---
 ---Features:
@@ -93,7 +89,7 @@ end
 ---- InputNumber("Enter your age") -> Prompts and returns a number
 ---- Invalid inputs like "abc" return 0
 ---
----`message` - The prompt message to display <br> `input` - The user's numeric input (returns 0 if invalid)
+---`message` - The prompt message to display
 ---@param message string
 ---@return number input
 ---@nodiscard
@@ -118,8 +114,6 @@ function input.number(message)
   return num
 end
 
----***SRG Custom Function***
----
 ---Collects multiple numeric inputs from the user
 ---
 ---Features:
@@ -135,10 +129,10 @@ end
 ----   input 1: (user types)
 ----   input 2: (user types)
 ----   input 3: (user types)
----- Will return:
-----   
+---- Returns a table with all valid numbers
 ---
----`message` - The prompt message to display <br> `number_of_inputs` - The number of numeric inputs to collect
+---`message` - The prompt message to display
+---`number_of_inputs` - The number of numeric inputs to collect
 ---@param message string
 ---@param number_of_inputs number
 ---@return table
@@ -156,8 +150,6 @@ function input.number_table(message, number_of_inputs)
   return inputs
 end
 
----***SRG Custom Function***
----
 ---Collects string inputs until the user submits an empty input
 ---
 ---Features:
@@ -200,8 +192,6 @@ function input.loop(message)
   return inputs or {}
 end
 
----***SRG Custom Function***
----
 ---Collects numeric inputs until the user submits an empty input
 ---
 ---Features:
