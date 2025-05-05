@@ -2,6 +2,7 @@
     "diagnostics.disable": [
         "lowercase-global",
         "duplicate-set-field",
-        "undefined-doc-name"
+        "undefined-doc-name",
+        "return-type-mismatch"
     ]
 }

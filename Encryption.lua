@@ -18,6 +18,8 @@ encryption = {}
 ---@return string
 ---@nodiscard
 function encryption.text_to_ascii(s)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+
   local asciiCode = ""
   for i in s do asciiCode = asciiCode .. s[i]:byte() .. " " end
   return string.trim(asciiCode)
@@ -30,6 +32,8 @@ end
 ---@return string
 ---@nodiscard
 function encryption.text_to_hex(s)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+
   local hexCode = ""
   for i = 1, #s do hexCode = hexCode .. string.format("%02X", s[i]:byte()) end
   return hexCode
@@ -42,6 +46,8 @@ end
 ---@return string
 ---@nodiscard
 function encryption.text_to_binary(s)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+
   local binaryCode = ""
   for i = 1, #s do
     local charCode = string.byte(s, i)
@@ -58,6 +64,8 @@ end
 ---@return string
 ---@nodiscard
 function encryption.morse_to_text(s)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+
   local text = ""
   local morseToText = {}
 
@@ -69,4 +77,66 @@ function encryption.morse_to_text(s)
     if char then text = text .. char end
   end
   return string.trim(text)
+end
+
+function encryption.bxor(a, b)
+  if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
+  if type(b) ~= "number" then error("Number expected for 'b', given: " .. type(b)) end
+
+  local result = 0
+  local bitval = 1
+
+  while a > 0 or b > 0 do
+    local aBit = a % 2
+    local bBit = b % 2
+
+    if aBit ~= bBit then result = result + bitval end
+
+    bitval = bitval * 2
+    a = math.floor(a / 2)
+    b = math.floor(b / 2)
+  end
+
+  return result
+end
+
+---Note: XOR is symmetric - use the same key to decrypt
+function encryption.xor(s, key)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  if type(key) ~= "string" then error("String expected for 'key', given: " .. type(key)) end
+
+  local encrypted = ""
+
+  for i = 1, #s do
+    local charByte = string.byte(s:sub(i, i))
+    local keyByte = string.byte(key:sub((i - 1) % #key + 1, (i - 1) % #key + 1))
+    local encryptedByte = encryption.bxor(charByte, keyByte)
+    encrypted = encrypted .. string.char(encryptedByte)
+  end
+
+  return encrypted
+end
+
+function encryption.caesar_cipher(s, shift)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  if type(shift) ~= "number" then error("Number expected for 'shift', given: " .. type(shift)) end
+
+  local encrypted = ""
+
+  for i = 1, #s do
+    local character = s:sub(i, i)
+    if character:match("%a") then
+      local base = character:match("%u") and 65 or 97
+      encrypted = encrypted .. string.char(((string.byte(character) - base + shift) % 26) + base)
+    else encrypted = encrypted .. character
+    end
+  end
+
+  return encrypted
+end
+
+function encryption.rot13(s)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+
+  return encryption.caesar_cipher(s, 13)
 end

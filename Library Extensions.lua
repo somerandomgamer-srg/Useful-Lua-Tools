@@ -2,46 +2,46 @@
 ---***SRG Custom Function***
 ---
 ---Calculates the average from a list of numbers
----@param list table
+---@param t table
 ---@return number
 ---@nodiscard
-function math.average(list)
-  local average = 0
-  if type(list) == "list" then
-    local total = 0
-    for i = 1, #list do total = total + list[i] end
-    average = total / #list
-  end
+function math.average(t)
+  if type(t) ~= "table" then error("Table expected for 't', given: " .. type(t)) end
+
+  local average
+  local total = 0
+  for i = 1, #t do total = total + t[i] end
+  average = total / #t
   return average
 end
 
 ---***SRG Custom Function***
 ---
 ---Calculates the median from a list of numbers
----@param list table
+---@param t table
 ---@return number
 ---@nodiscard
-function math.median(list)
-  list:sort()
-  local middle = math.floor(#list / 2) + 1
-  if list then
-    if #list % 2 == 1 then return list[middle]
-    else return (list[middle] + list[middle - 1]) / 2
-    end
-  end
+function math.median(t)
+  if type(t) ~= "table" then error("Table expected for 't', given: " .. type(t)) end
 
-  return 0
+  t:sort()
+  local middle = math.floor(#t / 2) + 1
+  if #t % 2 == 1 then return t[middle]
+  else return (t[middle] + t[middle - 1]) / 2
+  end
 end
 
 ---***SRG Custom Function***
 ---
 ---Calculates the range from a list of numbers
----@param list table
+---@param t table
 ---@return number
 ---@nodiscard
-function math.range(list)
-  local minimum = math.min(list:unpack())
-  local maximum = math.max(list:unpack())
+function math.range(t)
+  if type(t) ~= "table" then error("Table expected for 't', given: " .. type(t)) end
+
+  local minimum = math.min(t:unpack())
+  local maximum = math.max(t:unpack())
 
   return maximum - minimum
 end
@@ -49,14 +49,16 @@ end
 ---***SRG Custom Function***
 ---
 ---Calculates the mode from a list of numbers
----@param list table
+---@param t table
 ---@return number
 ---@nodiscard
-function math.mode(list)
+function math.mode(t)
+  if type(t) ~= "table" then error("Table expected for 't', given: " .. type(t)) end
+
   local freq = {}
-  for i = 1, #list do
-    if freq[list[i]] then freq[list[i]] = freq[list[i]] + 1
-    else freq[list[i]] = 1
+  for i = 1, #t do
+    if freq[t[i]] then freq[t[i]] = freq[t[i]] + 1
+    else freq[t[i]] = 1
     end
   end
 
@@ -72,26 +74,138 @@ end
 ---***SRG Custom Function***
 ---
 ---Calculates the standard deviation from a list of numbers
----@param list table
+---@param t table
 ---@return number
 ---@nodiscard
-function math.standard_deviation(list)
+function math.standard_deviation(t)
+  if type(t) ~= "table" then error("Table expected for 't', given: " .. type(t)) end
+
   local deviation = 0
-  local avg = math.average(list)
-  for i = 1, #list do deviation = deviation + (list[i] - avg)^2 end
-  return math.sqrt(deviation / #list)
+  local avg = math.average(t)
+  for i = 1, #t do deviation = deviation + (t[i] - avg)^2 end
+  return math.sqrt(deviation / #t)
 end
 
 ---***SRG Custom Function***
 ---
 ---Calculates the sum from a list of numbers
----@param list table
+---@param t table
 ---@return number
 ---@nodiscard
-function math.sum(list)
+function math.sum(t)
+  if type(t) ~= "table" then error("Table expected for 't', given: " .. type(t)) end
+
   local sum = 0
-  for i in #list do sum = sum + list[i] end
+  for i in #t do sum = sum + t[i] end
   return sum
+end
+
+---***SRG Custom Function***
+---
+---Finds the greatest common factor between 2 numbers (`x` and `y`)
+---@param x number
+---@param y number
+---@return number
+---@nodiscard
+function math.gcd(x, y)
+  if type(x) ~= "number" then error("Number expected for 'x', given: " .. type(x)) end
+  if type(y) ~= "number" then error("Number expected for 'y', given: " .. type(y)) end
+
+  local result
+  local biggest = math.max(x, y)
+
+  if x == y then result = x
+  elseif x == 0 or y == 0 then result = "N/A"
+  elseif x == 1 or y == 1 then result = 1
+  else
+    for i = 1, biggest do
+      if x % i == 0 and y % i == 0 then result = i end
+    end
+  end
+
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Checks if a number (`x`) is a prime number
+---@param x number
+---@return boolean
+---@nodiscard
+function math.is_prime(x)
+  if type(x) ~= "number" then error("Number expected for 'x', given: " .. type(x)) end
+
+  if x < 2 then return false
+  else
+    local prime = true
+    for i = 2, #x - 3 do
+      if x % i == 0 then
+        prime = false
+        break
+      end
+    end
+    return prime
+  end
+end
+
+---***SRG Custom Function***
+---
+---Finds the least common multiple between 2 numbers (`x` and `y`)
+---@param x number
+---@param y number
+---@return number
+---@nodiscard
+function math.lcm(x, y)
+  if type(x) ~= "number" then error("Number expected for 'x', given: " .. type(x)) end
+  if type(y) ~= "number" then error("Number expected for 'y', given: " .. type(y)) end
+
+  return (x * y) / math.gcd(x, y)
+end
+
+---***SRG Custom Function***
+---
+---Uses the quadratic formula to solve the roots using 3 numbers (`a`, `b`, and `c`)
+---@param a number
+---@param b number
+---@param c number
+---@return number
+---@return number
+---@nodiscard
+function math.quadratic(a, b, c)
+  if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
+  if type(b) ~= "number" then error("Number expected for 'b', given: " .. type(b)) end
+  if type(c) ~= "number" then error("Number expected for 'c', given: " .. type(c)) end
+
+  local disc = b ^ 2 - 4 * a * c
+
+  if disc < 0 then
+    print("No real roots")
+    return nil, nil
+  end
+
+  local temp = -b + math.sqrt(disc)
+  local temp2 = -b - math.sqrt(disc)
+  local temp3 = 2 * a
+  local ans1 = temp / temp3
+  local ans2 = temp2 / temp3
+  return ans1, ans2
+end
+
+function math.aos(a, b)
+  if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
+  if type(b) ~= "number" then error("Number expected for 'b', given: " .. type(b)) end
+
+  return -b / (2 * a)
+end
+
+function math.vertex(a, b, c)
+  if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
+  if type(b) ~= "number" then error("Number expected for 'b', given: " .. type(b)) end
+  if type(c) ~= "number" then error("Number expected for 'c', given: " .. type(c)) end
+
+  local aos = math.aos(a, b)
+
+  return aos, a * aos ^ 2 + b * aos + c
 end
 
 ---***SRG Custom Function***
@@ -146,7 +260,7 @@ function math.asinh(x) return math.log(x + math.sqrt(x^2 + 1)) end
 
 ---***SRG Custom Function***
 ---
----Cleans a string to ensure it's a valid number format
+---Cleans a string (`s`) to ensure it's a valid number format
 ---
 ---Features:
 ---- Removes all non-numeric characters except decimal points and minus signs
@@ -158,13 +272,13 @@ function math.asinh(x) return math.log(x + math.sqrt(x^2 + 1)) end
 ---- CleanNumber("12.34.56") -> "12.3456"
 ---- CleanNumber("ab12cd") -> "12"
 ---- CleanNumber("$52 per Year") -> "52"
----
----`input` - The string to be cleaned <br> `cleaned` - The resulting valid number string
----@param input string
----@return string cleaned 
+---@param s string
+---@return string 
 ---@nodiscard
-function string.clean_number(input)
-  local cleaned = input:gsub("[^0-9%.%-]", "")
+function string.clean_number(s)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+
+  local cleaned = s:gsub("[^0-9%.%-]", "")
 
   local firstDecimal = cleaned:find("%.")
   if firstDecimal then cleaned = cleaned:sub(1, firstDecimal)..cleaned:sub(firstDecimal + 1):gsub("%.", "") end
@@ -184,17 +298,29 @@ end
 ---@param s string
 ---@return string
 ---@nodiscard
-function string.trim(s) return s:match("^%s*(.-)%s*$") end
-
+function string.trim(s)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  return s:match("^%s*(.-)%s*$")
+end
 
 ---***SRG Custom Function***
 ---
 ---Splits a string (`s`) into a table based on a pattern (`pattern`)
+---
+---Example:
+---```lua
+---  string.split("1 2 3 4 5", " ") -> {"1","2","3","4","5"}
+---  string.split("1-2-3-4-5", "-") -> {"1","2","3","4","5"}
+---  string.split("1 2:3 4 5", ":") -> {"1 2","3 4 5"}
+---```
 ---@param s string
 ---@param pattern string
 ---@return table
 ---@nodiscard
 function string.split(s, pattern)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  if type(pattern) ~= "string" then error("String expected for 'pattern', given: " .. type(pattern)) end
+
   toReturn = {}
   local start = 1
 
@@ -215,7 +341,10 @@ end
 ---@param letter string
 ---@return boolean
 ---@nodiscard
-function string.starts_with(s, letter) return s[1] == letter end
+function string.starts_with(s, letter)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  return s[1] == letter
+end
 
 ---***SRG Custom Function***
 ---
@@ -224,7 +353,10 @@ function string.starts_with(s, letter) return s[1] == letter end
 ---@param letter string
 ---@return boolean
 ---@nodiscard
-function string.ends_with(s, letter) return s[#s] == letter end
+function string.ends_with(s, letter)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  return s[#s] == letter
+end
 
 -----------Table Library-----------
 
@@ -239,6 +371,8 @@ function string.ends_with(s, letter) return s[#s] == letter end
 ---@return number instances
 ---@nodiscard
 function table.contains(t, value)
+  if type(t) ~= "table" then error("Table expected for 't', given: " .. type(t)) end
+
   local amount = 0
   for _, v in pairs(t) do
     if v == value then amount = amount + 1
@@ -256,33 +390,35 @@ end
 ---@return table
 ---@nodiscard
 function table.csv_to_table(s)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+
   local toReturn = {}
-  local current_row = {}
+  local currentRow = {}
   local field = ""
-  local in_quotes = false
+  local inQuotes = false
   local i = 1
   local row = 1
 
   while i <= #s do
     local char = s:sub(i,i)
-    
+
     if char == '"' then
-      if in_quotes and s:sub(i+1,i+1) == '"' then
+      if inQuotes and s:sub(i+1,i+1) == '"' then
         field = field .. '"'
         i = i + 2
       else
-        in_quotes = not in_quotes
+        inQuotes = not inQuotes
         i = i + 1
       end
-    elseif char == ',' and not in_quotes then
-      table.insert(current_row, field)
+    elseif char == ',' and not inQuotes then
+      table.insert(currentRow, field)
       field = ""
       i = i + 1
-    elseif (char == '\n' or i == #s) and not in_quotes then
+    elseif (char == '\n' or i == #s) and not inQuotes then
       if i == #s and char ~= '\n' then field = field .. char end
-      table.insert(current_row, field)
-      toReturn[row] = current_row
-      current_row = {}
+      table.insert(currentRow, field)
+      toReturn[row] = currentRow
+      currentRow = {}
       field = ""
       row = row + 1
       i = i + 1
@@ -302,21 +438,22 @@ end
 ---@return string
 ---@nodiscard
 function table.to_csv(t)
+  if type(t) ~= "table" then error("Table expected for 't', given: " .. type(t)) end
+
   local csv = ""
   for i = 1, #t do
     local row = t[i]
     if type(row) == "table" then
-      for j = 1, #row do
-        local value = tostring(row[j])
-        -- Quote the field if it contains commas, quotes, or newlines
-        if value:find('[,"\n]') then
-          value = '"' .. value:gsub('"', '""') .. '"'
-        end
+      for ii = 1, #row do
+        local value = tostring(row[ii])
+        if value:find('[,"\n]') then value = '"' .. value:gsub('"', '""') .. '"' end
         csv = csv .. value
-        if j < #row then csv = csv .. "," end
+        if ii < #row then csv = csv .. "," end
       end
       if i < #t then csv = csv .. "\n" end
+      if i < #row then csv = csv .. "," end
     end
+    if i < #t then csv = csv .. "\n" end
   end
   return csv
 end
