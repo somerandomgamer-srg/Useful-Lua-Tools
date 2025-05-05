@@ -129,7 +129,12 @@ end
 ----   input 1: (user types)
 ----   input 2: (user types)
 ----   input 3: (user types)
----- Returns a table with all valid numbers
+---- User types:
+----   input 1: 95
+----   input 2: abc (Invalid number input)
+----   input 3: 87
+---- Will return:
+----   {95, 0, 87}
 ---
 ---`message` - The prompt message to display
 ---`number_of_inputs` - The number of numeric inputs to collect
