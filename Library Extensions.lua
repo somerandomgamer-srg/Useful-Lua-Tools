@@ -231,7 +231,10 @@ end
 ---@param x number
 ---@return number
 ---@nodiscard
-math.sinh = function(x) return (math.exp(x) - math.exp(-x)) / 2 end
+math.sinh = function(x)
+  if type(x) ~= "number" then error("Number expected for 'x', given: " .. type(x)) end
+  return (math.exp(x) - math.exp(-x)) / 2
+end
 
 ---***SRG Custom Function***
 ---
@@ -239,7 +242,10 @@ math.sinh = function(x) return (math.exp(x) - math.exp(-x)) / 2 end
 ---@param x number
 ---@return number
 ---@nodiscard
-math.cosh = function(x) return (math.exp(x) + math.exp(-x)) / 2 end
+math.cosh = function(x)
+  if type(x) ~= "number" then error("Number expected for 'x', given: " .. type(x)) end
+  return (math.exp(x) + math.exp(-x)) / 2
+end
 
 ---***SRG Custom Function***
 ---
@@ -247,7 +253,10 @@ math.cosh = function(x) return (math.exp(x) + math.exp(-x)) / 2 end
 ---@param x number
 ---@return number
 ---@nodiscard
-math.tanh = function(x) return math.sinh(x) / math.cosh(x) end
+math.tanh = function(x)
+  if type(x) ~= "number" then error("Number expected for 'x', given: " .. type(x)) end
+  return math.sinh(x) / math.cosh(x)
+end
 
 ---***SRG Custom Function***
 ---
@@ -255,7 +264,10 @@ math.tanh = function(x) return math.sinh(x) / math.cosh(x) end
 ---@param x number
 ---@return number
 ---@nodiscard
-function math.acosh(x) return math.log(x + math.sqrt(x^2 - 1)) end
+function math.acosh(x)
+  if type(x) ~= "number" then error("Number expected for 'x', given: " .. type(x)) end
+  return math.log(x + math.sqrt(x^2 - 1))
+end
 
 ---***SRG Custom Function***
 ---
@@ -263,7 +275,10 @@ function math.acosh(x) return math.log(x + math.sqrt(x^2 - 1)) end
 ---@param x number
 ---@return number
 ---@nodiscard
-function math.atanh(x) return math.log((1 + x)/(1 - x)) / 2 end
+function math.atanh(x)
+  if type(x) ~= "number" then error("Number expected for 'x', given: " .. type(x)) end
+  return math.log((1 + x)/(1 - x)) / 2
+end
 
 ---***SRG Custom Function***
 ---
@@ -271,7 +286,10 @@ function math.atanh(x) return math.log((1 + x)/(1 - x)) / 2 end
 ---@param x number
 ---@return number
 ---@nodiscard
-function math.asinh(x) return math.log(x + math.sqrt(x^2 + 1)) end
+function math.asinh(x)
+  if type(x) ~= "number" then error("Number expected for 'x', given: " .. type(x)) end
+  return math.log(x + math.sqrt(x^2 + 1))
+end
 
 -----------String Library-----------
 
