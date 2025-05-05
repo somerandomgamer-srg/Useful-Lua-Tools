@@ -81,10 +81,10 @@ end
 
 ---***SRG Custom Function***
 ---
----Performs bitwise XOR operation between two numbers
----@param a number First number
----@param b number Second number
----@return number Result of XOR operation
+---Performs bitwise XOR operation between two numbers (`a` and `b`)
+---@param a number
+---@param b number
+---@return number
 ---@nodiscard
 function encryption.bxor(a, b)
   if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
@@ -109,11 +109,11 @@ end
 
 ---***SRG Custom Function***
 ---
----Performs XOR encryption/decryption on a string using a key
+---Performs XOR encryption/decryption on a string (`s`) using a key (`key`)
 ---Note: XOR is symmetric - use the same key to decrypt
----@param s string Text to encrypt/decrypt
----@param key string Encryption key
----@return string Encrypted/decrypted text
+---@param s string
+---@param key string
+---@return string
 ---@nodiscard
 function encryption.xor(s, key)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
@@ -133,10 +133,10 @@ end
 
 ---***SRG Custom Function***
 ---
----Applies Caesar cipher encryption to a string with specified shift
----@param s string Text to encrypt
----@param shift number Number of positions to shift characters
----@return string Encrypted text
+---Applies Caesar cipher encryption to a string (`s`) with specified shift (`shift`)
+---@param s string
+---@param shift number
+---@return string
 ---@nodiscard
 function encryption.caesar_cipher(s, shift)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
@@ -158,9 +158,9 @@ end
 
 ---***SRG Custom Function***
 ---
----Applies ROT13 encryption (Caesar cipher with shift of 13)
----@param s string Text to encrypt/decrypt
----@return string Encrypted/decrypted text
+---Applies ROT13 encryption (Caesar cipher with shift of 13) to a string (`s`)
+---@param s string
+---@return string
 ---@nodiscard
 function encryption.rot13(s)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
