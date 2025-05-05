@@ -162,15 +162,7 @@ function math.lcm(x, y)
   return (x * y) / math.gcd(x, y)
 end
 
----***SRG Custom Function***
----
----Uses the quadratic formula to solve the roots using 3 numbers (`a`, `b`, and `c`)
----@param a number
----@param b number
----@param c number
----@return number
----@return number
----@nodiscard
+
 function math.quadratic(a, b, c)
   if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
   if type(b) ~= "number" then error("Number expected for 'b', given: " .. type(b)) end
@@ -193,10 +185,10 @@ end
 
 ---***SRG Custom Function***
 ---
----Calculates the axis of symmetry for a quadratic function using a and b coefficients
----@param a number The coefficient of x²
----@param b number The coefficient of x
----@return number The x-coordinate of the axis of symmetry
+---Calculates the axis of symmetry for a quadratic function using `a` and `b` coefficients
+---@param a number
+---@param b number
+---@return number
 ---@nodiscard
 function math.aos(a, b)
   if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
@@ -207,12 +199,12 @@ end
 
 ---***SRG Custom Function***
 ---
----Calculates the vertex point of a quadratic function using a, b, and c coefficients
----@param a number The coefficient of x²
----@param b number The coefficient of x
----@param c number The constant term
----@return number x The x-coordinate of the vertex
----@return number y The y-coordinate of the vertex
+---Calculates the vertex point of a quadratic function using `a`, `b`, and `c` coefficients
+---@param a number
+---@param b number
+---@param c number
+---@return number x
+---@return number y
 ---@nodiscard
 function math.vertex(a, b, c)
   if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
