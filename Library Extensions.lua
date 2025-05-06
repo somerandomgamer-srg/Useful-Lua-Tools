@@ -1,4 +1,7 @@
-local function errorFormat(
+local function errorFormat(expected_type, param_name, given_value)
+  return string.format("%s expected for '%s', given: %s (%s)", 
+    expected_type, param_name, tostring(given_value), type(given_value))
+end
 
 -----------Math Library-----------
 ---***SRG Custom Function***
