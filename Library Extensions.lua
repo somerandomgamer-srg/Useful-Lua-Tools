@@ -329,7 +329,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Removes whitespace from both ends of a string (`s`)
+---Removes whitespace from both ends of `s`
 ---@param s string
 ---@return string
 ---@nodiscard
@@ -340,7 +340,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Splits a string (`s`) into a table based on a pattern (`pattern`)
+---Splits `s` into a table based on `pattern`
 ---
 ---Example:
 ---```lua
@@ -371,7 +371,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Checks if a string (`s`) starts with a specific letter (`letter`)
+---Checks if `s` starts with `letter`
 ---@param s string
 ---@param letter string
 ---@return boolean
@@ -383,7 +383,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Checks if a string (`s`) ends with a specific letter (`letter`)
+---Checks if `s` ends with `letter`
 ---@param s string
 ---@param letter string
 ---@return boolean
@@ -393,11 +393,28 @@ function string.ends_with(s, letter)
   return s[#s] == letter
 end
 
+---***SRG Custom Function***
+---
+---Adds `string_char` to both ends of `s`, repeating it `length` times.
+---@param s string
+---@param string_char? string
+---@param length? number
+---@return string
+---@nodiscard
+function string.pad(s, string_char, include_start, include_end, length)
+  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  if type(string_char) ~= "string" then error("String expected for 'string_char', given: " .. type(string_char)) end
+  if include_start and type(include_start) ~= "boolean" then error("Boolean expected for 'include_start', given: " .. type(include_start)) end
+  if include_end and type(include_end) ~= "boolean" then error(string.format("Boolean expected for 'include_end', given: %s (%s)", tostring(include_end), type(include_end))) end
+  if length and type(length) ~= "number" then error(string.format("Number expected for 'length', given: %s (%s)", tostring(length), type(length))) end
+  
+end
+
 -----------Table Library-----------
 
 ---***SRG Custom Function***
 ---
----Recursively checks if a table (`t`) contains a specific value (`value`)
+---Recursively checks if `t` contains `value`
 ---
 ---Returns (`true`, `number of instances`) or (`false`, `0`)
 ---@param t table
