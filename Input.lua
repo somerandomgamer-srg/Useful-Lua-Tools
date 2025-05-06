@@ -11,7 +11,7 @@ input = {}
 ---- No input validation or cleaning
 ---
 ---Example usage:
----- Input("Enter your name") -> Prompts "Enter your name: "
+---- Input("Enter your name")
 ---- Returns exactly what the user types
 ---
 ---`message` - The prompt message to display
@@ -39,12 +39,17 @@ end
 ---
 ---Example usage:
 ---- InputTable("Enter 3 names", 3)
----- Will show:
-----   Enter 3 names
-----   input 1: (user types)
-----   input 2: (user types)
-----   input 3: (user types)
----- Returns a table with all inputs
+----   Will show:
+----     Enter 3 scores
+----     input 1: (user types)
+----     input 2: (user types)
+----     input 3: (user types)
+----   User types:
+----     input 1: Rebecca
+----     input 2: James
+----     input 3: Tommy
+----   Will return:
+----     {"Rebecca", "James", "Tommy"}
 ---
 ---`message` - The prompt message to display
 ---`number_of_inputs` - How many inputs to collect
@@ -80,7 +85,7 @@ end
 ---Gets a single numeric input from the user with validation
 ---
 ---Features:
----- Displays a custom prompt message
+---- Displays an optional custom prompt message
 ---- Automatically cleans and validates the input
 ---- Returns 0 if input is invalid
 ---- Handles decimal numbers and negative values

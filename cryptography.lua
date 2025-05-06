@@ -8,8 +8,8 @@ local morseCodeTable = {
   [","]="--..--", ["."]=".-.-.-", ["/"]="-..-.", ["?"]="..--.."
 }
 
----@class encryptionlib
-encryption = {}
+---@class cryptographylib
+cryptography = {}
 
 ---***SRG Custom Function***
 ---
@@ -17,7 +17,7 @@ encryption = {}
 ---@param s string
 ---@return string
 ---@nodiscard
-function encryption.text_to_ascii(s)
+function cryptography.text_to_ascii(s)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
 
   local asciiCode = ""
@@ -31,7 +31,7 @@ end
 ---@param s string
 ---@return string
 ---@nodiscard
-function encryption.text_to_hex(s)
+function cryptography.text_to_hex(s)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
 
   local hexCode = ""
@@ -45,7 +45,7 @@ end
 ---@param s string
 ---@return string
 ---@nodiscard
-function encryption.text_to_binary(s)
+function cryptography.text_to_binary(s)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
 
   local binaryCode = ""
@@ -63,7 +63,7 @@ end
 ---@param s string
 ---@return string
 ---@nodiscard
-function encryption.morse_to_text(s)
+function cryptography.morse_to_text(s)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
 
   local text = ""
@@ -86,7 +86,7 @@ end
 ---@param b number
 ---@return number
 ---@nodiscard
-function encryption.bxor(a, b)
+function cryptography.bxor(a, b)
   if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
   if type(b) ~= "number" then error("Number expected for 'b', given: " .. type(b)) end
 
@@ -115,7 +115,7 @@ end
 ---@param key string
 ---@return string
 ---@nodiscard
-function encryption.xor(s, key)
+function cryptography.xor(s, key)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
   if type(key) ~= "string" then error("String expected for 'key', given: " .. type(key)) end
 
@@ -124,7 +124,7 @@ function encryption.xor(s, key)
   for i = 1, #s do
     local charByte = string.byte(s:sub(i, i))
     local keyByte = string.byte(key:sub((i - 1) % #key + 1, (i - 1) % #key + 1))
-    local encryptedByte = encryption.bxor(charByte, keyByte)
+    local encryptedByte = cryptography.bxor(charByte, keyByte)
     encrypted = encrypted .. string.char(encryptedByte)
   end
 
@@ -138,7 +138,7 @@ end
 ---@param shift number
 ---@return string
 ---@nodiscard
-function encryption.caesar_cipher(s, shift)
+function cryptography.caesar_cipher(s, shift)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
   if type(shift) ~= "number" then error("Number expected for 'shift', given: " .. type(shift)) end
 
@@ -162,8 +162,8 @@ end
 ---@param s string
 ---@return string
 ---@nodiscard
-function encryption.rot13(s)
+function cryptography.rot13(s)
   if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
 
-  return encryption.caesar_cipher(s, 13)
+  return cryptography.caesar_cipher(s, 13)
 end

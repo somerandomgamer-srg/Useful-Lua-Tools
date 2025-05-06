@@ -1,3 +1,0 @@
----@class filelib
-file = {}
-
