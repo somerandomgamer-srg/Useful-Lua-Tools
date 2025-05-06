@@ -1,3 +1,5 @@
+local function errorFormat(
+
 -----------Math Library-----------
 ---***SRG Custom Function***
 ---
