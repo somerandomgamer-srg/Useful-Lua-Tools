@@ -1,6 +1,5 @@
-local function errorFormat(expected_type, param_name, given_value)
-  return string.format("%s expected for '%s', given: %s (%s)", 
-    expected_type, param_name, tostring(given_value), type(given_value))
+local function errorMsg(expected, name, value)
+  error(string.format("%s expected for '%s', given: %s (%s)", expected, name, tostring(value), type(value)))
 end
 
 -----------Math Library-----------
@@ -11,7 +10,7 @@ end
 ---@return number
 ---@nodiscard
 function math.average(t)
-  if type(t) ~= "table" then error(string.format("Table expected for 't', given: %s", type(t))) end
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   local average
   local total = 0
@@ -27,7 +26,7 @@ end
 ---@return number
 ---@nodiscard
 function math.median(t)
-  if type(t) ~= "table" then error(string.format("Table expected for 't', given: %s", type(t))) end
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   t:sort()
   local middle = math.floor(#t / 2) + 1
@@ -43,7 +42,7 @@ end
 ---@return number
 ---@nodiscard
 function math.range(t)
-  if type(t) ~= "table" then error(string.format("Table expected for 't', given: %s", type(t))) end
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   local minimum = math.min(t:unpack())
   local maximum = math.max(t:unpack())
@@ -58,7 +57,7 @@ end
 ---@return number
 ---@nodiscard
 function math.mode(t)
-  if type(t) ~= "table" then error(string.format("Table expected for 't', given: %s", type(t))) end
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   local freq = {}
   for i = 1, #t do
@@ -83,7 +82,7 @@ end
 ---@return number
 ---@nodiscard
 function math.standard_deviation(t)
-  if type(t) ~= "table" then error(string.format("Table expected for 't', given: %s", type(t))) end
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   local deviation = 0
   local avg = math.average(t)
@@ -98,7 +97,7 @@ end
 ---@return number
 ---@nodiscard
 function math.sum(t)
-  if type(t) ~= "table" then error(string.format("Table expected for 't', given: %s", type(t))) end
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   local sum = 0
   for i in #t do sum = sum + t[i] end
@@ -113,8 +112,8 @@ end
 ---@return number
 ---@nodiscard
 function math.gcd(x, y)
-  if type(x) ~= "number" then error(string.format("Number expected for 'x', given: %s", type(x))) end
-  if type(y) ~= "number" then error(string.format("Number expected for 'y', given: %s", type(y))) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(y) ~= "number" then errorMsg("Number", "y", y) end
 
   local result
   local biggest = math.max(x, y)
@@ -138,7 +137,7 @@ end
 ---@return boolean
 ---@nodiscard
 function math.is_prime(x)
-  if type(x) ~= "number" then error(string.format("Number expected for 'x', given: %s", type(x))) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
   if x < 2 then return false
   else
@@ -161,8 +160,8 @@ end
 ---@return number
 ---@nodiscard
 function math.lcm(x, y)
-  if type(x) ~= "number" then error(string.format("Number expected for 'x', given: %s", type(x))) end
-  if type(y) ~= "number" then error(string.format("Number expected for 'y', given: %s", type(y))) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(y) ~= "number" then errorMsg("Number", "y", y) end
 
   return (x * y) / math.gcd(x, y)
 end
@@ -178,9 +177,9 @@ end
 ---@return number?
 ---@nodiscard
 function math.quadratic(a, b, c)
-  if type(a) ~= "number" then error(string.format("Number expected for 'a', given: %s", type(a))) end
-  if type(b) ~= "number" then error(string.format("Number expected for 'b', given: %s", type(b))) end
-  if type(c) ~= "number" then error(string.format("Number expected for 'c', given: %s", type(c))) end
+  if type(a) ~= "number" then errorMsg("Number", "a", a) end
+  if type(b) ~= "number" then errorMsg("Number", "b", b) end
+  if type(c) ~= "number" then errorMsg("Number", "c", c) end
 
   local disc = b ^ 2 - 4 * a * c
 
@@ -205,8 +204,8 @@ end
 ---@return number
 ---@nodiscard
 function math.aos(a, b)
-  if type(a) ~= "number" then error(string.format("Number expected for 'a', given: %s", type(a))) end
-  if type(b) ~= "number" then error(string.format("Number expected for 'b', given: %s", type(b))) end
+  if type(a) ~= "number" then errorMsg("Number", "a", a) end
+  if type(b) ~= "number" then errorMsg("Number", "b", b) end
 
   return -b / (2 * a)
 end
@@ -221,9 +220,9 @@ end
 ---@return number y
 ---@nodiscard
 function math.vertex(a, b, c)
-  if type(a) ~= "number" then error(string.format("Number expected for 'a', given: %s", type(a))) end
-  if type(b) ~= "number" then error(string.format("Number expected for 'b', given: %s", type(b))) end
-  if type(c) ~= "number" then error(string.format("Number expected for 'c', given: %s", type(c))) end
+  if type(a) ~= "number" then errorMsg("Number", "a", a) end
+  if type(b) ~= "number" then errorMsg("Number", "b", b) end
+  if type(c) ~= "number" then errorMsg("Number", "c", c) end
 
   local aos = math.aos(a, b)
 
@@ -237,7 +236,7 @@ end
 ---@return number
 ---@nodiscard
 math.sinh = function(x)
-  if type(x) ~= "number" then error(string.format("Number expected for 'x', given: %s", type(x))) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return (math.exp(x) - math.exp(-x)) / 2
 end
 
@@ -248,7 +247,7 @@ end
 ---@return number
 ---@nodiscard
 math.cosh = function(x)
-  if type(x) ~= "number" then error(string.format("Number expected for 'x', given: %s", type(x))) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return (math.exp(x) + math.exp(-x)) / 2
 end
 
@@ -259,7 +258,7 @@ end
 ---@return number
 ---@nodiscard
 math.tanh = function(x)
-  if type(x) ~= "number" then error(string.format("Number expected for 'x', given: %s", type(x))) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.sinh(x) / math.cosh(x)
 end
 
@@ -270,7 +269,7 @@ end
 ---@return number
 ---@nodiscard
 function math.acosh(x)
-  if type(x) ~= "number" then error(string.format("Number expected for 'x', given: %s", type(x))) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.log(x + math.sqrt(x^2 - 1))
 end
 
@@ -281,7 +280,7 @@ end
 ---@return number
 ---@nodiscard
 function math.atanh(x)
-  if type(x) ~= "number" then error(string.format("Number expected for 'x', given: %s", type(x))) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.log((1 + x)/(1 - x)) / 2
 end
 
@@ -292,7 +291,7 @@ end
 ---@return number
 ---@nodiscard
 function math.asinh(x)
-  if type(x) ~= "number" then error(string.format("Number expected for 'x', given: %s", type(x))) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.log(x + math.sqrt(x^2 + 1))
 end
 
@@ -316,7 +315,7 @@ end
 ---@return string 
 ---@nodiscard
 function string.clean_number(s)
-  if type(s) ~= "string" then error(string.format("String expected for 's', given: %s", type(s))) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   local cleaned = s:gsub("[^0-9%.%-]", "")
 
@@ -339,7 +338,7 @@ end
 ---@return string
 ---@nodiscard
 function string.trim(s)
-  if type(s) ~= "string" then error(string.format("String expected for 's', given: %s", type(s))) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
   return s:match("^%s*(.-)%s*$")
 end
 
@@ -358,8 +357,8 @@ end
 ---@return table
 ---@nodiscard
 function string.split(s, pattern)
-  if type(s) ~= "string" then error(string.format("String expected for 's', given: %s", type(s))) end
-  if type(pattern) ~= "string" then error(string.format("String expected for 'pattern', given: %s", type(pattern))) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(pattern) ~= "string" then errorMsg("String", "pattern", pattern) end
 
   toReturn = {}
   local start = 1
@@ -382,7 +381,7 @@ end
 ---@return boolean
 ---@nodiscard
 function string.starts_with(s, letter)
-  if type(s) ~= "string" then error(string.format("String expected for 's', given: %s", type(s))) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
   return s[1] == letter
 end
 
@@ -394,25 +393,33 @@ end
 ---@return boolean
 ---@nodiscard
 function string.ends_with(s, letter)
-  if type(s) ~= "string" then error(string.format("String expected for 's', given: %s", type(s))) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
   return s[#s] == letter
 end
 
 ---***SRG Custom Function***
 ---
----Adds `string_char` to both ends of `s`, repeating it `length` times.
+---Adds `string_char` to `s`'s start if `include_start` is true and to its end if `include_end` is true, repeating it `length` times.
 ---@param s string
----@param string_char? string
----@param length? number
+---@param string_char string
+---@param length number
+---@param include_start? boolean
+---@param include_end? boolean
 ---@return string
 ---@nodiscard
-function string.pad(s, string_char, include_start, include_end, length)
-  if type(s) ~= "string" then error(string.format("String expected for 's', given: %s", type(s))) end
-  if type(string_char) ~= "string" then error(string.format("String expected for 'string_char', given: %s", type(string_char))) end
-  if include_start and type(include_start) ~= "boolean" then error(string.format("Boolean expected for 'include_start', given: %s", type(include_start))) end
-  if include_end and type(include_end) ~= "boolean" then error(string.format("Boolean expected for 'include_end', given: %s", type(include_end))) end
-  if length and type(length) ~= "number" then error(string.format("Number expected for 'length', given: %s", type(length))) end
+function string.pad(s, string_char, length, include_start, include_end)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(string_char) ~= "string" then errorMsg("String", "string_char", string_char) end
+  if type(length) ~= "number" then errorMsg("Number", "length", length) end
+  if include_start and type(include_start) ~= "boolean" then errorMsg("Boolean", "include_start", include_start) end
+  if include_end and type(include_end) ~= "boolean" then errorMsg("Boolean", "include_end", include_end) end
 
+  if not include_start or not include_end then include_start, include_end = true, true end
+
+  if include_start then s = string.rep(string_char, length) .. s end
+  if include_start then s = s .. string.rep(string_char, length) end
+
+  return s
 end
 
 -----------Table Library-----------
@@ -428,7 +435,7 @@ end
 ---@return number instances
 ---@nodiscard
 function table.contains(t, value)
-  if type(t) ~= "table" then error(string.format("Table expected for 't', given: %s", type(t))) end
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   local amount = 0
   for _, v in pairs(t) do
@@ -448,7 +455,7 @@ end
 ---@return table
 ---@nodiscard
 function table.csv_to_table(s)
-  if type(s) ~= "string" then error(string.format("String expected for 's', given: %s", type(s))) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   local toReturn = {}
   local currentRow = {}
@@ -458,10 +465,10 @@ function table.csv_to_table(s)
   local row = 1
 
   while i <= #s do
-    local char = s:sub(i,i)
+    local char = s:sub(i, i)
 
     if char == '"' then
-      if inQuotes and s:sub(i+1,i+1) == '"' then
+      if inQuotes and s:sub(i + 1, i + 1) == '"' then
         field = field .. '"'
         i = i + 2
       else
@@ -496,7 +503,7 @@ end
 ---@return string
 ---@nodiscard
 function table.to_csv(t)
-  if type(t) ~= "table" then error(string.format("Table expected for 't', given: %s", type(t))) end
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   local csv = ""
   for i = 1, #t do

@@ -1,3 +1,7 @@
+local function errorMsg(expected, name, value)
+  error(string.format("%s expected for '%s', given: %s (%s)", expected, name, tostring(value), type(value)))
+end
+
 local morseCodeTable = {
   a=".-", b="-...", c="-.-.", d="-..", e=".", f="..-.", g="--.", h="....", i="..", j=".---", k="-.-",
   l=".-..", m="--", n="-.", o="---", p=".--.", q="--.-", r=".-.", s="...", t="-", u="..-", v="...-",
@@ -18,7 +22,7 @@ cryptography = {}
 ---@return string
 ---@nodiscard
 function cryptography.text_to_ascii(s)
-  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   local asciiCode = ""
   for i in s do asciiCode = asciiCode .. s[i]:byte() .. " " end
@@ -32,7 +36,7 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.text_to_hex(s)
-  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   local hexCode = ""
   for i = 1, #s do hexCode = hexCode .. string.format("%02X", s[i]:byte()) end
@@ -46,7 +50,7 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.text_to_binary(s)
-  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   local binaryCode = ""
   for i = 1, #s do
@@ -64,7 +68,7 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.morse_to_text(s)
-  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   local text = ""
   local morseToText = {}
@@ -81,30 +85,104 @@ end
 
 ---***SRG Custom Function***
 ---
----Performs bitwise XOR operation between two numbers (`a` and `b`)
+---Performs bitwise XOR operation between `a` and `b`
 ---@param a number
 ---@param b number
 ---@return number
 ---@nodiscard
 function cryptography.bxor(a, b)
-  if type(a) ~= "number" then error("Number expected for 'a', given: " .. type(a)) end
-  if type(b) ~= "number" then error("Number expected for 'b', given: " .. type(b)) end
+  if type(a) ~= "number" then errorMsg("Number", "a", a) end
+  if type(b) ~= "number" then errorMsg("Number", "b", b) end
 
-  local result = 0
-  local bitval = 1
+  return a ~ b
+end
 
-  while a > 0 or b > 0 do
-    local aBit = a % 2
-    local bBit = b % 2
+---***SRG Custom Function***
+---
+---Performs bitwise AND operation between `a` and `b`
+---@param a number
+---@param b number
+---@return number
+---@nodiscard
+function cryptography.band(a, b)
+  if type(a) ~= "number" then errorMsg("Number", "a", a) end
+  if type(b) ~= "number" then errorMsg("Number", "b", b) end
 
-    if aBit ~= bBit then result = result + bitval end
+  return a & b
+end
 
-    bitval = bitval * 2
-    a = math.floor(a / 2)
-    b = math.floor(b / 2)
-  end
+---***SRG Custom Function***
+---
+---Performs bitwise NOT operation on `x`
+---@param x number
+---@return number
+---@nodiscard
+function cryptography.bnot(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
-  return result
+  return ~x
+end
+
+---***SRG Custom Function***
+---
+---Performs bitwise OR operation between `a` and `b`
+---@param a number
+---@param b number
+---@return number
+---@nodiscard
+function cryptography.bor(a, b)
+  if type(a) ~= "number" then errorMsg("Number", "a", a) end
+  if type(b) ~= "number" then errorMsg("Number", "b", b) end
+
+  return a | b
+end
+
+---***SRG Custom Function***
+---
+---Performs bitwise SWAP operation on `x`
+---@param x number
+---@return number
+---@nodiscard
+function cryptography.bswap(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+
+  return ((x & 0xFF) << 24) | ((x & 0xFF00) << 8) | ((x & 0xFF0000) >> 8) | ((x >> 24) & 0xFF)
+end
+
+function cryptography.rshift(x, amount)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
+
+  return x >> amount
+end
+
+function cryptography.lshift(x, amount)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
+
+  return x << amount
+end
+
+function cryptography.rol(x, amount)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
+
+  return ((x << amount) | (x >> (32 - amount))) & 0xFFFFFFFF
+end
+
+function cryptography.ror(x, amount)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
+
+  return ((x >> amount) | (x << (32 - amount))) & 0xFFFFFFFF
+end
+
+function cryptography.to_bit(x)
+  return x & 0xFFFFFFFF
+end
+
+function cryptography.to_hex()
+  
 end
 
 ---***SRG Custom Function***
@@ -116,7 +194,7 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.xor(s, key)
-  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
   if type(key) ~= "string" then error("String expected for 'key', given: " .. type(key)) end
 
   local encrypted = ""
@@ -139,7 +217,7 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.caesar_cipher(s, shift)
-  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
   if type(shift) ~= "number" then error("Number expected for 'shift', given: " .. type(shift)) end
 
   local encrypted = ""
@@ -163,7 +241,7 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.rot13(s)
-  if type(s) ~= "string" then error("String expected for 's', given: " .. type(s)) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   return cryptography.caesar_cipher(s, 13)
 end
