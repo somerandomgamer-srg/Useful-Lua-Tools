@@ -337,10 +337,8 @@ end
 ---@nodiscard
 function cryptography.ascii_to_text(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  
+
   local text = ""
-  for num in s:gmatch("%d+") do
-    text = text .. string.char(tonumber(num))
-  end
+  for num in s:gmatch("%d+") do text = text .. string.char(tonumber(num)) end
   return text
 end
