@@ -218,21 +218,24 @@ function cryptography.extract(n, field, width)
   return (n >> field) & ((1 << width) - 1)
 end
 
+---Returns the number `x` rotated `disp` bits to the right. Negative displacements rotate to the left.
 function cryptography.rrotate(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
-  
+
   disp = disp % 32
   return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
 end
 
+---Returns the number `x` rotated `disp` bits to the left. Negative displacements rotate to the right.
 function cryptography.lrotate(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
-  
+
   disp = disp % 32
   return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
 end
+bit32.
 
 ---***SRG Custom Function***
 ---
