@@ -165,9 +165,9 @@ end
 
 ---***SRG Custom Function***
 ---
----performs a bitwise left rotation on `x`.
----@param x number
----@param disp number
+---performs a bitwise left rotation on `x` by `disp` positions.
+---@param x number The number to rotate
+---@param disp number The number of positions to rotate left
 ---@return number
 function cryptography.rol(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
@@ -178,9 +178,9 @@ end
 
 ---***SRG Custom Function***
 ---
----Performs a bitwise right rotation on `x`.
----@param x number
----@param disp number
+---Performs a bitwise right rotation on `x` by `disp` positions.
+---@param x number The number to rotate
+---@param disp number The number of positions to rotate right
 ---@return number
 function cryptography.ror(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
