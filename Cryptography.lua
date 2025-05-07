@@ -235,7 +235,16 @@ function cryptography.lrotate(x, disp)
   disp = disp % 32
   return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
 end
-bit32.
+function cryptography.replace(n, v, field, width)
+  if type(n) ~= "number" then errorMsg("Number", "n", n) end
+  if type(v) ~= "number" then errorMsg("Number", "v", v) end
+  if type(field) ~= "number" then errorMsg("Number", "field", field) end
+  if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
+  
+  width = width or 1
+  local mask = ~(((1 << width) - 1) << field)
+  return (n & mask) | ((v & ((1 << width) - 1)) << field)
+end
 
 ---***SRG Custom Function***
 ---
