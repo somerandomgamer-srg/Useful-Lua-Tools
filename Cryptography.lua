@@ -189,7 +189,12 @@ function cryptography.number_to_hex(x)
   return string.format("%x", x & 0xFFFFFFFF)
 end
 
-bit3
+function cryptography.btest(x, y)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(y) ~= "number" then errorMsg("Number", "y", y) end
+  
+  return (x & y) ~= 0
+end
 
 ---***SRG Custom Function***
 ---
