@@ -295,6 +295,20 @@ function math.asinh(x)
   return math.log(x + math.sqrt(x^2 + 1))
 end
 
+---***SRG Custom Function***
+---
+---Rounds `x` to `precision` decimal places (whole number if no precision given)
+---@param x number
+---@param precision? number
+---@return number
+function math.round(x, precision)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(precision) ~= "number" then errorMsg("Number", "precision", precision) end
+
+  local mult = 10^(precision or 0)
+  return math.floor(x * mult + 0.5) / mult
+end
+
 -----------String Library-----------
 
 ---***SRG Custom Function***

@@ -229,7 +229,7 @@ end
 ---@nodiscard
 function cryptography.xor(s, key)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if type(key) ~= "string" then error("String expected for 'key', given: " .. type(key)) end
+  if type(key) ~= "string" then errorMsg("String", "key", key) end
 
   local encrypted = ""
 
@@ -252,7 +252,7 @@ end
 ---@nodiscard
 function cryptography.caesar_cipher(s, shift)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if type(shift) ~= "number" then error("Number expected for 'shift', given: " .. type(shift)) end
+  if type(shift) ~= "number" then errorMsg("Number", "shift", shift) end
 
   local encrypted = ""
 
