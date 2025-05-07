@@ -177,14 +177,19 @@ function cryptography.ror(x, amount)
   return ((x >> amount) | (x << (32 - amount))) & 0xFFFFFFFF
 end
 
-function cryptography.to_bit(x)
+function cryptography.number_to_bit(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+
   return x & 0xFFFFFFFF
 end
 
-function cryptography.to_hex(x)
+function cryptography.number_to_hex(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
+
   return string.format("%x", x & 0xFFFFFFFF)
 end
+
+bit3
 
 ---***SRG Custom Function***
 ---
