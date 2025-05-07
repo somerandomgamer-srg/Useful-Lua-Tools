@@ -196,6 +196,15 @@ function cryptography.btest(a, b)
   return (a & b) ~= 0
 end
 
+function cryptography.extract(n, field, width)
+  if type(n) ~= "number" then errorMsg("Number", "n", n) end
+  if type(field) ~= "number" then errorMsg("Number", "field", field) end
+  if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
+  
+  width = width or 1
+  return (n >> field) & ((1 << width) - 1)
+end
+
 bit32
 
 ---***SRG Custom Function***
