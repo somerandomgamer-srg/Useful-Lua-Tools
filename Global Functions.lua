@@ -16,24 +16,11 @@ function wait(x)
   os.execute(string.format("sleep %d", x))
 end
 
----Checks if `value` is a `type_of_object`
+---***SRG Custom Function***
 ---
----Available types:
---- | "nil"
---- | "number"
---- | "string"
---- | "boolean"
---- | "table"
---- | "function"
---- | "thread"
---- | "userdata"
---- | "nil"
---- | "number"
---- | "string"
---- | "boolean"
---- | "table"
---- | "function"
---- | "thread"
---- | "userdata"
+---Checks if `value` is a `type_of_object`
+---@param value any The value to check
+---@param type_of_object "nil"|"number"|"string"|"boolean"|"table"|"function"|"thread"|"userdata" The type to check against
+---@return boolean
 function isType(value, type_of_object) return type(value) == type_of_object end
 
