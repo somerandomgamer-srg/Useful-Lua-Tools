@@ -149,32 +149,32 @@ function cryptography.bswap(x)
   return ((x & 0xFF) << 24) | ((x & 0xFF00) << 8) | ((x & 0xFF0000) >> 8) | ((x >> 24) & 0xFF)
 end
 
-function cryptography.rshift(x, amount)
+function cryptography.rshift(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
+  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  return x >> amount
+  return x >> disp
 end
 
-function cryptography.lshift(x, amount)
+function cryptography.lshift(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
+  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  return x << amount
+  return x << disp
 end
 
-function cryptography.rol(x, amount)
+function cryptography.rol(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
+  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  return ((x << amount) | (x >> (32 - amount))) & 0xFFFFFFFF
+  return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
 end
 
-function cryptography.ror(x, amount)
+function cryptography.ror(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
+  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  return ((x >> amount) | (x << (32 - amount))) & 0xFFFFFFFF
+  return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
 end
 
 function cryptography.number_to_bit(x)
@@ -189,6 +189,12 @@ function cryptography.number_to_hex(x)
   return string.format("%x", x & 0xFFFFFFFF)
 end
 
+---***SRG Custom Function***
+---
+---Returns a boolean signaling whether the bitwise *and* of its operands /is different from zero.
+---@param a number
+---@param b number
+---@return boolean
 function cryptography.btest(a, b)
   if type(a) ~= "number" then errorMsg("Number", "a", a) end
   if type(b) ~= "number" then errorMsg("Number", "b", b) end
@@ -196,16 +202,23 @@ function cryptography.btest(a, b)
   return (a & b) ~= 0
 end
 
+---***SRG Custom Function***
+---
+---Returns the unsigned number formed by the bits `field` to `field + width - 1` from `n`.
+---@param n number
+---@param field number
+---@param width? number
+---@return number
 function cryptography.extract(n, field, width)
   if type(n) ~= "number" then errorMsg("Number", "n", n) end
   if type(field) ~= "number" then errorMsg("Number", "field", field) end
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
-  
+
   width = width or 1
   return (n >> field) & ((1 << width) - 1)
 end
 
-bit32
+bit32.r
 
 ---***SRG Custom Function***
 ---
