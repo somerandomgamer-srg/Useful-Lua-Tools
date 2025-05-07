@@ -19,8 +19,8 @@ end
 ---***SRG Custom Function***
 ---
 ---Checks if `value` is a `type_of_object`
----@param value any The value to check
----@param type_of_object "nil"|"number"|"string"|"boolean"|"table"|"function"|"thread"|"userdata" The type to check against
+---@param value any
+---@param type_of_object "nil"|"number"|"string"|"boolean"|"table"|"function"|"thread"|"userdata"
 ---@return boolean
 function isType(value, type_of_object) return type(value) == type_of_object end
 

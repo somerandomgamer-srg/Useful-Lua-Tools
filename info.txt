@@ -1,0 +1,30 @@
+1. math.average(t) - Calculates average from a list of numbers
+2. math.median(t) - Calculates median from a list of numbers
+3. math.range(t) - Calculates range from a list of numbers
+4. math.mode(t) - Calculates mode from a list of numbers
+5. math.standard_deviation(t) - Calculates standard deviation
+6. math.sum(t) - Calculates sum of numbers in a table
+7. math.gcd(x, y) - Finds greatest common factor between 2 numbers
+8. math.is_prime(x) - Checks if a number is prime
+9. math.lcm(x, y) - Finds least common multiple between 2 numbers
+10. math.quadratic(a, b, c) - Solves quadratic equations
+11. math.aos(a, b) - Calculates axis of symmetry for quadratic functions
+12. math.vertex(a, b, c) - Calculates vertex point of quadratic functions
+13. math.sinh(x) - Hyperbolic sine
+14. math.cosh(x) - Hyperbolic cosine
+15. math.tanh(x) - Hyperbolic tangent
+16. math.acosh(x) - Inverse hyperbolic cosine
+17. math.atanh(x) - Inverse hyperbolic tangent
+18. math.asinh(x) - Inverse hyperbolic sine
+19. math.round(x, precision) - Rounds number to specified decimal places
+20. string.clean_number(s): Cleans a string to ensure valid number format by removing non-numeric characters except decimal points and minus signs.
+21. string.trim(s): Removes whitespace from both ends of a string.
+22. string.split(s, pattern): Splits a string into a table based on a pattern.
+23. string.starts_with(s, letter): Checks if string starts with given letter.
+24. string.ends_with(s, letter): Checks if string ends with given letter.
+25. string.pad(s, string_char, length, include_start, include_end): Adds padding characters to start and/or end of string.
+
+Table Library
+26. table.contains(t, value): Recursively checks if table t contains value. Returns true/false and the number of instances found.
+27. table.csv_to_table(s): Converts a CSV string into a table. Handles quoted fields and commas within fields.
+28. table.to_csv(t): Converts a table to a CSV string. Handles values containing commas, quotes, or newlines.
