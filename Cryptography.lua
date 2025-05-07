@@ -226,6 +226,14 @@ function cryptography.rrotate(x, disp)
   return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
 end
 
+function cryptography.lrotate(x, disp)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
+  
+  disp = disp % 32
+  return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
+end
+
 ---***SRG Custom Function***
 ---
 ---Performs XOR encryption/decryption on a string (`s`) using a key (`key`)
