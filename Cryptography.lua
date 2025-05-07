@@ -337,8 +337,13 @@ end
 ---@nodiscard
 function cryptography.ascii_to_text(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if not s:match("^%d+%s*") then error("Input must be space-separated ASCII numbers") end
 
   local text = ""
-  for num in s:gmatch("%d+") do text = text .. string.char(tonumber(num)) end
+  for num in s:gmatch("%d+") do 
+    local n = tonumber(num)
+    if n < 0 or n > 255 then error("ASCII values must be between 0 and 255") end
+    text = text .. string.char(n)
+  end
   return text
 end
