@@ -163,6 +163,12 @@ function cryptography.lshift(x, disp)
   return x << disp
 end
 
+---***SRG Custom Function***
+---
+---performs a bitwise left rotation on `x`.
+---@param x number
+---@param disp number
+---@return number
 function cryptography.rol(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
@@ -170,6 +176,12 @@ function cryptography.rol(x, disp)
   return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
 end
 
+---***SRG Custom Function***
+---
+---Performs a bitwise right rotation on `x`.
+---@param x number
+---@param disp number
+---@return number
 function cryptography.ror(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
@@ -177,12 +189,21 @@ function cryptography.ror(x, disp)
   return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
 end
 
+---***SRG Custom Function***
+---
+---Converts `x` to a 32-bit integer, normalizing it to the valid bit range.
+---@param x number
+---@return number
 function cryptography.number_to_bit(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
   return x & 0xFFFFFFFF
 end
-
+---***SRG Custom Function***
+---
+---@Converts `x` to its hexadecimal representation.
+---@param x number
+---@return string
 function cryptography.number_to_hex(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
@@ -218,7 +239,12 @@ function cryptography.extract(n, field, width)
   return (n >> field) & ((1 << width) - 1)
 end
 
+---***SRG Custom Function***
+---
 ---Returns the number `x` rotated `disp` bits to the right. Negative displacements rotate to the left.
+---@param x number
+---@param disp number
+---@return number
 function cryptography.rrotate(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
@@ -227,7 +253,12 @@ function cryptography.rrotate(x, disp)
   return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
 end
 
+---***SRG Custom Function***
+---
 ---Returns the number `x` rotated `disp` bits to the left. Negative displacements rotate to the right.
+---@param x number
+---@param disp number
+---@return number
 function cryptography.lrotate(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
@@ -235,12 +266,21 @@ function cryptography.lrotate(x, disp)
   disp = disp % 32
   return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
 end
+
+---***SRG Custom Function***
+---
+---Returns a copy of `n` with the bits `field` to `field + width - 1` replaced by the value `v`.
+---@param n number
+---@param v number
+---@param field number
+---@param width number
+---@return number
 function cryptography.replace(n, v, field, width)
   if type(n) ~= "number" then errorMsg("Number", "n", n) end
   if type(v) ~= "number" then errorMsg("Number", "v", v) end
   if type(field) ~= "number" then errorMsg("Number", "field", field) end
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
-  
+
   width = width or 1
   local mask = ~(((1 << width) - 1) << field)
   return (n & mask) | ((v & ((1 << width) - 1)) << field)
