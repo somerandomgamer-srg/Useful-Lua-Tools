@@ -85,61 +85,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Performs bitwise XOR operation between `a` and `b`
----@param a number
----@param b number
----@return number
----@nodiscard
-function cryptography.bxor(a, b)
-  if type(a) ~= "number" then errorMsg("Number", "a", a) end
-  if type(b) ~= "number" then errorMsg("Number", "b", b) end
-
-  return a ~ b
-end
-
----***SRG Custom Function***
----
----Performs bitwise AND operation between `a` and `b`
----@param a number
----@param b number
----@return number
----@nodiscard
-function cryptography.band(a, b)
-  if type(a) ~= "number" then errorMsg("Number", "a", a) end
-  if type(b) ~= "number" then errorMsg("Number", "b", b) end
-
-  return a & b
-end
-
----***SRG Custom Function***
----
----Performs bitwise NOT operation on `x`
----@param x number
----@return number
----@nodiscard
-function cryptography.bnot(x)
-  if type(x) ~= "number" then errorMsg("Number", "x", x) end
-
-  return ~x
-end
-
----***SRG Custom Function***
----
----Performs bitwise OR operation between `a` and `b`
----@param a number
----@param b number
----@return number
----@nodiscard
-function cryptography.bor(a, b)
-  if type(a) ~= "number" then errorMsg("Number", "a", a) end
-  if type(b) ~= "number" then errorMsg("Number", "b", b) end
-
-  return a | b
-end
-
----***SRG Custom Function***
----
----Performs bitwise SWAP operation on `x`
+---Performs bitwise SWAP operation on `x`.
 ---@param x number
 ---@return number
 ---@nodiscard
@@ -147,20 +93,6 @@ function cryptography.bswap(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
   return ((x & 0xFF) << 24) | ((x & 0xFF00) << 8) | ((x & 0xFF0000) >> 8) | ((x >> 24) & 0xFF)
-end
-
-function cryptography.rshift(x, disp)
-  if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
-
-  return x >> disp
-end
-
-function cryptography.lshift(x, disp)
-  if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
-
-  return x << disp
 end
 
 ---***SRG Custom Function***
@@ -199,6 +131,7 @@ function cryptography.number_to_bit(x)
 
   return x & 0xFFFFFFFF
 end
+
 ---***SRG Custom Function***
 ---
 ---@Converts `x` to its hexadecimal representation.
@@ -303,7 +236,7 @@ function cryptography.xor(s, key)
   for i = 1, #s do
     local charByte = string.byte(s:sub(i, i))
     local keyByte = string.byte(key:sub((i - 1) % #key + 1, (i - 1) % #key + 1))
-    local encryptedByte = cryptography.bxor(charByte, keyByte)
+    local encryptedByte = charByte ~ keyByte
     encrypted = encrypted .. string.char(encryptedByte)
   end
 
