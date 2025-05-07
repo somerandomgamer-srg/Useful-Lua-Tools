@@ -279,3 +279,68 @@ function cryptography.rot13(s)
 
   return cryptography.caesar_cipher(s, 13)
 end
+
+---***SRG Custom Function***
+---
+---Converts plaintext to morse code
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.text_to_morse(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  
+  local morse = ""
+  for c in s:lower():gmatch(".") do
+    local code = morseCodeTable[c]
+    if code then morse = morse .. code .. " " end
+  end
+  return string.trim(morse)
+end
+
+---***SRG Custom Function***
+---
+---Converts binary string to text
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.binary_to_text(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  
+  local text = ""
+  for binary in s:gmatch("%d+") do
+    text = text .. string.char(tonumber(binary, 2))
+  end
+  return text
+end
+
+---***SRG Custom Function***
+---
+---Converts hexadecimal to text
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.hex_to_text(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  
+  local text = ""
+  for hex in s:gmatch("..") do
+    text = text .. string.char(tonumber(hex, 16))
+  end
+  return text
+end
+
+---***SRG Custom Function***
+---
+---Converts ASCII codes to text
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.ascii_to_text(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  
+  local text = ""
+  for num in s:gmatch("%d+") do
+    text = text .. string.char(tonumber(num))
+  end
+  return text
+end
