@@ -181,8 +181,9 @@ function cryptography.to_bit(x)
   return x & 0xFFFFFFFF
 end
 
-function cryptography.to_hex()
-  
+function cryptography.to_hex(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return string.format("%x", x & 0xFFFFFFFF)
 end
 
 ---***SRG Custom Function***
