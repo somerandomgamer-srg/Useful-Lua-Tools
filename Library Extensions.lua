@@ -643,21 +643,15 @@ function table.shuffle(t, n)
   end
 
   local shuffled = {}
-
-  local function shuffle(table)
-    local tempTable = {}
-    while #t > 0 do
-      local random = t[math.random(#table)]
-
-      tempTable:insert(random)
-      table:remove(random)
-    end
-
-    return tempTable
+  for i = 1, #t do
+    shuffled[i] = t[i]
   end
 
   while n > 0 do
-    shuffled = shuffle(t)
+    for i = #shuffled, 2, -1 do
+      local j = math.random(i)
+      shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+    end
     n = n - 1
   end
 
