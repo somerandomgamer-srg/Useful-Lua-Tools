@@ -1,4 +1,3 @@
-
 # SRG Library Documentation
 
 ## Math Library Extensions
@@ -24,28 +23,28 @@ print(math.median(oddNumbers)) --> 3
 ```
 
 #### `math.range(t)`
-Calculates difference between maximum and minimum values.
+Calculates the range from a list of numbers.
 ```lua
 local numbers = {10, 20, 30, 40, 50}
 print(math.range(numbers)) --> 40 (50 - 10)
 ```
 
 #### `math.mode(t)`
-Finds most frequently occurring value.
+Calculates the mode from a list of numbers.
 ```lua
 local numbers = {1, 2, 2, 3, 3, 3, 4}
 print(math.mode(numbers)) --> 3
 ```
 
 #### `math.standard_deviation(t)`
-Measures data spread using square root of average squared deviations from mean.
+Calculates the standard deviation from a list of numbers.
 ```lua
 local numbers = {2, 4, 4, 4, 5, 5, 7, 9}
 print(math.standard_deviation(numbers)) --> 2.0
 ```
 
 #### `math.sum(t)`
-Calculates total by adding all numbers.
+Calculates the sum from a list of numbers.
 ```lua
 local numbers = {1, 2, 3, 4, 5}
 print(math.sum(numbers)) --> 15
@@ -54,21 +53,21 @@ print(math.sum(numbers)) --> 15
 ### Number Theory Functions
 
 #### `math.gcd(x, y)`
-Finds greatest common divisor.
+Finds the greatest common factor between 2 numbers (`x` and `y`).
 ```lua
 print(math.gcd(48, 18)) --> 6
 print(math.gcd(35, 10)) --> 5
 ```
 
 #### `math.lcm(x, y)`
-Finds least common multiple.
+Finds the least common multiple between 2 numbers (`x` and `y`).
 ```lua
 print(math.lcm(4, 6)) --> 12
 print(math.lcm(21, 6)) --> 42
 ```
 
 #### `math.is_prime(x)`
-Tests if number is prime.
+Checks if a number (`x`) is a prime number.
 ```lua
 print(math.is_prime(7)) --> true
 print(math.is_prime(12)) --> false
@@ -77,20 +76,20 @@ print(math.is_prime(12)) --> false
 ### Quadratic Functions
 
 #### `math.quadratic(a, b, c)`
-Solves quadratic equation ax² + bx + c = 0.
+Solves a quadratic equation in the form ax² + bx + c using the quadratic formula.
 ```lua
 local x1, x2 = math.quadratic(1, -5, 6)
 print(x1, x2) --> 3, 2 (roots of x² - 5x + 6)
 ```
 
 #### `math.aos(a, b)`
-Calculates axis of symmetry (-b/2a).
+Calculates the axis of symmetry for a quadratic function using `a` and `b` coefficients.
 ```lua
 print(math.aos(1, -6)) --> 3 (axis of symmetry for x² - 6x + 5)
 ```
 
 #### `math.vertex(a, b, c)`
-Returns vertex coordinates (highest/lowest point).
+Calculates the vertex point of a quadratic function using `a`, `b`, and `c` coefficients.
 ```lua
 local x, y = math.vertex(1, -4, 3)
 print(x, y) --> 2, -1 (vertex of x² - 4x + 3)
@@ -98,35 +97,69 @@ print(x, y) --> 2, -1 (vertex of x² - 4x + 3)
 
 ### Hyperbolic Functions
 
+#### `math.sinh(x)`
+Calculates the hyperbolic sine of x.
 ```lua
 print(math.sinh(1)) --> 1.1752011936438
+```
+
+#### `math.cosh(x)`
+Calculates the hyperbolic cosine of x.
+```lua
 print(math.cosh(1)) --> 1.5430806348152
+```
+
+#### `math.tanh(x)`
+Calculates the hyperbolic tangent of x.
+```lua
 print(math.tanh(1)) --> 0.76159415595576
+```
+
+#### `math.asinh(x)`
+Calculates the inverse hyperbolic sine of x.
+```lua
 print(math.asinh(1)) --> 0.88137358701954
+```
+
+#### `math.acosh(x)`
+Calculates the inverse hyperbolic cosine of x.
+```lua
 print(math.acosh(2)) --> 1.3169578969248
+```
+
+#### `math.atanh(x)`
+Calculates the inverse hyperbolic tangent of x.
+```lua
 print(math.atanh(0.5)) --> 0.54930614433405
 ```
 
 ### Number Utilities
 
 #### `math.round(x, precision)`
-Rounds number to specified decimal places.
+Rounds `x` to `precision` decimal places (whole number if no precision given).
 ```lua
 print(math.round(3.14159, 2)) --> 3.14
 print(math.round(3.14159)) --> 3
 ```
 
-#### `math.fibonacci(n)`
-Generates nth Fibonacci number.
+#### `math.fib(n)`
+Calculates the `n`th term of the Fibonacci Sequence.
 ```lua
 print(math.fibonacci(7)) --> 13
 print(math.fibonacci(10)) --> 55
 ```
 
-#### `math.is_odd(x)` / `math.is_even(x)`
-Tests if number is odd or even.
+#### `math.is_odd(x)`
+Checks if `x` is an odd number.
+NOTE: Floats are neither odd nor even.
 ```lua
 print(math.is_odd(7)) --> true
+```
+
+#### `math.is_even(x)`
+Checks if `x` is an even number.
+NOTE: Floats are neither odd nor even.
+```lua
 print(math.is_even(4)) --> true
 ```
 
@@ -135,21 +168,38 @@ print(math.is_even(4)) --> true
 ### String Manipulation
 
 #### `string.clean_number(s)`
-Cleans string to valid number format.
+Cleans a string (`s`) to ensure it's a valid number format.
+
+Features:
+- Removes all non-numeric characters except decimal points and minus signs
+- Handles multiple decimal points by keeping only the first one
+- Preserves negative sign only if it's at the start
+
+Example usage:
+- CleanNumber("abc-123.45.6") -> "-123.456"
+- CleanNumber("12.34.56") -> "12.3456"
+- CleanNumber("ab12cd") -> "12"
+- CleanNumber("$52 per Year") -> "52"
 ```lua
 print(string.clean_number("abc-123.45.6")) --> "-123.456"
 print(string.clean_number("$52.99")) --> "52.99"
 ```
 
 #### `string.trim(s)`
-Removes whitespace from both ends.
+Removes whitespace from both ends of a string.
 ```lua
 print(string.trim("  hello  ")) --> "hello"
 ```
 
 #### `string.split(s, pattern)`
-Splits string into table based on pattern.
+Splits `s` into a table based on `pattern`.
+
+Example:
 ```lua
+string.split("1 2 3 4 5", " ") -> {"1","2","3","4","5"}
+string.split("1-2-3-4-5", "-") -> {"1","2","3","4","5"}
+string.split("1 2:3 4 5", ":") -> {"1 2","3 4 5"}
+
 local t = string.split("1,2,3", ",")
 -- t = {"1", "2", "3"}
 
@@ -157,35 +207,40 @@ local words = string.split("hello world", " ")
 -- words = {"hello", "world"}
 ```
 
-#### `string.starts_with(s, letter)` / `string.ends_with(s, letter)`
-Tests string start/end.
+#### `string.starts_with(s, letter)`
+Checks if `s` starts with `letter`.
 ```lua
 print(string.starts_with("Hello", "H")) --> true
+```
+
+#### `string.ends_with(s, letter)`
+Checks if `s` ends with `letter`.
+```lua
 print(string.ends_with("World", "d")) --> true
 ```
 
 #### `string.pad(s, string_char, length, include_start, include_end)`
-Adds padding characters.
+Adds `string_char` to `s`'s start if `include_start` is true and to its end if `include_end` is true, repeating it `length` times.
 ```lua
 print(string.pad("hello", "*", 2)) --> "**hello**"
 print(string.pad("hello", "-", 1, true, false)) --> "-hello"
 ```
 
 #### `string.capitalize(s)`
-Capitalizes first character.
+Capitalizes the first character of a string.
 ```lua
 print(string.capitalize("hello")) --> "Hello"
 ```
 
 #### `string.title_case(s, sep)`
-Capitalizes first letter of each word.
+Capitalizes the first letter of each word in `s` using the specified separator `sep` (default is space).
 ```lua
 print(string.title_case("hello world")) --> "Hello World"
 print(string.title_case("hello-world", "-")) --> "Hello-World"
 ```
 
 #### `string.count(s, pattern)`
-Counts pattern occurrences.
+Returns the amount of occurrences `pattern` occurs in `s`.
 ```lua
 print(string.count("hello world", "l")) --> 3
 print(string.count("hello hello", "hello")) --> 2
@@ -196,26 +251,31 @@ print(string.count("hello hello", "hello")) --> 2
 ### Table Operations
 
 #### `table.contains(t, value)`
-Recursively searches for value.
+Recursively checks if `t` contains `value`.
+Returns (`true`, `number of instances`) or (`false`, `0`).
 ```lua
 local t = {1, 2, {3, 4, {5}}}
 local found, count = table.contains(t, 4)
 print(found, count) --> true, 1
 ```
 
-#### `table.csv_to_table(s)` / `table.to_csv(t)`
-CSV conversion.
+#### `table.csv_to_table(s)`
+Converts a CSV string (`s`) into a table.
 ```lua
 local csv = "1,2,3\n4,5,6"
 local t = table.csv_to_table(csv)
 -- t = {{1,2,3}, {4,5,6}}
+```
 
+#### `table.to_csv(t)`
+Converts a table (`t`) to a CSV string.
+```lua
 local csv_string = table.to_csv(t)
 -- csv_string = "1,2,3\n4,5,6"
 ```
 
 #### `table.reverse(t)`
-Reverses element order.
+Reverses the order of elements in `t`.
 ```lua
 local t = {1, 2, 3}
 local reversed = table.reverse(t)
@@ -223,15 +283,20 @@ local reversed = table.reverse(t)
 ```
 
 #### `table.shuffle(t, n)`
-Randomly reorders elements n times.
+Shuffles the order of elements in `t` `n` times.
 ```lua
 local t = {1, 2, 3, 4, 5}
 local shuffled = table.shuffle(t)
 -- shuffled = {3, 1, 5, 2, 4} (random order)
 ```
 
+#### `table.count_keys(t)`
+Counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences.
+
+
 #### `table.deep_count_keys(t, separator)`
-Counts keys in nested tables.
+Recursively counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences.
+The keys in nested tables are joined using `separator` (defaults to ".").
 ```lua
 local t = {
   values = {
