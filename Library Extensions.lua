@@ -638,6 +638,7 @@ function table.to_csv(t)
   return csv
 end
 
+---
 function table.reverse(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
@@ -646,6 +647,7 @@ function table.reverse(t)
   return reversed
 end
 
+---
 function table.shuffle(t, n)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   if n then

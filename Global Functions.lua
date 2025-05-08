@@ -24,3 +24,37 @@ end
 ---@return boolean
 function isType(value, type_of_object) return type(value) == type_of_object end
 
+---
+function benchmark(func, n)
+  local ran = 0
+  local startBenchmark = os.time()
+
+  while ran < n do
+    local funct, err = load(func)
+    if err then
+      error("Error: " .. err)
+      return
+    end
+
+    local success, result = nil, nil
+    if funct then
+      success, result = pcall(funct)
+      if not success then
+        error("Error: " .. result)
+        return
+      end
+    end
+
+    lastResult = result
+    ran = ran + 1
+  end
+
+  local totalTime = os.time() - startBenchmark
+  local avgTime = totalTime / n
+  return totalTime, avgTime
+end
+
+---
+function execution_time(func)
+
+end
