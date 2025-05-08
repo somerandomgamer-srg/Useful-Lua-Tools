@@ -25,33 +25,23 @@ end
 function isType(value, type_of_object) return type(value) == type_of_object end
 
 ---
-function benchmark(func, n)
-  local ran = 0
-  local startBenchmark = os.time()
-
-  while ran < n do
-    local funct, err = load(func)
-    if err then
-      error("Error: " .. err)
-      return
+function benchmark(func, iterations)
+  if type(func) ~= "function" then errorMsg("Function", "func", func) end
+  if type(iterations) ~= "number" then errorMsg("Number", "iterations", iterations) end
+  
+  local startTime = os.clock()
+  local lastResult
+  
+  for i = 1, iterations do
+    local success, result = pcall(func)
+    if not success then
+      error("Error in iteration " .. i .. ": " .. result)
     end
-
-    local success, result = nil, nil
-    if funct then
-      success, result = pcall(funct)
-      if not success then
-        error("Error: " .. result)
-        return
-      end
-    end
-
     lastResult = result
-    ran = ran + 1
   end
-
-  local totalTime = os.time() - startBenchmark
-  local avgTime = totalTime / n
-  return totalTime, avgTime
+  
+  local totalTime = os.clock() - startTime
+  return totalTime, totalTime / iterations, lastResult
 end
 
 ---
