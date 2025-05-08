@@ -5,9 +5,14 @@ end
 -----------Math Library-----------
 ---***SRG Custom Function***
 ---
----Calculates the average from a list of numbers
----@param t table
----@return number
+---Calculates arithmetic mean from a list of numbers
+---Example:
+---```lua
+---local numbers = {1, 2, 3, 4, 5}
+---print(math.average(numbers)) --> 3
+---```
+---@param t table List of numbers to average
+---@return number The arithmetic mean
 ---@nodiscard
 function math.average(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
@@ -384,9 +389,13 @@ end
 
 ---***SRG Custom Function***
 ---
----Removes whitespace from both ends of `s`
----@param s string
----@return string
+---Removes whitespace from both ends of a string
+---Example:
+---```lua
+---print(string.trim("  hello  ")) --> "hello"
+---```
+---@param s string The string to trim
+---@return string Trimmed string
 ---@nodiscard
 function string.trim(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
