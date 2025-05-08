@@ -654,12 +654,10 @@ function table.shuffle(t, n)
     n = 1
   end
 
-  local shuffled = {}
-
   while n > 0 do
-    shuffled = shuffleTable(t)
+    t = shuffleTable(t)
     n = n - 1
   end
 
-  return shuffled
+  return t
 end
