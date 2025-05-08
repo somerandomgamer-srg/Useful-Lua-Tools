@@ -372,37 +372,67 @@ local names = input.loop("Enter names")
 
 ### Text Conversion
 
-#### Binary, ASCII, and Hex Conversion
+#### `cryptography.text_to_ascii(s)`
+Converts a string from plaintext to ASCII code numbers.
 ```lua
--- Text to various formats
-local text = "Hello"
-print(cryptography.text_to_binary(text))
---> "01001000 01100101 01101100 01101100 01101111"
-
-print(cryptography.text_to_ascii(text))
+print(cryptography.text_to_ascii("Hello"))
 --> "72 101 108 108 111"
-
-print(cryptography.text_to_hex(text))
---> "48656C6C6F"
-
--- Convert back to text
-print(cryptography.binary_to_text("01001000"))
-print(cryptography.ascii_to_text("72 101"))
-print(cryptography.hex_to_text("48656C"))
 ```
 
-#### Morse Code
+#### `cryptography.ascii_to_text(s)`
+Converts ASCII code numbers back to text.
 ```lua
-local text = "SOS"
-local morse = cryptography.text_to_morse(text)
-print(morse) --> "... --- ..."
+print(cryptography.ascii_to_text("72 101 108 108 111"))
+--> "Hello"
+```
 
-print(cryptography.morse_to_text(morse)) --> "SOS"
+#### `cryptography.text_to_hex(s)`
+Converts a string from plaintext to hexadecimal.
+```lua
+print(cryptography.text_to_hex("Hello"))
+--> "48656C6C6F"
+```
+
+#### `cryptography.hex_to_text(s)`
+Converts hexadecimal back to text.
+```lua
+print(cryptography.hex_to_text("48656C6C6F"))
+--> "Hello"
+```
+
+#### `cryptography.text_to_binary(s)`
+Converts a string from plaintext to binary.
+```lua
+print(cryptography.text_to_binary("Hello"))
+--> "01001000 01100101 01101100 01101100 01101111"
+```
+
+#### `cryptography.binary_to_text(s)`
+Converts binary back to text.
+```lua
+print(cryptography.binary_to_text("01001000 01100101"))
+--> "He"
+```
+
+#### `cryptography.text_to_morse(s)`
+Converts plaintext to morse code.
+```lua
+print(cryptography.text_to_morse("SOS"))
+--> "... --- ..."
+```
+
+#### `cryptography.morse_to_text(s)`
+Converts morse code back to plaintext.
+```lua
+print(cryptography.morse_to_text("... --- ..."))
+--> "sos"
 ```
 
 ### Encryption
 
-#### XOR Encryption
+#### `cryptography.xor(s, key)`
+Performs XOR encryption/decryption on a string using a key.
+Note: XOR is symmetric - use the same key to decrypt.
 ```lua
 local message = "Hello"
 local key = "Key"
@@ -411,26 +441,85 @@ local decrypted = cryptography.xor(encrypted, key)
 print(decrypted) --> "Hello"
 ```
 
-#### Caesar Cipher
+#### `cryptography.caesar_cipher(s, shift)`
+Applies Caesar cipher encryption to a string with specified shift.
 ```lua
-local text = "Hello"
-local encrypted = cryptography.caesar_cipher(text, 3)
-print(encrypted) --> "Khoor"
+print(cryptography.caesar_cipher("Hello", 3))
+--> "Khoor"
+```
 
--- ROT13 (Caesar with shift of 13)
-print(cryptography.rot13("Hello")) --> "Uryyb"
+#### `cryptography.rot13(s)`
+Applies ROT13 encryption (Caesar cipher with shift of 13).
+```lua
+print(cryptography.rot13("Hello"))
+--> "Uryyb"
 ```
 
 ### Bitwise Operations
-```lua
--- Bit manipulation
-print(cryptography.bswap(0x12345678)) --> 0x78563412
-print(cryptography.rol(0x12345678, 4)) -- Left rotation
-print(cryptography.ror(0x12345678, 4)) -- Right rotation
 
--- Bit extraction and replacement
-print(cryptography.extract(0xFF, 4, 4)) --> 0xF
-print(cryptography.replace(0x1234, 0xF, 4, 4)) --> 0x12F4
+#### `cryptography.bswap(x)`
+Performs bitwise SWAP operation.
+```lua
+print(cryptography.bswap(0x12345678))
+--> 0x78563412
+```
+
+#### `cryptography.rol(x, disp)`
+Performs a bitwise left rotation by specified positions.
+```lua
+print(cryptography.rol(0x12345678, 4))
+```
+
+#### `cryptography.ror(x, disp)`
+Performs a bitwise right rotation by specified positions.
+```lua
+print(cryptography.ror(0x12345678, 4))
+```
+
+#### `cryptography.number_to_bit(x)`
+Converts a number to a 32-bit integer.
+```lua
+print(cryptography.number_to_bit(12345))
+```
+
+#### `cryptography.number_to_hex(x)`
+Converts a number to its hexadecimal representation.
+```lua
+print(cryptography.number_to_hex(255))
+--> "ff"
+```
+
+#### `cryptography.btest(a, b)`
+Tests if bitwise AND of operands is non-zero.
+```lua
+print(cryptography.btest(3, 2))
+--> true
+```
+
+#### `cryptography.extract(n, field, width)`
+Extracts bits from a number.
+```lua
+print(cryptography.extract(0xFF, 4, 4))
+--> 0xF
+```
+
+#### `cryptography.rrotate(x, disp)`
+Rotates bits right (negative for left).
+```lua
+print(cryptography.rrotate(0x12345678, 4))
+```
+
+#### `cryptography.lrotate(x, disp)`
+Rotates bits left (negative for right).
+```lua
+print(cryptography.lrotate(0x12345678, 4))
+```
+
+#### `cryptography.replace(n, v, field, width)`
+Replaces bits in a number with another value.
+```lua
+print(cryptography.replace(0x1234, 0xF, 4, 4))
+--> 0x12F4
 ```
 
 ## Global Functions
