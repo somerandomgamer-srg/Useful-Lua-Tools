@@ -716,11 +716,12 @@ end
 
 ---***SRG Custom Function***
 ---
----Recursively counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences
----@param t table
----@param separator string
----@return number
----@return table Key_Table
+---Recursively counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences.
+---The keys in nested tables are joined using a separator (defaults to ".")
+---@param t table The table to count keys in
+---@param separator? string The separator used to join nested keys (default: ".")
+---@return number Total number of keys
+---@return table Key_Table Table with key paths and their counts
 ---@nodiscard
 function table.deep_count_keys(t, separator)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
