@@ -698,17 +698,25 @@ end
 ---@param t table
 ---@return number
 ---@return table Key_Table
-function table.deep_count_keys(t)
+function table.deep_count_keys(t, prefix)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  prefix = prefix or ""
 
   local keyTable = {}
   local amount = 0
+  
   for key, value in pairs(t) do
+    local currentPath = prefix == "" and key or prefix .. "." .. key
     if type(value) == "table" then
-      local returnedAmount, returnedKeyTable = table.deep_count_keys(value)
-      
-    keyTable[key] = keyTable[key] + 1 or 1
+      local subAmount, subKeys = table.deep_count_keys(value, currentPath)
+      amount = amount + subAmount
+      for k, v in pairs(subKeys) do
+        keyTable[k] = v
+      end
+    end
+    keyTable[currentPath] = (keyTable[currentPath] or 0) + 1
     amount = amount + 1
   end
+  
   return amount, keyTable
 end
