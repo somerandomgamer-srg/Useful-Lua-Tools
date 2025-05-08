@@ -5,14 +5,9 @@ end
 -----------Math Library-----------
 ---***SRG Custom Function***
 ---
----Calculates arithmetic mean from a list of numbers
----Example:
----```lua
----local numbers = {1, 2, 3, 4, 5}
----print(math.average(numbers)) --> 3
----```
----@param t table List of numbers to average
----@return number The arithmetic mean
+---Calculates the average from a list of numbers
+---@param t table
+---@return number
 ---@nodiscard
 function math.average(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
@@ -26,17 +21,9 @@ end
 
 ---***SRG Custom Function***
 ---
----Finds middle value in sorted list. For even-length lists, averages two middle values.
----Example:
----```lua
----local numbers = {1, 3, 5, 7}
----print(math.median(numbers)) --> 4 (average of 3 and 5)
----
----local oddNumbers = {1, 3, 5}
----print(math.median(oddNumbers)) --> 3
----```
----@param t table List of numbers to find median
----@return number The median value
+---Calculates the median from a list of numbers
+---@param t table
+---@return number
 ---@nodiscard
 function math.median(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
@@ -397,13 +384,9 @@ end
 
 ---***SRG Custom Function***
 ---
----Removes whitespace from both ends of a string
----Example:
----```lua
----print(string.trim("  hello  ")) --> "hello"
----```
----@param s string The string to trim
----@return string Trimmed string
+---Removes whitespace from both ends of `s`
+---@param s string
+---@return string
 ---@nodiscard
 function string.trim(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
