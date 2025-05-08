@@ -1,4 +1,3 @@
-
 # Extensions
 ## Math Library
 1. math.average(t): Calculates arithmetic mean from a list of numbers. Sums all numbers and divides by count.
