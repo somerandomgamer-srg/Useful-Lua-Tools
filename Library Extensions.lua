@@ -526,6 +526,7 @@ function string.count(s, pattern)
 end
 -----------Table Library-----------
 
+---Main function for table.shuffle
 local function shuffleTable(t)
   local shuffled = {}
   while #t > 0 do
@@ -638,7 +639,11 @@ function table.to_csv(t)
   return csv
 end
 
+---***SRG Custom Function***
 ---
+---Reverses the order of elements in `t`
+---@param t table
+---@return table
 function table.reverse(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
@@ -647,7 +652,12 @@ function table.reverse(t)
   return reversed
 end
 
+---***SRG Custom Function***
 ---
+---Shuffles the order of elements in `t` `n` times
+---@param t table
+---@param n number
+---@return table
 function table.shuffle(t, n)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   if n then
@@ -662,4 +672,43 @@ function table.shuffle(t, n)
   end
 
   return t
+end
+
+---***SRG Custom Function***
+---
+---Counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences
+---@param t table
+---@return number
+---@return table Key_Table
+function table.count_keys(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  local keyTable = {}
+  local amount = 0
+  for key, _ in pairs(t) do
+    keyTable[key] = keyTable[key] + 1 or 1
+    amount = amount + 1
+  end
+  return amount, keyTable
+end
+
+---***SRG Custom Function***
+---
+---Recursively counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences
+---@param t table
+---@return number
+---@return table Key_Table
+function table.deep_count_keys(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  local keyTable = {}
+  local amount = 0
+  for key, value in pairs(t) do
+    if type(value) == "table" then
+      local returnedAmount, returnedKeyTable = table.deep_count_keys(value)
+      
+    keyTable[key] = keyTable[key] + 1 or 1
+    amount = amount + 1
+  end
+  return amount, keyTable
 end

@@ -63,6 +63,9 @@ end
 ---***SRG Custom Function***
 ---
 ---Runs `func` and returns the time it takes to run `func`.
+---@param func function
+---@return number Time
+---@return string Result
 function execution_time(func)
   if type(func) ~= "function" then errorMsg("Function", "func", func) end
 
