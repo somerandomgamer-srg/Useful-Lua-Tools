@@ -701,7 +701,7 @@ end
 function table.deep_count_keys(t, separator)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   separator = separator or "."
-  
+
   local function count_recursive(tbl, prefix)
     prefix = prefix or ""
     local keyTable = {}
