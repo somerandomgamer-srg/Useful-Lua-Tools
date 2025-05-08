@@ -31,6 +31,25 @@ end
 
 ---***SRG Custom Function***
 ---
+---Converts ASCII codes to text
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.ascii_to_text(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if not s:match("^%d+%s*") then error("Input must be space-separated ASCII numbers") end
+
+  local text = ""
+  for num in s:gmatch("%d+") do
+    local n = tonumber(num)
+    if n < 0 or n > 255 then error("ASCII values must be between 0 and 255") end
+    text = text .. string.char(n)
+  end
+  return text
+end
+
+---***SRG Custom Function***
+---
 ---Converts a string (`s`) from plaintext to hexadecimal
 ---@param s string
 ---@return string
@@ -41,6 +60,20 @@ function cryptography.text_to_hex(s)
   local hexCode = ""
   for i = 1, #s do hexCode = hexCode .. string.format("%02X", s[i]:byte()) end
   return hexCode
+end
+
+---***SRG Custom Function***
+---
+---Converts hexadecimal to text
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.hex_to_text(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  local text = ""
+  for hex in s:gmatch("..") do text = text .. string.char(tonumber(hex, 16)) end
+  return text
 end
 
 ---***SRG Custom Function***
@@ -59,6 +92,37 @@ function cryptography.text_to_binary(s)
     binaryCode = binaryCode .. binary .. " "
   end
   return string.trim(binaryCode)
+end
+
+---***SRG Custom Function***
+---
+---Converts binary string to text
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.binary_to_text(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  local text = ""
+  for binary in s:gmatch("%d+") do text = text .. string.char(tonumber(binary, 2)) end
+  return text
+end
+
+---***SRG Custom Function***
+---
+---Converts plaintext to morse code
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.text_to_morse(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  local morse = ""
+  for c in s:lower():gmatch(".") do
+    local code = morseCodeTable[c]
+    if code then morse = morse .. code .. " " end
+  end
+  return string.trim(morse)
 end
 
 ---***SRG Custom Function***
@@ -278,72 +342,4 @@ function cryptography.rot13(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   return cryptography.caesar_cipher(s, 13)
-end
-
----***SRG Custom Function***
----
----Converts plaintext to morse code
----@param s string
----@return string
----@nodiscard
-function cryptography.text_to_morse(s)
-  if type(s) ~= "string" then errorMsg("String", "s", s) end
-  
-  local morse = ""
-  for c in s:lower():gmatch(".") do
-    local code = morseCodeTable[c]
-    if code then morse = morse .. code .. " " end
-  end
-  return string.trim(morse)
-end
-
----***SRG Custom Function***
----
----Converts binary string to text
----@param s string
----@return string
----@nodiscard
-function cryptography.binary_to_text(s)
-  if type(s) ~= "string" then errorMsg("String", "s", s) end
-  
-  local text = ""
-  for binary in s:gmatch("%d+") do
-    text = text .. string.char(tonumber(binary, 2))
-  end
-  return text
-end
-
----***SRG Custom Function***
----
----Converts hexadecimal to text
----@param s string
----@return string
----@nodiscard
-function cryptography.hex_to_text(s)
-  if type(s) ~= "string" then errorMsg("String", "s", s) end
-  
-  local text = ""
-  for hex in s:gmatch("..") do
-    text = text .. string.char(tonumber(hex, 16))
-  end
-  return text
-end
-
----***SRG Custom Function***
----
----Converts ASCII codes to text
----@param s string
----@return string
----@nodiscard
-function cryptography.ascii_to_text(s)
-  if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if not s:match("^%d+%s*") then error("Input must be space-separated ASCII numbers") end
-
-  local text = ""
-  for num in s:gmatch("%d+") do 
-    local n = tonumber(num)
-    if n < 0 or n > 255 then error("ASCII values must be between 0 and 255") end
-    text = text .. string.char(n)
-  end
-  return text
 end

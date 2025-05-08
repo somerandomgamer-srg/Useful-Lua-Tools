@@ -3,6 +3,7 @@
         "lowercase-global",
         "duplicate-set-field",
         "undefined-doc-name",
-        "return-type-mismatch"
+        "return-type-mismatch",
+        "param-type-mismatch"
     ]
 }

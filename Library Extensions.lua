@@ -309,6 +309,43 @@ function math.round(x, precision)
   return math.floor(x * mult + 0.5) / mult
 end
 
+---***SRG Custom Function***
+---
+---Calculates the `n`th term of the Fibonacci Sequence
+---@param n number
+---@return number
+function math.fib(n)
+  if type(n) ~= "number" then errorMsg("Number", "n", n) end
+
+  if n <= 0 then return 0
+  elseif n == 1 then return 0
+  elseif n == 2 then return 1
+  else return math.fib(n-1) + math.fib(n-2)
+  end
+end
+
+---***SRG Custom Function***
+---
+---Checks if `x` is an odd number
+---NOTE: Floats are neither odd nor even
+---@param x number
+---@return number
+function math.is_odd(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return x % 2 == 1
+end
+
+---***SRG Custom Function***
+---
+---Checks if `x` is an even number
+---NOTE: Floats are neither odd nor even
+---@param x number
+---@return number
+function math.is_even(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return x % 2 == 0
+end
+
 -----------String Library-----------
 
 ---***SRG Custom Function***
@@ -434,6 +471,10 @@ function string.pad(s, string_char, length, include_start, include_end)
   if include_start then s = s .. string.rep(string_char, length) end
 
   return s
+end
+
+function string.capitalize(s)
+  return string.gsub(s, "." , s[1]:upper(), 1)
 end
 
 -----------Table Library-----------
