@@ -539,6 +539,25 @@ local function shuffleTable(t)
   return shuffled
 end
 
+---Main function for table.deep_count_keys
+local function countRecursive(t, prefix separator)
+  prefix = prefix or ""
+  local keyTable = {}
+  local amount = 0
+
+  for key, value in pairs(t) do
+    local currentPath = prefix == "" and key or prefix .. separator .. key
+    if type(value) == "table" then
+      local subAmount, subKeys = countRecursive(value, currentPath, separator)
+      amount = amount + subAmount
+      for k, v in pairs(subKeys) do keyTable[k] = v end
+    end
+    keyTable[currentPath] = keyTable[currentPath] + 1 or 0
+    amount = amount + 1
+  end
+  return amount, keyTable
+end
+
 ---***SRG Custom Function***
 ---
 ---Recursively checks if `t` contains `value`
@@ -644,6 +663,7 @@ end
 ---Reverses the order of elements in `t`
 ---@param t table
 ---@return table
+---@nodiscard
 function table.reverse(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
@@ -658,6 +678,7 @@ end
 ---@param t table
 ---@param n number
 ---@return table
+---@nodiscard
 function table.shuffle(t, n)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   if n then
@@ -680,6 +701,7 @@ end
 ---@param t table
 ---@return number
 ---@return table Key_Table
+---@nodiscard
 function table.count_keys(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
@@ -696,31 +718,13 @@ end
 ---
 ---Recursively counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences
 ---@param t table
+---@param separator string
 ---@return number
 ---@return table Key_Table
+---@nodiscard
 function table.deep_count_keys(t, separator)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   separator = separator or "."
 
-  local function count_recursive(tbl, prefix)
-    prefix = prefix or ""
-    local keyTable = {}
-    local amount = 0
-
-    for key, value in pairs(tbl) do
-      local currentPath = prefix == "" and key or prefix .. separator .. key
-      if type(value) == "table" then
-        local subAmount, subKeys = count_recursive(value, currentPath)
-        amount = amount + subAmount
-        for k, v in pairs(subKeys) do
-          keyTable[k] = v
-        end
-      end
-      keyTable[currentPath] = (keyTable[currentPath] or 0) + 1
-      amount = amount + 1
-    end
-    return amount, keyTable
-  end
-
-  return count_recursive(t)
+  return countRecursive(t, separator)
 end
