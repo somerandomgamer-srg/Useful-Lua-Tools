@@ -526,6 +526,18 @@ function string.count(s, pattern)
 end
 -----------Table Library-----------
 
+local function shuffleTable(t)
+  local shuffled = {}
+  while #t > 0 do
+    local random = t[math.random(#t)]
+
+    shuffled:insert(random)
+    t:remove(random)
+  end
+
+  return shuffled
+end
+
 ---***SRG Custom Function***
 ---
 ---Recursively checks if `t` contains `value`
@@ -643,15 +655,9 @@ function table.shuffle(t, n)
   end
 
   local shuffled = {}
-  for i = 1, #t do
-    shuffled[i] = t[i]
-  end
 
   while n > 0 do
-    for i = #shuffled, 2, -1 do
-      local j = math.random(i)
-      shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
-    end
+    shuffled = shuffleTable(t)
     n = n - 1
   end
 
