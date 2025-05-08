@@ -1,14 +1,6 @@
 
 # SRG Library Documentation
 
-## Table of Contents
-- [Math Library Extensions](#math-library-extensions)
-- [String Library Extensions](#string-library-extensions)
-- [Table Library Extensions](#table-library-extensions)
-- [Input Library](#input-library)
-- [Cryptography Library](#cryptography-library)
-- [Global Functions](#global-functions)
-
 ## Math Library Extensions
 Extended functionality for Lua's math library.
 
