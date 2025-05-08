@@ -482,9 +482,26 @@ end
 function string.capitalize(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
   if #s == 0 then return s end
-  return s:sub(1,1):upper() .. s:sub(2)
+
+  return s:sub(1, 1):upper() .. s:sub(2)
 end
 
+---***SRG Custom Function***
+---
+---
+---@param s string
+---@param sep string
+---@return string
+---@nodiscard
+function string.title_case(s, sep)
+  if not sep then sep = " " end
+
+  local capitalized = ""
+  local t = string.split(s, sep)
+
+  for _, word in ipairs(t) do capitalized = capitalized .. string.capitalize(word) end
+  return capitalized
+end
 -----------Table Library-----------
 
 ---***SRG Custom Function***
