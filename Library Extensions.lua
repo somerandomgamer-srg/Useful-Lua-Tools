@@ -481,7 +481,8 @@ end
 ---@nodiscard
 function string.capitalize(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  return string.gsub(s, "^%l", string.upper)
+  if #s == 0 then return s end
+  return s:sub(1,1):upper() .. s:sub(2)
 end
 
 -----------Table Library-----------
