@@ -36,9 +36,8 @@
 1. table.contains(t, value): Recursively checks if table t contains value. Returns true/false and the number of instances found.
 2. table.csv_to_table(s): Converts a CSV string into a table. Handles quoted fields and commas within fields.
 3. table.to_csv(t): Converts a table to a CSV string. Handles values containing commas, quotes, or newlines.
-4. table.unique(t): Removes duplicate values from a table.
-5. table.reverse(t): Reverses the order of elements in a table.
-6. table.shuffle(t): Randomly shuffles a table's elements.
+4. table.reverse(t): Reverses the order of elements in a table.
+5. table.shuffle(t): Randomly shuffles a table's elements.
 # Libraries I Made
 ## Input Library
 1. input.string(message): Gets a single string input with an optional prompt message.

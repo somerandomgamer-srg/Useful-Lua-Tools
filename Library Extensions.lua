@@ -488,19 +488,41 @@ end
 
 ---***SRG Custom Function***
 ---
----Capitalizes the first letter of each word in a string using the specified separator
----@param s string The input string to convert to title case
----@param sep? string The separator between words (defaults to space)
----@return string The string with first letter of each word capitalized
+---Capitalizes the first letter of each word in `s` using the specified separator `sep` (default is space)
+---@param s string
+---@param sep? string 
+---@return string
 ---@nodiscard
 function string.title_case(s, sep)
-  if not sep then sep = " " end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if sep then
+    if type(sep) ~= "string" then errorMsg("String", "sep", sep) end
+  else
+    sep = " "
+  end
+  if #s == 0 then return s end
 
   local capitalized = ""
   local t = string.split(s, sep)
 
   for _, word in ipairs(t) do capitalized = capitalized .. string.capitalize(word) end
   return capitalized
+end
+
+---***SRG Custom Function***
+---
+---Returns the amount of occurrences `pattern` occurs in `s`
+---@param s string
+---@param pattern? string 
+---@return number
+---@nodiscard
+function string.count(s, pattern)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if not pattern or #pattern == 0 then pattern = " " end
+
+  local amount = 0
+  for _ in string.gmatch(s, pattern) do count = count + 1 end
+  return amount
 end
 -----------Table Library-----------
 
@@ -584,6 +606,7 @@ end
 ---@nodiscard
 function table.to_csv(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   local csv = ""
   for i = 1, #t do
@@ -601,4 +624,42 @@ function table.to_csv(t)
     if i < #t then csv = csv .. "\n" end
   end
   return csv
+end
+
+function table.reverse(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  local reversed = {}
+  for i = #t, 1, -1 do reversed:insert(i) end
+  return reversed
+end
+
+function table.shuffle(t, n)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if n then
+    if type(n) ~= "number" then errorMsg("Number", "n", n) end
+  else
+    n = 1
+  end
+
+  local shuffled = {}
+
+  local function shuffle(table)
+    local tempTable = {}
+    while #t > 0 do
+      local random = t[math.random(#table)]
+
+      tempTable:insert(random)
+      table:remove(random)
+    end
+
+    return tempTable
+  end
+
+  while n > 0 do
+    shuffled = shuffle(t)
+    n = n - 1
+  end
+
+  return shuffled
 end
