@@ -698,10 +698,31 @@ end
 ---@param t table
 ---@return number
 ---@return table Key_Table
-function table.deep_count_keys(t, prefix)
+function table.deep_count_keys(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
-  if prefix then
-    if type(prefix) ~prefix = prefix or ""
+  
+  local function count_recursive(tbl, prefix)
+    prefix = prefix or ""
+    local keyTable = {}
+    local amount = 0
+
+    for key, value in pairs(tbl) do
+      local currentPath = prefix == "" and key or prefix .. "." .. key
+      if type(value) == "table" then
+        local subAmount, subKeys = count_recursive(value, currentPath)
+        amount = amount + subAmount
+        for k, v in pairs(subKeys) do
+          keyTable[k] = v
+        end
+      end
+      keyTable[currentPath] = (keyTable[currentPath] or 0) + 1
+      amount = amount + 1
+    end
+    return amount, keyTable
+  end
+
+  return count_recursive(t)
+end
 
   local keyTable = {}
   local amount = 0
