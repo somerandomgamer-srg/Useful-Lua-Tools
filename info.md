@@ -1,86 +1,420 @@
-# Extensions
-## Math Library
-1. math.average(t): Calculates arithmetic mean from a list of numbers. Sums all numbers and divides by count.
-2. math.median(t): Finds the middle value in a sorted list. For even-length lists, averages the two middle values.
-3. math.range(t): Calculates the difference between the maximum and minimum values in a dataset.
-4. math.mode(t): Finds the most frequently occurring value in a dataset.
-5. math.standard_deviation(t): Measures data spread. Calculates square root of average squared deviations from mean.
-6. math.sum(t): Calculates total by adding all numbers in a table.
-7. math.gcd(x, y): Finds largest number that divides both x and y without remainder.
-8. math.is_prime(x): Returns true if number is only divisible by 1 and itself.
-9. math.lcm(x, y): Finds smallest positive number divisible by both x and y.
-10. math.quadratic(a, b, c): Solves ax² + bx + c = 0 using quadratic formula, returns two roots.
-11. math.aos(a, b): Calculates x-coordinate of vertex (-b/2a) for quadratic functions.
-12. math.vertex(a, b, c): Returns (x,y) coordinates of quadratic function's highest/lowest point.
-13. math.sinh(x): Calculates hyperbolic sine
-14. math.cosh(x): Calculates hyperbolic cosine
-15. math.tanh(x): Calculates hyperbolic tangent
-16. math.acosh(x): Calculates inverse hyperbolic cosine
-17. math.atanh(x): Calculates inverse hyperbolic tangent
-18. math.asinh(x): Calculates inverse hyperbolic sine
-19. math.round(x, precision): Rounds number to specified decimal places. If no precision given, rounds to whole number.
-20. math.fibonacci(n): Generates the nth Fibonacci number using recursive calculation.
-21. math.is_odd(x): Returns true if number divided by 2 has remainder of 1.
-22. math.is_even(x): Returns true if number is divisible by 2 with no remainder.
 
-## String Library
-1. string.clean_number(s): Removes non-numeric characters except decimal points and minus signs. Handles multiple decimals by keeping first one.
-2. string.trim(s): Removes whitespace from both ends of a string.
-3. string.split(s, pattern): Creates table by splitting string at each occurrence of pattern.
-4. string.starts_with(s, letter): Returns true if string's first character matches given letter.
-5. string.ends_with(s, letter): Returns true if string's last character matches given letter.
-6. string.pad(s, string_char, length, include_start, include_end): Adds padding characters to start/end of string to reach desired length.
-7. string.capitalize(s): Makes first character uppercase, leaves rest unchanged.
-8. string.title_case(s): Capitalizes first letter of each word using specified separator (default space).
-9. string.count(s, pattern): Returns number of times pattern appears in string.
+# SRG Library Documentation
 
-## Table Library
-1. table.contains(t, value): Recursively searches table for value, returns (found/not found, count of instances).
-2. table.csv_to_table(s): Parses CSV string into table. Handles quoted fields, commas within fields.
-3. table.to_csv(t): Converts table to CSV string. Properly handles values with commas, quotes, newlines.
-4. table.reverse(t): Creates new table with elements in reverse order.
-5. table.shuffle(t): Randomly reorders elements using Fisher-Yates algorithm.
-6. table.deep_count_keys(t, separator): Counts keys in nested tables, returns flattened path count using separator (default ".").
+## Table of Contents
+- [Math Library Extensions](#math-library-extensions)
+- [String Library Extensions](#string-library-extensions)
+- [Table Library Extensions](#table-library-extensions)
+- [Input Library](#input-library)
+- [Cryptography Library](#cryptography-library)
+- [Global Functions](#global-functions)
 
-# Libraries I Made
+## Math Library Extensions
+Extended functionality for Lua's math library.
+
+### Statistical Functions
+
+#### `math.average(t)`
+Calculates arithmetic mean from a list of numbers.
+```lua
+local numbers = {1, 2, 3, 4, 5}
+print(math.average(numbers)) --> 3
+```
+
+#### `math.median(t)`
+Finds middle value in sorted list. For even-length lists, averages two middle values.
+```lua
+local numbers = {1, 3, 5, 7}
+print(math.median(numbers)) --> 4 (average of 3 and 5)
+
+local oddNumbers = {1, 3, 5}
+print(math.median(oddNumbers)) --> 3
+```
+
+#### `math.range(t)`
+Calculates difference between maximum and minimum values.
+```lua
+local numbers = {10, 20, 30, 40, 50}
+print(math.range(numbers)) --> 40 (50 - 10)
+```
+
+#### `math.mode(t)`
+Finds most frequently occurring value.
+```lua
+local numbers = {1, 2, 2, 3, 3, 3, 4}
+print(math.mode(numbers)) --> 3
+```
+
+#### `math.standard_deviation(t)`
+Measures data spread using square root of average squared deviations from mean.
+```lua
+local numbers = {2, 4, 4, 4, 5, 5, 7, 9}
+print(math.standard_deviation(numbers)) --> 2.0
+```
+
+#### `math.sum(t)`
+Calculates total by adding all numbers.
+```lua
+local numbers = {1, 2, 3, 4, 5}
+print(math.sum(numbers)) --> 15
+```
+
+### Number Theory Functions
+
+#### `math.gcd(x, y)`
+Finds greatest common divisor.
+```lua
+print(math.gcd(48, 18)) --> 6
+print(math.gcd(35, 10)) --> 5
+```
+
+#### `math.lcm(x, y)`
+Finds least common multiple.
+```lua
+print(math.lcm(4, 6)) --> 12
+print(math.lcm(21, 6)) --> 42
+```
+
+#### `math.is_prime(x)`
+Tests if number is prime.
+```lua
+print(math.is_prime(7)) --> true
+print(math.is_prime(12)) --> false
+```
+
+### Quadratic Functions
+
+#### `math.quadratic(a, b, c)`
+Solves quadratic equation ax² + bx + c = 0.
+```lua
+local x1, x2 = math.quadratic(1, -5, 6)
+print(x1, x2) --> 3, 2 (roots of x² - 5x + 6)
+```
+
+#### `math.aos(a, b)`
+Calculates axis of symmetry (-b/2a).
+```lua
+print(math.aos(1, -6)) --> 3 (axis of symmetry for x² - 6x + 5)
+```
+
+#### `math.vertex(a, b, c)`
+Returns vertex coordinates (highest/lowest point).
+```lua
+local x, y = math.vertex(1, -4, 3)
+print(x, y) --> 2, -1 (vertex of x² - 4x + 3)
+```
+
+### Hyperbolic Functions
+
+```lua
+print(math.sinh(1)) --> 1.1752011936438
+print(math.cosh(1)) --> 1.5430806348152
+print(math.tanh(1)) --> 0.76159415595576
+print(math.asinh(1)) --> 0.88137358701954
+print(math.acosh(2)) --> 1.3169578969248
+print(math.atanh(0.5)) --> 0.54930614433405
+```
+
+### Number Utilities
+
+#### `math.round(x, precision)`
+Rounds number to specified decimal places.
+```lua
+print(math.round(3.14159, 2)) --> 3.14
+print(math.round(3.14159)) --> 3
+```
+
+#### `math.fibonacci(n)`
+Generates nth Fibonacci number.
+```lua
+print(math.fibonacci(7)) --> 13
+print(math.fibonacci(10)) --> 55
+```
+
+#### `math.is_odd(x)` / `math.is_even(x)`
+Tests if number is odd or even.
+```lua
+print(math.is_odd(7)) --> true
+print(math.is_even(4)) --> true
+```
+
+## String Library Extensions
+
+### String Manipulation
+
+#### `string.clean_number(s)`
+Cleans string to valid number format.
+```lua
+print(string.clean_number("abc-123.45.6")) --> "-123.456"
+print(string.clean_number("$52.99")) --> "52.99"
+```
+
+#### `string.trim(s)`
+Removes whitespace from both ends.
+```lua
+print(string.trim("  hello  ")) --> "hello"
+```
+
+#### `string.split(s, pattern)`
+Splits string into table based on pattern.
+```lua
+local t = string.split("1,2,3", ",")
+-- t = {"1", "2", "3"}
+
+local words = string.split("hello world", " ")
+-- words = {"hello", "world"}
+```
+
+#### `string.starts_with(s, letter)` / `string.ends_with(s, letter)`
+Tests string start/end.
+```lua
+print(string.starts_with("Hello", "H")) --> true
+print(string.ends_with("World", "d")) --> true
+```
+
+#### `string.pad(s, string_char, length, include_start, include_end)`
+Adds padding characters.
+```lua
+print(string.pad("hello", "*", 2)) --> "**hello**"
+print(string.pad("hello", "-", 1, true, false)) --> "-hello"
+```
+
+#### `string.capitalize(s)`
+Capitalizes first character.
+```lua
+print(string.capitalize("hello")) --> "Hello"
+```
+
+#### `string.title_case(s, sep)`
+Capitalizes first letter of each word.
+```lua
+print(string.title_case("hello world")) --> "Hello World"
+print(string.title_case("hello-world", "-")) --> "Hello-World"
+```
+
+#### `string.count(s, pattern)`
+Counts pattern occurrences.
+```lua
+print(string.count("hello world", "l")) --> 3
+print(string.count("hello hello", "hello")) --> 2
+```
+
+## Table Library Extensions
+
+### Table Operations
+
+#### `table.contains(t, value)`
+Recursively searches for value.
+```lua
+local t = {1, 2, {3, 4, {5}}}
+local found, count = table.contains(t, 4)
+print(found, count) --> true, 1
+```
+
+#### `table.csv_to_table(s)` / `table.to_csv(t)`
+CSV conversion.
+```lua
+local csv = "1,2,3\n4,5,6"
+local t = table.csv_to_table(csv)
+-- t = {{1,2,3}, {4,5,6}}
+
+local csv_string = table.to_csv(t)
+-- csv_string = "1,2,3\n4,5,6"
+```
+
+#### `table.reverse(t)`
+Reverses element order.
+```lua
+local t = {1, 2, 3}
+local reversed = table.reverse(t)
+-- reversed = {3, 2, 1}
+```
+
+#### `table.shuffle(t, n)`
+Randomly reorders elements n times.
+```lua
+local t = {1, 2, 3, 4, 5}
+local shuffled = table.shuffle(t)
+-- shuffled = {3, 1, 5, 2, 4} (random order)
+```
+
+#### `table.deep_count_keys(t, separator)`
+Counts keys in nested tables.
+```lua
+local t = {
+  values = {
+    apples = 5,
+    fruits = {
+      oranges = 3
+    }
+  }
+}
+local count, paths = table.deep_count_keys(t)
+-- paths = {
+--   "values" = 1,
+--   "values.apples" = 1,
+--   "values.fruits" = 1,
+--   "values.fruits.oranges" = 1
+-- }
+```
+
 ## Input Library
-1. input.string(message): Gets single string input with optional prompt message.
-2. input.table(message, number_of_inputs): Collects multiple string inputs, numbers each prompt.
-3. input.number(message): Gets numeric input, validates and cleans input, returns 0 if invalid.
-4. input.number_table(message, number_of_inputs): Collects multiple numeric inputs with validation.
-5. input.loop(message): Collects string inputs until empty submission.
-6. input.number_loop(message): Collects numeric inputs until empty submission, validates each.
+
+### Input Functions
+
+#### `input.string(message)`
+Gets string input.
+```lua
+local name = input.string("Enter your name")
+-- Enter your name: John
+-- name = "John"
+```
+
+#### `input.table(message, number_of_inputs)`
+Collects multiple strings.
+```lua
+local names = input.table("Enter 3 names", 3)
+-- Enter 3 names
+-- input 1: John
+-- input 2: Jane
+-- input 3: Bob
+-- names = {"John", "Jane", "Bob"}
+```
+
+#### `input.number(message)`
+Gets validated numeric input.
+```lua
+local age = input.number("Enter your age")
+-- Enter your age: 25
+-- age = 25
+```
+
+#### `input.number_table(message, number_of_inputs)`
+Collects multiple numbers.
+```lua
+local scores = input.number_table("Enter 3 scores", 3)
+-- Enter 3 scores
+-- input 1: 95
+-- input 2: 87
+-- input 3: 92
+-- scores = {95, 87, 92}
+```
+
+#### `input.loop(message)` / `input.number_loop(message)`
+Collects inputs until empty submission.
+```lua
+local names = input.loop("Enter names")
+-- Enter names (press enter to finish)
+-- Input 1: John
+-- Input 2: Jane
+-- Input 3: 
+-- names = {"John", "Jane"}
+```
 
 ## Cryptography Library
-### Conversion
-1. text_to_ascii(s): Converts text to space-separated ASCII codes
-2. ascii_to_text(s): Converts space-separated ASCII codes back to text
-3. text_to_hex(s): Converts text to hexadecimal representation
-4. hex_to_text(s): Converts hexadecimal back to text
-5. text_to_binary(s): Converts text to space-separated 8-bit binary
-6. binary_to_text(s): Converts space-separated binary back to text
-7. text_to_morse(s): Converts text to morse code using dots and dashes
-8. morse_to_text(s): Converts morse code back to text
+
+### Text Conversion
+
+#### Binary, ASCII, and Hex Conversion
+```lua
+-- Text to various formats
+local text = "Hello"
+print(cryptography.text_to_binary(text))
+--> "01001000 01100101 01101100 01101100 01101111"
+
+print(cryptography.text_to_ascii(text))
+--> "72 101 108 108 111"
+
+print(cryptography.text_to_hex(text))
+--> "48656C6C6F"
+
+-- Convert back to text
+print(cryptography.binary_to_text("01001000"))
+print(cryptography.ascii_to_text("72 101"))
+print(cryptography.hex_to_text("48656C"))
+```
+
+#### Morse Code
+```lua
+local text = "SOS"
+local morse = cryptography.text_to_morse(text)
+print(morse) --> "... --- ..."
+
+print(cryptography.morse_to_text(morse)) --> "SOS"
+```
+
+### Encryption
+
+#### XOR Encryption
+```lua
+local message = "Hello"
+local key = "Key"
+local encrypted = cryptography.xor(message, key)
+local decrypted = cryptography.xor(encrypted, key)
+print(decrypted) --> "Hello"
+```
+
+#### Caesar Cipher
+```lua
+local text = "Hello"
+local encrypted = cryptography.caesar_cipher(text, 3)
+print(encrypted) --> "Khoor"
+
+-- ROT13 (Caesar with shift of 13)
+print(cryptography.rot13("Hello")) --> "Uryyb"
+```
 
 ### Bitwise Operations
-9. bswap(x): Swaps byte order in 32-bit integer
-10. rol(x, disp): Rotates bits left by specified positions
-11. ror(x, disp): Rotates bits right by specified positions
-12. number_to_bit(x): Normalizes number to 32-bit integer range
-13. number_to_hex(x): Converts number to hexadecimal string
-14. btest(a, b): Tests if bitwise AND of values is non-zero
-15. extract(n, field, width): Extracts bit field from number
-16. rrotate(x, disp): Right rotation with negative displacement handling
-17. lrotate(x, disp): Left rotation with negative displacement handling
-18. replace(n, v, field, width): Replaces bits in specific field
+```lua
+-- Bit manipulation
+print(cryptography.bswap(0x12345678)) --> 0x78563412
+print(cryptography.rol(0x12345678, 4)) -- Left rotation
+print(cryptography.ror(0x12345678, 4)) -- Right rotation
 
-### Encryption/Decryption
-19. xor(s, key): XOR encryption/decryption using provided key
-20. caesar_cipher(s, shift): Shifts letters by specified amount
-21. rot13(s): Caesar cipher with fixed 13-character shift
+-- Bit extraction and replacement
+print(cryptography.extract(0xFF, 4, 4)) --> 0xF
+print(cryptography.replace(0x1234, 0xF, 4, 4)) --> 0x12F4
+```
 
-# Global Functions
-1. wait(x): Pauses code execution for specified seconds
-2. is_type(value, type_of_object): Type checking function returning boolean
-3. benchmark(func, iterations): Measures average and total execution time
-4. execution_time(func): Measures single execution time of function
+## Global Functions
+
+### Utility Functions
+
+#### `wait(x)`
+Pauses execution.
+```lua
+print("Start")
+wait(2) -- Waits 2 seconds
+print("End")
+```
+
+#### `isType(value, type_of_object)`
+Type checking.
+```lua
+print(isType(42, "number")) --> true
+print(isType("hello", "string")) --> true
+```
+
+#### `benchmark(func, iterations)`
+Performance testing.
+```lua
+local function test()
+  for i = 1, 1000000 do
+    local x = i * i
+  end
+end
+
+local total, avg, _ = benchmark(test, 5)
+print(string.format("Total: %.3fs, Average: %.3fs", total, avg))
+```
+
+#### `execution_time(func)`
+Single execution timing.
+```lua
+local time, _ = execution_time(function()
+  for i = 1, 1000000 do
+    local x = i * i
+  end
+end)
+print(string.format("Time: %.3fs", time))
+```
