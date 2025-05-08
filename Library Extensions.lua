@@ -698,8 +698,9 @@ end
 ---@param t table
 ---@return number
 ---@return table Key_Table
-function table.deep_count_keys(t)
+function table.deep_count_keys(t, separator)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  separator = separator or "."
   
   local function count_recursive(tbl, prefix)
     prefix = prefix or ""
@@ -707,7 +708,7 @@ function table.deep_count_keys(t)
     local amount = 0
 
     for key, value in pairs(tbl) do
-      local currentPath = prefix == "" and key or prefix .. "." .. key
+      local currentPath = prefix == "" and key or prefix .. separator .. key
       if type(value) == "table" then
         local subAmount, subKeys = count_recursive(value, currentPath)
         amount = amount + subAmount
