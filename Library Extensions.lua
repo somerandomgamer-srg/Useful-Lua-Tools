@@ -488,10 +488,10 @@ end
 
 ---***SRG Custom Function***
 ---
----
----@param s string
----@param sep string
----@return string
+---Capitalizes the first letter of each word in a string using the specified separator
+---@param s string The input string to convert to title case
+---@param sep? string The separator between words (defaults to space)
+---@return string The string with first letter of each word capitalized
 ---@nodiscard
 function string.title_case(s, sep)
   if not sep then sep = " " end
