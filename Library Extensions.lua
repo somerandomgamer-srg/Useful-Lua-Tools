@@ -473,8 +473,15 @@ function string.pad(s, string_char, length, include_start, include_end)
   return s
 end
 
+---***SRG Custom Function***
+---
+---Capitalizes the first character of a string
+---@param s string
+---@return string
+---@nodiscard
 function string.capitalize(s)
-  return string.gsub(s, "." , s[1]:upper(), 1)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  return string.gsub(s, "^%l", string.upper)
 end
 
 -----------Table Library-----------
