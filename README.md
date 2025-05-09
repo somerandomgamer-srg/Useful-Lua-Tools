@@ -1,91 +1,96 @@
-
 # Useful Lua Tools
 
-## (A message from the creator)
+A comprehensive library extending Lua's standard functionality with additional tools and utilities.
 
-### About Me
-Hello, I am SRG. SRG is short for (Some Random Gamer). I have been scripting for less than a year. I know how to:
-- Code with Lua
-- Code with Luau, a sub-version of Lua that was specifically made for Roblox
-- Make datastores with SQL
-
-I originally got into coding because of my friend Michialok. I started coding in Roblox and self-taught myself most of the things I know.
-I have taken 4 or 5 Computer Science classes (I forgot the actual amount). I've taken 3 different Engineering classes and I am currently in another one as I'm typing this (Probably should focus more on my class but I'm doing fine).
-I can barely code with Python and I'm also planning to learn Javascript.
-
-Career Choices: I am planning to be some type of Engineer or Programmer.
-
-## Library Features
-
-This library extends Lua's standard libraries with additional functionality:
-
-### Math Extensions
-- Statistical functions (average, median, mode, etc.)
-- Number theory functions (GCD, LCM, prime checking)
-- Quadratic equation solving
-- Hyperbolic functions
-- Number utilities (rounding, Fibonacci, odd/even checking)
-
-### String Extensions
-- String cleaning and formatting
-- Text manipulation (trim, split, case conversion)
-- Pattern matching helpers
-
-### Table Extensions
-- Advanced table operations
-- CSV conversion
-- Table manipulation (reverse, shuffle)
-- Key counting and deep inspection
-
-### Input Library
-- User input handling
-- Multiple input collection
-- Numeric input validation
-- Input looping
-
-### Cryptography
-- Text format conversion (ASCII, Hex, Binary, Morse)
-- Encryption methods (XOR, Caesar cipher, ROT13)
-- Bitwise operations
-
-### Global Utilities
-- Timing and benchmarking
-- Type checking
-- System operations
+## Features
+### **Boxes that have a checkmark are already implemented**
+### **Boxes that don't have a checkmark are not implemented yet**
+- [x] Math Extensions
+  - [x] Statistical functions (average, median, mode)
+  - [x] Number theory (GCD, LCM, prime checking)
+  - [x] Quadratic equation solving
+  - [x] Hyperbolic functions
+  - [x] Number utilities
+- [x] String Extensions
+  - [x] String cleaning and formatting
+  - [x] Text manipulation
+  - [x] Pattern matching helpers
+- [x] Table Extensions
+  - [x] Advanced table operations
+  - [x] CSV conversion
+  - [x] Table manipulation
+- [x] Input Library
+  - [x] User input handling
+  - [x] Multiple input collection
+  - [x] Numeric input validation
+- [x] Cryptography
+  - [x] Text format conversion
+  - [x] Encryption methods
+  - [x] Bitwise operations
+- [x] Global Utilities
+  - [x] Timing and benchmarking
+  - [x] Type checking
+  - [x] System operations
+- [ ] Additional Features
+  - [ ] Multi-language support
+  - [ ] Custom validation patterns
+  - [ ] Error logging system
 
 ## Usage
 
-1. Include the library files in your project
+### Basic Include
 ```lua
-  require("Useful Lua Tools")
+require("Useful Lua Tools")
 ```
-2. Access the extended functionality through the standard Lua libraries
-3. Check `help.md` for detailed documentation and examples
 
-## Getting Started
-
+### Math Functions
 ```lua
--- Example usage
 local numbers = {1, 2, 3, 4, 5}
 print(math.average(numbers))  -- Output: 3
-
-local text = "  Hello World  "
-print(string.trim(text))  -- Output: "Hello World"
-
--- More examples in help.md
+print(math.median(numbers))   -- Output: 3
+print(math.mode(numbers))     -- Output: nil (no mode)
 ```
 
-## Installation
-
-Installation is actually really simple. To use, simply `require` the main library file:
+### String Functions
 ```lua
-  require("Useful Lua Tools")
+local text = "  Hello World  "
+print(string.trim(text))      -- Output: "Hello World"
+print(string.capitalize(text)) -- Output: "  Hello world  "
 ```
-After that step is completed, 
 
-## Contribution
+### Cryptography
+```lua
+local text = "Hello"
+print(cryptography.text_to_hex(text))    -- Output: "48656C6C6F"
+print(cryptography.text_to_morse(text))  -- Output: ".... . .-.. .-.. ---"
+```
 
-If you'd like to contribute:
+## Contact
 
-## License
+- **Creator**: Some Random Gamer (SRG)
+- **Discord**: [Join my Discord server!](https://discord.gg/w9aE98gKDs)
+- **Issues**: Please report any bugs to the [bugs-suggestions-and-feedback](https://discord.com/channels/1296889247176982528/1298419569135980564) channel
+- **Contributions**: DM me on Discord!
+```require("Useful Lua Tools")
+```
 
+### Math Functions
+```lua
+local numbers = {1, 2, 3, 4, 5}
+print(math.average(numbers))  -- Output: 3
+print(math.median(numbers))   -- Output: 3
+print(math.mode(numbers))     -- Output: nil (no mode)
+```
+
+### String Functions
+```lua
+local text = "  Hello World  "
+print(string.trim(text))      -- Output: "Hello World"
+print(string.capitalize(text)) -- Output: "  Hello world  "
+```
+
+### Cryptography
+```lua
+local text = "Hello"
+print(cryptography.text_to_hex(text))    -- Output: "48656C6C6F"
+print(cryptography.text_to_morse(text))  -- Output: ".... . .-.. .-.. ---"
