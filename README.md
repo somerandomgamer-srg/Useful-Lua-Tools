@@ -56,8 +56,11 @@ This library extends Lua's standard libraries with additional functionality:
 ## Usage
 
 1. Include the library files in your project
-2. Access the extended functionality through the standard Lua libraries
-3. Check `help.md` for detailed documentation and examples
+```lua
+  require("Useful Lua Tools")
+```
+3. Access the extended functionality through the standard Lua libraries
+4. Check `help.md` for detailed documentation and examples
 
 ## Getting Started
 
@@ -71,3 +74,4 @@ print(string.trim(text))  -- Output: "Hello World"
 
 -- More examples in help.md
 ```
+
