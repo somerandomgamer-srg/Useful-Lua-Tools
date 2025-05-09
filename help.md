@@ -1,28 +1,27 @@
 # SRG Library Documentation
 
 ## Math Library Extensions
-Extended functionality for Lua's math library.
 
 ### Statistical Functions
 
-#### `math.average(t)`
-Calculates arithmetic mean from a list of numbers.
-```lua
-local numbers = {1, 2, 3, 4, 5}
-print(math.average(numbers)) --> 3
-```
+- `math.average(t)`
+  - Calculates arithmetic mean from a list of numbers.
+  - ```lua
+      local numbers = {1, 2, 3, 4, 5}
+      print(math.average(numbers)) --> 3
+    ```
 
-#### `math.median(t)`
-Finds middle value in sorted list. For even-length lists, averages two middle values.
-```lua
-local numbers = {1, 3, 5, 7}
-print(math.median(numbers)) --> 4 (average of 3 and 5)
+- `math.median(t)`
+  - Finds middle value in sorted list. For even-length lists, averages two middle values.
+  - ```lua
+      local numbers = {1, 3, 5, 7}
+      print(math.median(numbers)) --> 4 (average of 3 and 5)
+      
+      local oddNumbers = {1, 3, 5}
+      print(math.median(oddNumbers)) --> 3
+    ```
 
-local oddNumbers = {1, 3, 5}
-print(math.median(oddNumbers)) --> 3
-```
-
-#### `math.range(t)`
+- `math.range(t)`
 Calculates the range from a list of numbers.
 ```lua
 local numbers = {10, 20, 30, 40, 50}
@@ -292,6 +291,21 @@ local shuffled = table.shuffle(t)
 
 #### `table.count_keys(t)`
 Counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences.
+```lua
+local t = {
+  values = {
+    apples = 5,
+    fruits = {
+      oranges = 3
+    }
+  }
+}
+local count, keys = table.count_keys(t)
+-- count = 4
+-- keys = {
+--   "values" = 1
+-- }
+```
 
 
 #### `table.deep_count_keys(t, separator)`
@@ -307,6 +321,7 @@ local t = {
   }
 }
 local count, paths = table.deep_count_keys(t)
+-- count = 4
 -- paths = {
 --   "values" = 1,
 --   "values.apples" = 1,
@@ -489,78 +504,76 @@ print(cryptography.number_to_hex(255))
 --> "ff"
 ```
 
-#### `cryptography.btest(a, b)`
-Tests if bitwise AND of operands is non-zero.
-```lua
-print(cryptography.btest(3, 2))
---> true
-```
+- `cryptography.btest(a, b)`
+  - Tests if bitwise AND of operands is non-zero.
+  - ```lua
+      print(cryptography.btest(3, 2)) --> true
+    ```
 
-#### `cryptography.extract(n, field, width)`
-Extracts bits from a number.
-```lua
-print(cryptography.extract(0xFF, 4, 4))
---> 0xF
-```
+- `cryptography.extract(n, field, width)`
+  - Extracts bits from a number.
+  - ```lua
+      print(cryptography.extract(0xFF, 4, 4) --> 0xF
+    ```
 
-#### `cryptography.rrotate(x, disp)`
-Rotates bits right (negative for left).
-```lua
-print(cryptography.rrotate(0x12345678, 4))
-```
+- `cryptography.rrotate(x, disp)`
+  - Rotates bits right (negative for left).
+  - ```lua
+      print(cryptography.rrotate(0x12345678, 4))
+    ```
 
-#### `cryptography.lrotate(x, disp)`
-Rotates bits left (negative for right).
-```lua
-print(cryptography.lrotate(0x12345678, 4))
-```
+- `cryptography.lrotate(x, disp)`
+  - Rotates bits left (negative for right).
+  - ```lua
+      print(cryptography.lrotate(0x12345678, 4))
+    ```
 
-#### `cryptography.replace(n, v, field, width)`
-Replaces bits in a number with another value.
-```lua
-print(cryptography.replace(0x1234, 0xF, 4, 4))
---> 0x12F4
-```
+- `cryptography.replace(n, v, field, width)`
+  - Replaces bits in a number with another value.
+  - ```lua
+      print(cryptography.replace(0x1234, 0xF, 4, 4)) --> 0x12F4
+    ```
 
 ## Global Functions
 
-### Utility Functions
+- `wait(x)`
+  - Yields the code for `x` seconds. (Similar to python's wait function)
+  - ```lua
+      print("Start")
+      wait(2) -- Waits 2 seconds
+      print("End")
+    ```
 
-#### `wait(x)`
-Pauses execution.
-```lua
-print("Start")
-wait(2) -- Waits 2 seconds
-print("End")
-```
+- `isType(value, type_of_object)`
+  - Checks if `value` is a `type_of_object`
+  - Available types:
+  - |`nil`|`number`|`string`|`boolean`|`table`|`function`|`thread`|`userdata`|
+    |-----|--------|--------|---------|-------|----------|--------|----------|
+  - ```lua
+      print(isType(42, "number")) --> true
+      print(isType("hello", "string")) --> true
+    ```
 
-#### `isType(value, type_of_object)`
-Type checking.
-```lua
-print(isType(42, "number")) --> true
-print(isType("hello", "string")) --> true
-```
+- `benchmark(func, iterations)`
+  - Performance testing.
+  - ```lua
+      local function test()
+        for i = 1, 1000000 do
+          local x = i * i
+        end
+      end
+      
+      local total, avg, _ = benchmark(test, 5)
+      print(string.format("Total: %.3fs, Average: %.3fs", total, avg))
+    ```
 
-#### `benchmark(func, iterations)`
-Performance testing.
-```lua
-local function test()
-  for i = 1, 1000000 do
-    local x = i * i
-  end
-end
-
-local total, avg, _ = benchmark(test, 5)
-print(string.format("Total: %.3fs, Average: %.3fs", total, avg))
-```
-
-#### `execution_time(func)`
-Single execution timing.
-```lua
-local time, _ = execution_time(function()
-  for i = 1, 1000000 do
-    local x = i * i
-  end
-end)
-print(string.format("Time: %.3fs", time))
-```
+- `execution_time(func)`
+  - Single execution timing.
+  - ```lua
+    local time, _ = execution_time(function()
+      for i = 1, 1000000 do
+        local x = i * i
+      end
+    end)
+    print(string.format("Time: %.3fs", time))
+    ```
