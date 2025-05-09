@@ -59,8 +59,8 @@ This library extends Lua's standard libraries with additional functionality:
 ```lua
   require("Useful Lua Tools")
 ```
-3. Access the extended functionality through the standard Lua libraries
-4. Check `help.md` for detailed documentation and examples
+2. Access the extended functionality through the standard Lua libraries
+3. Check `help.md` for detailed documentation and examples
 
 ## Getting Started
 
@@ -77,31 +77,15 @@ print(string.trim(text))  -- Output: "Hello World"
 
 ## Installation
 
-1. Clone or download this repository
-2. Add the files to your Lua project
-3. Include the main library file:
+Installation is actually really simple. To use, simply `require` the main library file:
 ```lua
-require("Useful Lua Tools")
+  require("Useful Lua Tools")
 ```
+After that step is completed, 
 
-## Testing
-
-Each function has been thoroughly tested for:
-- Input validation
-- Edge cases
-- Error handling
-- Performance
-
-## Contributing
+## Contribution
 
 If you'd like to contribute:
-1. Fork the repository
-2. Create a feature branch
-3. Add or improve functionality
-4. Add tests and documentation
-5. Submit a pull request
 
 ## License
-
-This project is open source and available under the MIT License.
 
