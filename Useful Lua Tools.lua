@@ -1304,14 +1304,24 @@ end
 ---@param t table
 function table.freeze(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if table.is_frozen(t) then return t end
 
-  t.__newindex = function(tbl, key, value)
-    if not value then
-      error(string.format("Attemp to delete `%s` from `%s`, a frozen table", key, table))
-    else
-      error(string.format("Attempt to add `%s` with a value of `%s` to `%s`, a frozen table", key, value, tbl))
+  local mt = getmetatable(t) or {}
+  mt.__frozen = true
+  mt.__newindex = function(tbl, key, value)
+    error(string.format("Attempt to modify frozen table: cannot set '%s' to '%s'", tostring(key), tostring(value)))
+  end
+  mt.__metatable = "frozen" -- Prevent getmetatable/setmetatable
+  setmetatable(t, mt)
+
+  -- Recursively freeze nested tables
+  for k, v in pairs(t) do
+    if type(v) == "table" then
+      t[k] = table.freeze(v)
     end
   end
+
+  return t
 end
 
 ---***SRG Custom Function***
@@ -1321,18 +1331,30 @@ end
 ---@return boolean
 function table.is_frozen(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
-  return t.__newindex ~= nil
+  local mt = getmetatable(t)
+  return mt and mt.__frozen == true or false
 end
 
 ---***SRG Custom Function***
 ---
----Unfreezes a frozen table
+---Creates an unfrozen copy of a table
 ---@param t table
 ---@return table
 function table.unfreeze(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
-  t.__newindex = nil
-  return t
+  if not table.is_frozen(t) then return t end
+
+  -- Create new table with same contents
+  local unfrozen = {}
+  for k, v in pairs(t) do
+    if type(v) == "table" then
+      unfrozen[k] = table.unfreeze(v)
+    else
+      unfrozen[k] = v
+    end
+  end
+
+  return unfrozen
 end
 ---------Global Functions---------
 
