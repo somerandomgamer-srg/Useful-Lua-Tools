@@ -1044,11 +1044,6 @@ function math.classify_number(x)
   end
 end
 
----- Z = 0 → Exactly average (equal to the mean)
----- Z > 0 → Above the mean
----- Z < 0 → Below the mean
----- Z > 2 or Z < -2 → Unusual (more than 2 standard deviations away)
----- Z > 3 or Z < -3 → Extremely rare
 function math.z_score(x, t)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
@@ -1059,7 +1054,7 @@ function math.z_score(x, t)
   return (x - avg) / dev
 end
 
-function secant(x)
+function math.secant(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   x = math.cos(x)
 
@@ -1067,7 +1062,7 @@ function secant(x)
   return 1 / x
 end
 
-function cosecant(x)
+function math.cosecant(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   x = math.sin(x)
 
@@ -1075,7 +1070,7 @@ function cosecant(x)
   return 1 / x
 end
 
-function cotangent(x)
+function math.cotangent(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   x = math.tan(x)
 
@@ -1083,17 +1078,17 @@ function cotangent(x)
   return 1 / x
 end
 
-function asecant(x)
+function math.asecant(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.acos(1 / x)
 end
 
-function acosecant(x)
+function math.acosecant(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.asin(1 / x)
 end
 
-function acotangent(x)
+function math.acotangent(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.atan(1 / x)
 end
