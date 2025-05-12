@@ -169,36 +169,35 @@
     ```
 
 - `math.factorial(x)`
-  - Calculates the factorial of a number
-    ```
+  - Calculates the factorial of `x`
 
 - `math.factors(x)`
-  - Returns all factors of a number
+  - Returns all factors of `x`
   - ```lua
-      print(table.concat(math.factors(12), ", ")) --> 1, 2, 3, 4, 6, 12
+      print(table.concat(math.factors(12), ", ")) --> {1, 2, 3, 4, 6, 12}
     ```
 
 - `math.is_perfect(x)`
-  - Checks if a number is perfect (sum of factors equals the number)
+  - Checks if `x` is perfect (sum of factors equals the number)
   - ```lua
       print(math.is_perfect(28)) --> true
       print(math.is_perfect(15)) --> false
     ```
 
 - `math.is_deficient(x)`
-  - Checks if a number is deficient (sum of factors less than number)
+  - Checks if `x` is deficient (sum of factors less than number)
   - ```lua
       print(math.is_deficient(15)) --> true
     ```
 
 - `math.is_abundant(x)`
-  - Checks if a number is abundant (sum of factors greater than number)
+  - Checks if `x` is abundant (sum of factors greater than number)
   - ```lua
       print(math.is_abundant(12)) --> true
     ```
 
 - `math.classify_number(x)`
-  - Classifies a number as Perfect, Deficient, or Abundant
+  - Classifies `x` as Perfect, Deficient, or Abundant
   - ```lua
       print(math.classify_number(28)) --> "Perfect"
       print(math.classify_number(15)) --> "Deficient"
@@ -206,14 +205,14 @@
     ```
 
 - `math.z_score(x, t)`
-  - Calculates the z-score of a value in a dataset
+  - Calculates the z-score of `x` in a dataset (`t`)
   - ```lua
       local data = {2, 4, 4, 4, 5, 5, 7, 9}
       print(math.z_score(7, data)) --> 1.5
     ```
 
 - `math.secant(x)`
-  - Calculates the secant of x
+  - Calculates the secant of `x`
   - ```lua
       print(math.secant(math.pi/3)) --> 2.0
     ```
