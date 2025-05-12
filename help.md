@@ -163,6 +163,7 @@
     ```
 
 - `math.is_perfect_square(x)`
+  - Checks if a number has an integer square root
   - ```lua
       print(math.is_perfect_square(16)) --> true
       print(math.is_perfect_square(18)) --> false
@@ -170,6 +171,10 @@
 
 - `math.factorial(x)`
   - Calculates the factorial of `x`
+  - ```lua
+      print(math.factorial(5)) --> 120
+      print(math.factorial(3)) --> 6
+    ```
 
 - `math.factors(x)`
   - Returns all factors of `x`
