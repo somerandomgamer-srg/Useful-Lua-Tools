@@ -1308,13 +1308,12 @@ function table.freeze(t)
 
   local mt = getmetatable(t) or {}
   mt.__frozen = true
-  mt.__newindex = function(tbl, key, value)
+  mt.__newindex = function(_, key, value)
     error(string.format("Attempt to modify frozen table: cannot set '%s' to '%s'", tostring(key), tostring(value)))
   end
-  mt.__metatable = "frozen" -- Prevent getmetatable/setmetatable
+  mt.__metatable = "frozen"
   setmetatable(t, mt)
 
-  -- Recursively freeze nested tables
   for k, v in pairs(t) do
     if type(v) == "table" then
       t[k] = table.freeze(v)
@@ -1344,10 +1343,8 @@ function table.unfreeze(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   if not table.is_frozen(t) then return t end
 
-  -- Remove the metatable to unfreeze
   setmetatable(t, nil)
-  
-  -- Recursively unfreeze nested tables
+
   for _, v in pairs(t) do
     if type(v) == "table" and table.is_frozen(v) then
       table.unfreeze(v)
@@ -1356,6 +1353,7 @@ function table.unfreeze(t)
 
   return t
 end
+
 ---------Global Functions---------
 
 ---***SRG Custom Function***
