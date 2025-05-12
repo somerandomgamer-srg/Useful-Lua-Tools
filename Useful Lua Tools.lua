@@ -1344,17 +1344,17 @@ function table.unfreeze(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   if not table.is_frozen(t) then return t end
 
-  -- Create new table with same contents
-  local unfrozen = {}
-  for k, v in pairs(t) do
-    if type(v) == "table" then
-      unfrozen[k] = table.unfreeze(v)
-    else
-      unfrozen[k] = v
+  -- Remove the metatable to unfreeze
+  setmetatable(t, nil)
+  
+  -- Recursively unfreeze nested tables
+  for _, v in pairs(t) do
+    if type(v) == "table" and table.is_frozen(v) then
+      table.unfreeze(v)
     end
   end
 
-  return unfrozen
+  return t
 end
 ---------Global Functions---------
 
