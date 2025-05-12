@@ -1096,6 +1096,12 @@ function math.z_score(x, t)
   return (x - avg) / dev
 end
 
+---***SRG Custom Function***
+---
+---Calculates the secant of x (1/cos(x))
+---@param x number
+---@return number
+---@nodiscard
 function math.secant(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   x = math.cos(x)
@@ -1104,6 +1110,12 @@ function math.secant(x)
   return 1 / x
 end
 
+---***SRG Custom Function***
+---
+---Calculates the cosecant of x (1/sin(x))
+---@param x number
+---@return number
+---@nodiscard
 function math.cosecant(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   x = math.sin(x)
@@ -1112,6 +1124,12 @@ function math.cosecant(x)
   return 1 / x
 end
 
+---***SRG Custom Function***
+---
+---Calculates the cotangent of x (1/tan(x))
+---@param x number
+---@return number
+---@nodiscard
 function math.cotangent(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   x = math.tan(x)
@@ -1120,16 +1138,34 @@ function math.cotangent(x)
   return 1 / x
 end
 
+---***SRG Custom Function***
+---
+---Calculates the inverse secant of x (arccos(1/x))
+---@param x number
+---@return number
+---@nodiscard
 function math.asecant(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.acos(1 / x)
 end
 
+---***SRG Custom Function***
+---
+---Calculates the inverse cosecant of x (arcsin(1/x))
+---@param x number
+---@return number
+---@nodiscard
 function math.acosecant(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.asin(1 / x)
 end
 
+---***SRG Custom Function***
+---
+---Calculates the inverse cotangent of x (arctan(1/x))
+---@param x number
+---@return number
+---@nodiscard
 function math.acotangent(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.atan(1 / x)
