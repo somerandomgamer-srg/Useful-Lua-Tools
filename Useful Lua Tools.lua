@@ -1306,15 +1306,33 @@ function table.freeze(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   if table.is_frozen(t) then return t end
 
-  for k, v in pairs(t) do
-    if type(v) == "table" then
-      t[k] = table.freeze(v)
+  -- Freeze nested tables first
+  if #t > 0 then
+    -- Array-like table
+    for i = 1, #t do
+      if type(t[i]) == "table" then
+        t[i] = table.freeze(t[i])
+      end
+    end
+  else
+    -- Key-value table
+    for k, v in pairs(t) do
+      if type(v) == "table" then
+        t[k] = table.freeze(v)
+      end
     end
   end
 
+  -- Set the freeze metatable
   setmetatable(t, {
     __frozen = true,
-    __newindex = function(_, key, value) error(string.format("Attempt to modify frozen table: cannot set '%s' to '%s'", tostring(key), tostring(value))) end,
+    __newindex = function(_, key, value)
+      if not value then
+        error(string.format("Attempt to delete index '%s' from a frozen table", tostring(key)))
+      else
+        error(string.format("Attempt to modify frozen table at index '%s' with value '%s'", tostring(key), tostring(value)))
+      end
+    end,
     __metatable = "frozen"
   })
 
