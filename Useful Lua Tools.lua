@@ -1005,6 +1005,99 @@ function math.combination(x, r)
   return math.factorial(x) / (math.factorial(r) * math.factorial(x - r))
 end
 
+function math.factors(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if x < 0 then error("`x` cannot be a negative number, given: " .. tostring(x)) end
+  if math.floor(x) ~= x then error("`x` must be a whole number") end
+
+
+  local factors = {1, x}
+  for i = 2, x - 1 do
+    if x % i == 0 then factors:insert(i) end
+  end
+
+  return factors
+end
+
+function math.is_perfect(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return math.sum(math.factors(x)) - x == x
+end
+
+function math.is_deficient(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return math.sum(math.factors(x)) - x < x
+end
+
+function math.is_abundant(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return math.sum(math.factors(x)) - x > x
+end
+
+function math.classify_number(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+
+  if math.is_perfect(x) then return "Perfect"
+  elseif math.is_deficient(x) then return "Deficient"
+  elseif math.is_abundant(x) then return "Abundant"
+  else return "Unknown"
+  end
+end
+
+---- Z = 0 → Exactly average (equal to the mean)
+---- Z > 0 → Above the mean
+---- Z < 0 → Below the mean
+---- Z > 2 or Z < -2 → Unusual (more than 2 standard deviations away)
+---- Z > 3 or Z < -3 → Extremely rare
+function math.z_score(x, t)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  local avg = math.average(t)
+  local dev = math.standard_deviation(t)
+
+  return (x - avg) / dev
+end
+
+function secant(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  x = math.cos(x)
+
+  if x == 0 then error("Secant is undefined for this input") end
+  return 1 / x
+end
+
+function cosecant(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  x = math.sin(x)
+
+  if x == 0 then error("Cosecant is undefined for this input") end
+  return 1 / x
+end
+
+function cotangent(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  x = math.tan(x)
+
+  if x == 0 then error("Cotangent is undefined for this input") end
+  return 1 / x
+end
+
+function asecant(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return math.acos(1 / x)
+end
+
+function acosecant(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return math.asin(1 / x)
+end
+
+function acotangent(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return math.atan(1 / x)
+end
+
 ---------String Library Extension---------
 
 ---***SRG Custom Function***

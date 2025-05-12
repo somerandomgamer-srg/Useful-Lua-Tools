@@ -1,7 +1,3 @@
-Adding new math and string functions to the documentation file, including factorial, permutation, combination, and is_palindrome.
-```
-
-```lua
 # SRG Library Documentation
 
 ## Math Library Extensions

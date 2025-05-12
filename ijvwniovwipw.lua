@@ -728,6 +728,80 @@ function math.factorial(x)
   end
   return fact
 end
+function math.permutation(x, r)
+  if type(x) ~= "number" then
+    errorMsg("Number", "x", x)
+  end
+  if type(r) ~= "number" then
+    errorMsg("Number", "r", r)
+  end
+  if x < r then
+    error("`r` cannot be greater than `x`")
+  end
+  return math.factorial(x) / math.factorial(x - r)
+end
+function math.combination(x, r)
+  if type(x) ~= "number" then
+    errorMsg("Number", "x", x)
+  end
+  if type(r) ~= "number" then
+    errorMsg("Number", "r", r)
+  end
+  if x < r then
+    error("`r` cannot be greater than `x`")
+  end
+  return math.factorial(x) / (math.factorial(r) * math.factorial(x - r))
+end
+function math.factors(x)
+  if type(x) ~= "number" then
+    errorMsg("Number", "x", x)
+  end
+  if x < 0 then
+    error("`x` cannot be a negative number, given: " .. tostring(x))
+  end
+  if math.floor(x) ~= x then
+    error("`x` must be a whole number")
+  end
+  local factors = {1, x}
+  for i = 2, x - 1 do
+    if x % i == 0 then
+      factors:insert(i)
+    end
+  end
+  return factors
+end
+function math.is_perfect(x)
+  if type(x) ~= "number" then
+    errorMsg("Number", "x", x)
+  end
+  return math.sum(math.factors(x)) - x == x
+end
+function math.is_deficient(x)
+  if type(x) ~= "number" then
+    errorMsg("Number", "x", x)
+  end
+  return math.sum(math.factors(x)) - x < x
+end
+function math.is_abundant(x)
+  if type(x) ~= "number" then
+    errorMsg("Number", "x", x)
+  end
+  return math.sum(math.factors(x)) - x > x
+end
+function math.classify_number(x)
+  if type(x) ~= "number" then
+    errorMsg("Number", "x", x)
+  end
+  if math.is_perfect(x) then
+    return "Perfect"
+  elseif math.is_deficient(x) then
+    return "Deficient"
+  elseif math.is_abundant(x) then
+    return "Abundant"
+  else
+    return "Unknown"
+  end
+end
 function string.clean_number(s)
   if type(s) ~= "string" then
     errorMsg("String", "s", s)
