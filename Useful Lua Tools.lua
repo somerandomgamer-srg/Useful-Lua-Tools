@@ -1306,19 +1306,21 @@ function table.freeze(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   if table.is_frozen(t) then return t end
 
-  local mt = getmetatable(t) or {}
-  mt.__frozen = true
-  mt.__newindex = function(_, key, value)
-    error(string.format("Attempt to modify frozen table: cannot set '%s' to '%s'", tostring(key), tostring(value)))
-  end
-  mt.__metatable = "frozen"
-  setmetatable(t, mt)
-
+  -- First recursively freeze nested tables
   for k, v in pairs(t) do
     if type(v) == "table" then
       t[k] = table.freeze(v)
     end
   end
+
+  -- Then freeze the table itself by setting a new metatable
+  setmetatable(t, {
+    __frozen = true,
+    __newindex = function(_, key, value)
+      error(string.format("Attempt to modify frozen table: cannot set '%s' to '%s'", tostring(key), tostring(value)))
+    end,
+    __metatable = "frozen" -- Prevent metamethod changes
+  })
 
   return t
 end
