@@ -291,10 +291,6 @@
       -- shuffled = {3, 1, 5, 2, 4} (random order)
     ```
 
-
-
-
-
 - `table.count_keys(t)`
   - Counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences.
   - ```lua

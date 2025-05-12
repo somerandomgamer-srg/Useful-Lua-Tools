@@ -75,10 +75,6 @@
 - `math.is_odd(x)`
   - Checks if `x` is an odd number.
 
-
-
-
-
   - NOTE: Floats are neither odd nor even.
 
 - `math.is_even(x)`

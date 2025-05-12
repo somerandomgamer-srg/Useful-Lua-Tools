@@ -1162,6 +1162,7 @@ function string.is_palindrome(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
   return s:reverse() == s
 end
+
 ---------Table Library Extension---------
 
 ---***SRG Custom Function***
