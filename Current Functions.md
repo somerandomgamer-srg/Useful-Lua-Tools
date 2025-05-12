@@ -81,6 +81,19 @@
   - Checks if `x` is an even number.
   - NOTE: Floats are neither odd nor even.
 
+- `math.is_perfect_square(x)`
+  - Checks if the square root of `x` is a whole number or not
+  - NOTE: Floats are neither odd nor even
+
+- `math.factorial(x)`
+  - Calculates the factorial of a number
+
+- `math.permutation(x, r)`
+  - Calculates the number of ways to arrange r items from x items
+
+- `math.combination(x, r)`
+  - Calculates the number of ways to choose r items from x items
+
 ## String Library Extensions
 
 ### String Manipulation
@@ -120,6 +133,9 @@
 
 - `string.count(s, pattern)`
   - Returns the amount of occurrences `pattern` occurs in `s`.
+
+- `string.is_palindrome(s)`
+  - Checks if a string reads the same forwards and backwards
 
 ## Table Library Extensions
 
@@ -249,7 +265,7 @@
 
 - `is_type(value, type_of_object)`
   - Checks if `value` is a `type_of_object`
-      
+
 - `benchmark(func, iterations)`
   - Runs `func` `iterations` times
 

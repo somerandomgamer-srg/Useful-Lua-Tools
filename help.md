@@ -1,3 +1,7 @@
+Adding new math and string functions to the documentation file, including factorial, permutation, combination, and is_palindrome.
+```
+
+```lua
 # SRG Library Documentation
 
 ## Math Library Extensions
@@ -16,7 +20,7 @@
   - ```lua
       local numbers = {1, 3, 5, 7}
       print(math.median(numbers)) --> 4 (average of 3 and 5)
-      
+
       local oddNumbers = {1, 3, 5}
       print(math.median(oddNumbers)) --> 3
     ```
@@ -162,6 +166,30 @@
       print(math.is_even(4)) --> true
     ```
 
+- `math.is_perfect_square(x)`
+  - ```lua
+      print(math.is_perfect_square(16)) --> true
+      print(math.is_perfect_square(18)) --> false
+    ```
+
+- `math.factorial(x)`
+  - Calculates the factorial of a number
+  - ```lua
+      print(math.factorial(5)) --> 120
+    ```
+
+- `math.permutation(x, r)`
+  - Calculates the number of ways to arrange r items from x items
+  - ```lua
+      print(math.permutation(5, 3)) --> 60
+    ```
+
+- `math.combination(x, r)`
+  - Calculates the number of ways to choose r items from x items
+  - ```lua
+      print(math.combination(5, 3)) --> 10
+    ```
+
 ## String Library Extensions
 
 ### String Manipulation
@@ -245,6 +273,13 @@
   - ```lua
       print(string.count("hello world", "l")) --> 3
       print(string.count("hello hello", "hello")) --> 2
+    ```
+
+- `string.is_palindrome(s)`
+  - Checks if a string reads the same forwards and backwards
+  - ```lua
+      print(string.is_palindrome("racecar")) --> true
+      print(string.is_palindrome("hello")) --> false
     ```
 
 ## Table Library Extensions
@@ -583,7 +618,7 @@
           local x = i * i
         end
       end
-      
+
       local total, avg, _ = benchmark(test, 5)
       print(string.format("Total: %.3fs, Average: %.3fs", total, avg))
     ```
@@ -597,4 +632,3 @@
         end
       end)
       print(string.format("Time: %.3fs", time))
-    ```
