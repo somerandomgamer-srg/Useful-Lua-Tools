@@ -1305,12 +1305,13 @@ end
 function table.freeze(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
-  t.__newindex = function(tbl, key, value)
+  t.__newindex = function(_, key, value)
     if not value then
-      error(string.format("Attemp to delete `%s` from `%s`, a frozen table", key, table))
+      error(string.format("Attempt to delete `%s` from a frozen table", key))
     else
-      error(string.format("Attempt to add `%s` with a value of `%s` to `%s`, a frozen table", key, value, tbl))
+      error(string.format("Attempt to add `%s` with a value of `%s` to a frozen table", key, value))
     end
+  t.__metatable = "frozen"
   end
 end
 ---------Global Functions---------
