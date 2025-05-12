@@ -713,8 +713,20 @@ function math.is_perfect_square(x)
   if type(x) ~= "number" then
     errorMsg("Number", "x", x)
   end
-  local root = math.sqrt(x)
-  return root == math.floor(root)
+  return math.sqrt(x) == math.floor(math.sqrt(x))
+end
+function math.factorial(x)
+  if x == 0 then
+    return 1
+  end
+  if x < 0 then
+    error("`x` cannot be a negative number, given: " .. tostring(x))
+  end
+  local fact = x
+  for i = x - 1, 1, -1 do
+    fact = fact * i
+  end
+  return fact
 end
 function string.clean_number(s)
   if type(s) ~= "string" then
@@ -839,6 +851,12 @@ function string.count(s, pattern)
     count = count + 1
   end
   return amount
+end
+function string.is_palindrome(s)
+  if type(s) ~= "string" then
+    errorMsg("String", "s", s)
+  end
+  return s:reverse() == s
 end
 function table.contains(t, value)
   if type(t) ~= "table" then

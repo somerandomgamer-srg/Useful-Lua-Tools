@@ -956,9 +956,39 @@ end
 ---@return number
 function math.is_perfect_square(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return math.sqrt(x) == math.floor(math.sqrt(x))
+end
 
-  local root = math.sqrt(x)
-  return root == math.floor(root)
+---***SRG Custom Function***
+---
+---Calculates the factorial of `x`
+---@param x number
+---@return number
+function math.factorial(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if x == 0 then return 1 end
+  if x < 0 then error("`x` cannot be a negative number, given: " .. tostring(x)) end
+
+  local fact = x
+  for i = x - 1, 1, -1 do fact = fact * i end
+
+  return fact
+end
+
+function math.permutation(x, r)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(r) ~= "number" then errorMsg("Number", "r", r) end
+  if x < r then error("`r` cannot be greater than `x`") end
+
+  return math.factorial(x) / math.factorial(x - r)
+end
+
+function math.combination(x, r)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(r) ~= "number" then errorMsg("Number", "r", r) end
+  if x < r then error("`r` cannot be greater than `x`") end
+
+  return math.factorial(x) / (math.factorial(r) * math.factorial(x - r))
 end
 
 ---------String Library Extension---------
@@ -1120,6 +1150,17 @@ function string.count(s, pattern)
   local amount = 0
   for _ in string.gmatch(s, pattern) do count = count + 1 end
   return amount
+end
+
+---***SRG Custom Function***
+---
+---Checks if `s` is a palindrome (the reversed string is the same as the original string)
+---@param s string
+---@return boolean
+---@nodiscard
+function string.is_palindrome(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  return s:reverse() == s
 end
 ---------Table Library Extension---------
 
@@ -1295,77 +1336,6 @@ function table.deep_count_keys(t, separator)
   separator = separator or "."
 
   return countRecursive(t, separator)
-end
-
----***SRG Custom Function***
----
----Freeze a table (`t`) to prevent unintended modifications.
----If any unintended modifications are detected, an error will be thrown.
----@param t table
-function table.freeze(t)
-  if type(t) ~= "table" then errorMsg("Table", "t", t) end
-  if table.is_frozen(t) then return t end
-
-  -- Freeze nested tables first
-  if #t > 0 then
-    -- Array-like table
-    for i = 1, #t do
-      if type(t[i]) == "table" then
-        t[i] = table.freeze(t[i])
-      end
-    end
-  else
-    -- Key-value table
-    for k, v in pairs(t) do
-      if type(v) == "table" then
-        t[k] = table.freeze(v)
-      end
-    end
-  end
-
-  -- Set the freeze metatable
-  setmetatable(t, {
-    __frozen = true,
-    __newindex = function(_, key, value)
-      if not value then
-        error(string.format("Attempt to delete index '%s' from a frozen table", tostring(key)))
-      else
-        error(string.format("Attempt to modify frozen table at index '%s' with value '%s'", tostring(key), tostring(value)))
-      end
-    end,
-    __metatable = "frozen"
-  })
-
-  return t
-end
-
----***SRG Custom Function***
----
----Checks if a table is frozen
----@param t table
----@return boolean
-function table.is_frozen(t)
-  if type(t) ~= "table" then errorMsg("Table", "t", t) end
-  local mt = getmetatable(t)
-  return mt and mt.__frozen == true or false
-end
-
----***SRG Custom Function***
----
----Creates an unfrozen copy of a table
----@param t table
----@return table
-function table.unfreeze(t)
-  if type(t) ~= "table" then errorMsg("Table", "t", t) end
-  if not table.is_frozen(t) then return t end
-
-  setmetatable(t, nil)
-
-  for _, v in pairs(t) do
-    if type(v) == "table" and table.is_frozen(v) then table.unfreeze(v) end
-  end
-
-  return t
 end
 
 ---------Global Functions---------
