@@ -1005,6 +1005,12 @@ function math.combination(x, r)
   return math.factorial(x) / (math.factorial(r) * math.factorial(x - r))
 end
 
+---***SRG Custom Function***
+---
+---Returns all factors of a number
+---@param x number
+---@return table
+---@nodiscard
 function math.factors(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if x < 0 then error("`x` cannot be a negative number, given: " .. tostring(x)) end
@@ -1019,21 +1025,45 @@ function math.factors(x)
   return factors
 end
 
+---***SRG Custom Function***
+---
+---Checks if a number is perfect (sum of factors equals the number)
+---@param x number
+---@return boolean
+---@nodiscard
 function math.is_perfect(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.sum(math.factors(x)) - x == x
 end
 
+---***SRG Custom Function***
+---
+---Checks if a number is deficient (sum of factors less than number)
+---@param x number
+---@return boolean
+---@nodiscard
 function math.is_deficient(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.sum(math.factors(x)) - x < x
 end
 
+---***SRG Custom Function***
+---
+---Checks if a number is abundant (sum of factors greater than number)
+---@param x number
+---@return boolean
+---@nodiscard
 function math.is_abundant(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.sum(math.factors(x)) - x > x
 end
 
+---***SRG Custom Function***
+---
+---Classifies a number as Perfect, Deficient, or Abundant
+---@param x number
+---@return string
+---@nodiscard
 function math.classify_number(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
@@ -1044,6 +1074,13 @@ function math.classify_number(x)
   end
 end
 
+---***SRG Custom Function***
+---
+---Calculates the z-score of a value in a dataset
+---@param x number
+---@param t table
+---@return number
+---@nodiscard
 function math.z_score(x, t)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(t) ~= "table" then errorMsg("Table", "t", t) end

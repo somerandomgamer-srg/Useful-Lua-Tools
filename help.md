@@ -170,8 +170,82 @@
 
 - `math.factorial(x)`
   - Calculates the factorial of a number
+    ```
+
+- `math.factors(x)`
+  - Returns all factors of a number
   - ```lua
-      print(math.factorial(5)) --> 120
+      print(table.concat(math.factors(12), ", ")) --> 1, 2, 3, 4, 6, 12
+    ```
+
+- `math.is_perfect(x)`
+  - Checks if a number is perfect (sum of factors equals the number)
+  - ```lua
+      print(math.is_perfect(28)) --> true
+      print(math.is_perfect(15)) --> false
+    ```
+
+- `math.is_deficient(x)`
+  - Checks if a number is deficient (sum of factors less than number)
+  - ```lua
+      print(math.is_deficient(15)) --> true
+    ```
+
+- `math.is_abundant(x)`
+  - Checks if a number is abundant (sum of factors greater than number)
+  - ```lua
+      print(math.is_abundant(12)) --> true
+    ```
+
+- `math.classify_number(x)`
+  - Classifies a number as Perfect, Deficient, or Abundant
+  - ```lua
+      print(math.classify_number(28)) --> "Perfect"
+      print(math.classify_number(15)) --> "Deficient"
+      print(math.classify_number(12)) --> "Abundant"
+    ```
+
+- `math.z_score(x, t)`
+  - Calculates the z-score of a value in a dataset
+  - ```lua
+      local data = {2, 4, 4, 4, 5, 5, 7, 9}
+      print(math.z_score(7, data)) --> 1.5
+    ```
+
+- `math.secant(x)`
+  - Calculates the secant of x
+  - ```lua
+      print(math.secant(math.pi/3)) --> 2.0
+    ```
+
+- `math.cosecant(x)`
+  - Calculates the cosecant of x
+  - ```lua
+      print(math.cosecant(math.pi/6)) --> 2.0
+    ```
+
+- `math.cotangent(x)`
+  - Calculates the cotangent of x
+  - ```lua
+      print(math.cotangent(math.pi/4)) --> 1.0
+    ```
+
+- `math.asecant(x)`
+  - Calculates the inverse secant of x
+  - ```lua
+      print(math.asecant(2)) --> 1.0472 (≈π/3)
+    ```
+
+- `math.acosecant(x)`
+  - Calculates the inverse cosecant of x
+  - ```lua
+      print(math.acosecant(2)) --> 0.5236 (≈π/6)
+    ```
+
+- `math.acotangent(x)`
+  - Calculates the inverse cotangent of x
+  - ```lua
+      print(math.acotangent(1)) --> 0.7854 (≈π/4)
     ```
 
 - `math.permutation(x, r)`

@@ -88,6 +88,42 @@
 - `math.factorial(x)`
   - Calculates the factorial of a number
 
+- `math.factors(x)`
+  - Returns all factors of a number
+
+- `math.is_perfect(x)`
+  - Checks if a number is perfect (sum of factors equals the number)
+
+- `math.is_deficient(x)`
+  - Checks if a number is deficient (sum of factors less than number)
+
+- `math.is_abundant(x)`
+  - Checks if a number is abundant (sum of factors greater than number)
+
+- `math.classify_number(x)`
+  - Classifies a number as Perfect, Deficient, or Abundant
+
+- `math.z_score(x, t)`
+  - Calculates the z-score of a value in a dataset
+
+- `math.secant(x)`
+  - Calculates the secant of x
+
+- `math.cosecant(x)`
+  - Calculates the cosecant of x
+
+- `math.cotangent(x)`
+  - Calculates the cotangent of x
+
+- `math.asecant(x)`
+  - Calculates the inverse secant of x
+
+- `math.acosecant(x)`
+  - Calculates the inverse cosecant of x
+
+- `math.acotangent(x)`
+  - Calculates the inverse cotangent of x
+
 - `math.permutation(x, r)`
   - Calculates the number of ways to arrange r items from x items
 
