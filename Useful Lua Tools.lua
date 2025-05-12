@@ -38,14 +38,20 @@ local function countRecursive(t, prefix, separator)
 end
 
 local morseCodeTable = {
- a=".-", b="-...", c="-.-.", d="-..", e=".", f="..-.", g="--.", h="....", i="..", j=".---", k="-.-",
- l=".-..", m="--", n="-.", o="---", p=".--.", q="--.-", r=".-.", s="...", t="-", u="..-", v="...-",
- w=".--", x="-..-", y="-.--", z="--..", ["1"]=".----", ["2"]="..---", ["3"]="...--", ["4"]="....-",
- ["5"]=".....", ["6"]="-....", ["7"]="--...", ["8"]="---..", ["9"]="----.", ["0"]="-----",
- [" "] = "/", ["!"]="-.-.--", ["@"]=".--.-.", ["&"]=".-...", ["("]="-.--.", [")"]="-.--.-",
- ["-"]="-....-", ["="]="-...-", ["+"]=".-.-.", [":"]="---...", ["'"]=".----.", ['"']=".-..-.",
- [","]="--..--", ["."]=".-.-.-", ["/"]="-..-.", ["?"]="..--.."
+  a=".-", b="-...", c="-.-.", d="-..", e=".", f="..-.", g="--.", h="....", i="..", j=".---", k="-.-",
+  l=".-..", m="--", n="-.", o="---", p=".--.", q="--.-", r=".-.", s="...", t="-", u="..-", v="...-",
+  w=".--", x="-..-", y="-.--", z="--..", ["1"]=".----", ["2"]="..---", ["3"]="...--", ["4"]="....-",
+  ["5"]=".....", ["6"]="-....", ["7"]="--...", ["8"]="---..", ["9"]="----.", ["0"]="-----",
+  [" "] = "/", ["!"]="-.-.--", ["@"]=".--.-.", ["&"]=".-...", ["("]="-.--.", [")"]="-.--.-",
+  ["-"]="-....-", ["="]="-...-", ["+"]=".-.-.", [":"]="---...", ["'"]=".----.", ['"']=".-..-.",
+  [","]="--..--", ["."]=".-.-.-", ["/"]="-..-.", ["?"]="..--.."
 }
+
+---------Initiate Variables---------
+
+-- ---The golden ratio (math`(1 + math.sqrt(5)) / 2`)
+-- ---@type number
+-- math.gr = (1 + math.sqrt(5)) / 2
 
 ---------Initiate Libraries---------
 
@@ -64,11 +70,11 @@ input = {}
 ---@return string
 ---@nodiscard
 function cryptography.text_to_ascii(s)
- if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
- local asciiCode = ""
- for i in s do asciiCode = asciiCode .. s[i]:byte() .. " " end
- return string.trim(asciiCode)
+  local asciiCode = ""
+  for i in s do asciiCode = asciiCode .. s[i]:byte() .. " " end
+  return string.trim(asciiCode)
 end
 
 ---***SRG Custom Function***
@@ -78,16 +84,16 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.ascii_to_text(s)
- if type(s) ~= "string" then errorMsg("String", "s", s) end
- if not s:match("^%d+%s*") then error("Input must be space-separated ASCII numbers") end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if not s:match("^%d+%s*") then error("Input must be space-separated ASCII numbers") end
 
- local text = ""
- for num in s:gmatch("%d+") do
-   local n = tonumber(num)
-   if n < 0 or n > 255 then error("ASCII values must be between 0 and 255") end
-   text = text .. string.char(n)
- end
- return text
+  local text = ""
+  for num in s:gmatch("%d+") do
+    local n = tonumber(num)
+    if n < 0 or n > 255 then error("ASCII values must be between 0 and 255") end
+    text = text .. string.char(n)
+  end
+  return text
 end
 
 ---***SRG Custom Function***
@@ -97,11 +103,11 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.text_to_hex(s)
- if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
- local hexCode = ""
- for i = 1, #s do hexCode = hexCode .. string.format("%02X", s[i]:byte()) end
- return hexCode
+  local hexCode = ""
+  for i = 1, #s do hexCode = hexCode .. string.format("%02X", s[i]:byte()) end
+  return hexCode
 end
 
 ---***SRG Custom Function***
@@ -111,11 +117,11 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.hex_to_text(s)
- if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
- local text = ""
- for hex in s:gmatch("..") do text = text .. string.char(tonumber(hex, 16)) end
- return text
+  local text = ""
+  for hex in s:gmatch("..") do text = text .. string.char(tonumber(hex, 16)) end
+  return text
 end
 
 ---***SRG Custom Function***
@@ -125,15 +131,15 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.text_to_binary(s)
- if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
- local binaryCode = ""
- for i = 1, #s do
-   local charCode = string.byte(s, i)
-   local binary = string.format("%08b", charCode)
-   binaryCode = binaryCode .. binary .. " "
- end
- return string.trim(binaryCode)
+  local binaryCode = ""
+  for i = 1, #s do
+    local charCode = string.byte(s, i)
+    local binary = string.format("%08b", charCode)
+    binaryCode = binaryCode .. binary .. " "
+  end
+  return string.trim(binaryCode)
 end
 
 ---***SRG Custom Function***
@@ -143,11 +149,11 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.binary_to_text(s)
- if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
- local text = ""
- for binary in s:gmatch("%d+") do text = text .. string.char(tonumber(binary, 2)) end
- return text
+  local text = ""
+  for binary in s:gmatch("%d+") do text = text .. string.char(tonumber(binary, 2)) end
+  return text
 end
 
 ---***SRG Custom Function***
@@ -157,14 +163,14 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.text_to_morse(s)
- if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
- local morse = ""
- for c in s:lower():gmatch(".") do
-   local code = morseCodeTable[c]
-   if code then morse = morse .. code .. " " end
- end
- return string.trim(morse)
+  local morse = ""
+  for c in s:lower():gmatch(".") do
+    local code = morseCodeTable[c]
+    if code then morse = morse .. code .. " " end
+  end
+  return string.trim(morse)
 end
 
 ---***SRG Custom Function***
@@ -174,19 +180,37 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.morse_to_text(s)
- if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
- local text = ""
- local morseToText = {}
+  local text = ""
+  local morseToText = {}
 
- for char, morse in pairs(morseCodeTable) do morseToText[morse] = char end
+  for char, morse in pairs(morseCodeTable) do morseToText[morse] = char end
 
- s = s:gsub(" / ", "  ")
- for symbol in s:gmatch("%S+") do
-   local char = morseToText[symbol]
-   if char then text = text .. char end
- end
- return string.trim(text)
+  s = s:gsub(" / ", "  ")
+  for symbol in s:gmatch("%S+") do
+    local char = morseToText[symbol]
+    if char then text = text .. char end
+  end
+  return string.trim(text)
+end
+
+---***SRG Custom Function***
+---
+---Generates a random UUID (version 4)
+---
+---UUID V4 format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
+---- `x`: 0-9 and a-f
+---- Hyphens (-) separate sections
+---- The `4` in the third section indicates it's a version 4 UUID
+---- `y`: 8, 9, a, or b
+---@return string
+---@nodiscard
+function cryptography.uuid_v4()
+  local returnValue = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+  returnValue = string.gsub(returnValue, "x", function() return ("0123456789abcdef")[math.random(16)] end)
+  returnValue = string.gsub(returnValue, "y", function() return ("89ab")[math.random(4)] end)
+  return returnValue
 end
 
 ---***SRG Custom Function***
@@ -196,9 +220,8 @@ end
 ---@return number
 ---@nodiscard
 function cryptography.bswap(x)
- if type(x) ~= "number" then errorMsg("Number", "x", x) end
-
- return ((x & 0xFF) << 24) | ((x & 0xFF00) << 8) | ((x & 0xFF0000) >> 8) | ((x >> 24) & 0xFF)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return ((x & 0xFF) << 24) | ((x & 0xFF00) << 8) | ((x & 0xFF0000) >> 8) | ((x >> 24) & 0xFF)
 end
 
 ---***SRG Custom Function***
@@ -208,10 +231,10 @@ end
 ---@param disp number The number of positions to rotate left
 ---@return number
 function cryptography.rol(x, disp)
- if type(x) ~= "number" then errorMsg("Number", "x", x) end
- if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
- return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
+  return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
 end
 
 ---***SRG Custom Function***
@@ -221,10 +244,10 @@ end
 ---@param disp number The number of positions to rotate right
 ---@return number
 function cryptography.ror(x, disp)
- if type(x) ~= "number" then errorMsg("Number", "x", x) end
- if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
- return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
+  return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
 end
 
 ---***SRG Custom Function***
@@ -233,9 +256,8 @@ end
 ---@param x number
 ---@return number
 function cryptography.number_to_bit(x)
- if type(x) ~= "number" then errorMsg("Number", "x", x) end
-
- return x & 0xFFFFFFFF
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return x & 0xFFFFFFFF
 end
 
 ---***SRG Custom Function***
@@ -244,9 +266,8 @@ end
 ---@param x number
 ---@return string
 function cryptography.number_to_hex(x)
- if type(x) ~= "number" then errorMsg("Number", "x", x) end
-
- return string.format("%x", x & 0xFFFFFFFF)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return string.format("%x", x & 0xFFFFFFFF)
 end
 
 ---***SRG Custom Function***
@@ -256,10 +277,10 @@ end
 ---@param b number
 ---@return boolean
 function cryptography.btest(a, b)
- if type(a) ~= "number" then errorMsg("Number", "a", a) end
- if type(b) ~= "number" then errorMsg("Number", "b", b) end
+  if type(a) ~= "number" then errorMsg("Number", "a", a) end
+  if type(b) ~= "number" then errorMsg("Number", "b", b) end
 
- return (a & b) ~= 0
+  return (a & b) ~= 0
 end
 
 ---***SRG Custom Function***
@@ -270,12 +291,12 @@ end
 ---@param width? number
 ---@return number
 function cryptography.extract(n, field, width)
- if type(n) ~= "number" then errorMsg("Number", "n", n) end
- if type(field) ~= "number" then errorMsg("Number", "field", field) end
- if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
+  if type(n) ~= "number" then errorMsg("Number", "n", n) end
+  if type(field) ~= "number" then errorMsg("Number", "field", field) end
+  if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
- width = width or 1
- return (n >> field) & ((1 << width) - 1)
+  width = width or 1
+  return (n >> field) & ((1 << width) - 1)
 end
 
 ---***SRG Custom Function***
@@ -285,11 +306,11 @@ end
 ---@param disp number
 ---@return number
 function cryptography.rrotate(x, disp)
- if type(x) ~= "number" then errorMsg("Number", "x", x) end
- if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
- disp = disp % 32
- return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
+  disp = disp % 32
+  return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
 end
 
 ---***SRG Custom Function***
@@ -299,11 +320,11 @@ end
 ---@param disp number
 ---@return number
 function cryptography.lrotate(x, disp)
- if type(x) ~= "number" then errorMsg("Number", "x", x) end
- if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
- disp = disp % 32
- return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
+  disp = disp % 32
+  return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
 end
 
 ---***SRG Custom Function***
@@ -315,14 +336,14 @@ end
 ---@param width number
 ---@return number
 function cryptography.replace(n, v, field, width)
- if type(n) ~= "number" then errorMsg("Number", "n", n) end
- if type(v) ~= "number" then errorMsg("Number", "v", v) end
- if type(field) ~= "number" then errorMsg("Number", "field", field) end
- if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
+  if type(n) ~= "number" then errorMsg("Number", "n", n) end
+  if type(v) ~= "number" then errorMsg("Number", "v", v) end
+  if type(field) ~= "number" then errorMsg("Number", "field", field) end
+  if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
- width = width or 1
- local mask = ~(((1 << width) - 1) << field)
- return (n & mask) | ((v & ((1 << width) - 1)) << field)
+  width = width or 1
+  local mask = ~(((1 << width) - 1) << field)
+  return (n & mask) | ((v & ((1 << width) - 1)) << field)
 end
 
 ---***SRG Custom Function***
@@ -335,19 +356,19 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.xor(s, key)
- if type(s) ~= "string" then errorMsg("String", "s", s) end
- if type(key) ~= "string" then errorMsg("String", "key", key) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(key) ~= "string" then errorMsg("String", "key", key) end
 
- local encrypted = ""
+  local encrypted = ""
 
- for i = 1, #s do
-   local charByte = string.byte(s:sub(i, i))
-   local keyByte = string.byte(key:sub((i - 1) % #key + 1, (i - 1) % #key + 1))
-   local encryptedByte = charByte ~ keyByte
-   encrypted = encrypted .. string.char(encryptedByte)
- end
+  for i = 1, #s do
+    local charByte = string.byte(s:sub(i, i))
+    local keyByte = string.byte(key:sub((i - 1) % #key + 1, (i - 1) % #key + 1))
+    local encryptedByte = charByte ~ keyByte
+    encrypted = encrypted .. string.char(encryptedByte)
+  end
 
- return encrypted
+  return encrypted
 end
 
 ---***SRG Custom Function***
@@ -358,21 +379,21 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.caesar_cipher(s, shift)
- if type(s) ~= "string" then errorMsg("String", "s", s) end
- if type(shift) ~= "number" then errorMsg("Number", "shift", shift) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(shift) ~= "number" then errorMsg("Number", "shift", shift) end
 
- local encrypted = ""
+  local encrypted = ""
 
- for i = 1, #s do
-   local character = s:sub(i, i)
-   if character:match("%a") then
-     local base = character:match("%u") and 65 or 97
-     encrypted = encrypted .. string.char(((string.byte(character) - base + shift) % 26) + base)
-   else encrypted = encrypted .. character
-   end
- end
+  for i = 1, #s do
+    local character = s:sub(i, i)
+    if character:match("%a") then
+      local base = character:match("%u") and 65 or 97
+      encrypted = encrypted .. string.char(((string.byte(character) - base + shift) % 26) + base)
+    else encrypted = encrypted .. character
+    end
+  end
 
- return encrypted
+  return encrypted
 end
 
 ---***SRG Custom Function***
@@ -382,9 +403,9 @@ end
 ---@return string
 ---@nodiscard
 function cryptography.rot13(s)
- if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
- return cryptography.caesar_cipher(s, 13)
+  return cryptography.caesar_cipher(s, 13)
 end
 
 ---------Input Library---------
@@ -392,11 +413,14 @@ end
 ---***SRG Custom Function***
 ---
 ---Gets a single string input from the user
----@param message string
+---@param message? string
 ---@return string
 ---@nodiscard
 function input.string(message)
-  if message and type(message) ~= "string" then error("Input message must be a string") end
+  if message then
+    if type(message) ~= "string" then errorMsg("String", "message", message) end
+  else message = ""
+  end
 
   io.write(message .. ": ")
   local inp = io.read()
@@ -410,12 +434,16 @@ end
 ---***SRG Custom Function***
 ---
 ---Collects multiple string inputs from the user
----@param message string
+---@param message? string
 ---@param number_of_inputs number
 ---@return table inputs
 ---@nodiscard
 function input.table(message, number_of_inputs)
-  if message and type(message) ~= "string" then error("Input message must be a string") end
+  if message then
+    if type(message) ~= "string" then errorMsg("String", "message", message) end
+  else message = ""
+  end
+
   if type(number_of_inputs) ~= "number" then
     error("Number of inputs must be a number")
     return {}
@@ -442,13 +470,13 @@ end
 ---***SRG Custom Function***
 ---
 ---Gets a single numeric input from the user with validation
----@param message string
+---@param message? string
 ---@return number input
 ---@nodiscard
 function input.number(message)
-  if type(message) ~= "string" then
-    error("Input message must be a string")
-    return 0
+  if message then
+    if type(message) ~= "string" then errorMsg("String", "message", message) end
+  else message = ""
   end
 
   io.write(message .. ": ")
@@ -469,12 +497,26 @@ end
 ---***SRG Custom Function***
 ---
 ---Collects multiple numeric inputs from the user
----@param message string
+---@param message? string
 ---@param number_of_inputs number
 ---@return table
 ---@nodiscard
 function input.number_table(message, number_of_inputs)
-  if message then io.write(message) end
+  if message then
+    if type(message) ~= "string" then errorMsg("String", "message", message) end
+  else message = ""
+  end
+
+  if type(number_of_inputs) ~= "number" then
+    error("Number of inputs must be a number")
+    return {}
+  end
+  if number_of_inputs < 1 then
+    error("Number of inputs must be greater than 0")
+    return {}
+  end
+
+  io.write(message)
 
   local inputs = {}
   for i = 1, number_of_inputs do
@@ -489,10 +531,15 @@ end
 ---***SRG Custom Function***
 ---
 ---Collects string inputs until the user submits an empty input
----@param message string
+---@param message? string
 ---@return table
 ---@nodiscard
 function input.loop(message)
+  if message then
+    if type(message) ~= "string" then errorMsg("String", "message", message) end
+  else message = ""
+  end
+
   local inputs = {}
   local current = 1
 
@@ -511,10 +558,15 @@ end
 ---***SRG Custom Function***
 ---
 ---Collects numeric inputs until the user submits an empty input
----@param message string
+---@param message? string
 ---@return table
 ---@nodiscard
 function input.number_loop(message)
+if message then
+  if type(message) ~= "string" then errorMsg("String", "message", message) end
+else message = ""
+end
+
   local inputs = {}
   local current = 1
 
@@ -698,7 +750,6 @@ function math.lcm(x, y)
   return (x * y) / math.gcd(x, y)
 end
 
-
 ---***SRG Custom Function***
 ---
 ---Solves a quadratic equation in the form ax² + bx + c using the quadratic formula
@@ -878,6 +929,36 @@ end
 function math.is_even(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return x % 2 == 0
+end
+
+---***SRG Custom Function***
+---
+---Randomly makes `x` positive or negative
+---
+---NOTE: Floats are neither odd nor even
+---@param x number
+---@return number
+function math.random_sign(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+
+  local r = math.random(2)
+  if r == 2 then return -math.abs(x)
+  else return math.abs(x)
+  end
+end
+
+---***SRG Custom Function***
+---
+---Checks if the square root of `x` is a whole number or not
+---
+---NOTE: Floats are neither odd nor even
+---@param x number
+---@return number
+function math.is_perfect_square(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+
+  local root = math.sqrt(x)
+  return root == math.floor(root)
 end
 
 ---------String Library Extension---------
@@ -1122,7 +1203,6 @@ end
 ---@nodiscard
 function table.to_csv(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
-  if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   local csv = ""
   for i = 1, #t do
@@ -1217,6 +1297,22 @@ function table.deep_count_keys(t, separator)
   return countRecursive(t, separator)
 end
 
+---***SRG Custom Function***
+---
+---Freeze a table (`t`) to prevent unintended modifications.
+---If any unintended modifications are detected, an error will be thrown.
+---@param t table
+function table.freeze(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  t.__newindex = function(tbl, key, value)
+    if not value then
+      error(string.format("Attemp to delete `%s` from `%s`, a frozen table", key, table))
+    else
+      error(string.format("Attempt to add `%s` with a value of `%s` to `%s`, a frozen table", key, value, tbl))
+    end
+  end
+end
 ---------Global Functions---------
 
 ---***SRG Custom Function***
@@ -1239,7 +1335,7 @@ end
 ---@param value any
 ---@param type_of_object "nil"|"number"|"string"|"boolean"|"table"|"function"|"thread"|"userdata"
 ---@return boolean
-function isType(value, type_of_object) return type(value) == type_of_object end
+function is_type(value, type_of_object) return type(value) == type_of_object end
 
 ---***SRG Custom Function***
 ---
@@ -1291,4 +1387,34 @@ function execution_time(func)
   if not success then error("Error executing function: " .. result) end
 
   return os.clock() - start, result
+end
+
+---***SRG Custom Function***
+---
+---Yields `t` seconds before running `func` without stopping other code.
+---@param t number
+---@param func function
+---@return any
+function delay(t, func)
+  if type(t) ~= "number" then errorMsg("Number", "t", t) end
+  if type(func) ~= "function" then errorMsg("Function", "func", func) end
+
+  return coroutine.wrap(function()
+    wait(t)
+    return func()
+  end)()
+end
+
+---***SRG Custom Function***
+---
+---Yields `t` seconds before running `func` while stopping other code.
+---@param t number
+---@param func function
+---@return any
+function delay_stop(t, func)
+  if type(t) ~= "number" then errorMsg("Number", "t", t) end
+  if type(func) ~= "function" then errorMsg("Function", "func", func) end
+
+  wait(t)
+  return func()
 end

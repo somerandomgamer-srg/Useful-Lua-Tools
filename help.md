@@ -1,4 +1,3 @@
-
 # SRG Library Documentation
 
 ## Math Library Extensions
@@ -168,7 +167,12 @@
 ### String Manipulation
 
 - `string.clean_number(s)`
-  - Cleans a string (`s`) to ensure it's a valid number format.
+  - Unlike simple `tonumber()` conversion, this function properly cleans a string (`s`) to ensure it's a valid number format:
+    - Extracts numeric values from mixed text (e.g., "22 km" → "22")
+    - Handles and corrects multiple decimal points (e.g., "3.23.3" → "3.233")
+    - Handles and corrects multiple negative signs (e.g., "-4343-2" → "-43432")
+    - Properly maintains negative signs only at the beginning
+    - Strips all non-numeric characters while preserving the numeric value
   - Features:
     - Removes all non-numeric characters except decimal points and minus signs
     - Handles multiple decimal points by keeping only the first one
@@ -466,6 +470,21 @@
       print(cryptography.rot13("Hello"))
       --> "Uryyb"
     ```
+- `cryptography.uuid_v4()`
+  - Generates a random UUID (version 4)
+  - UUID V4 format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
+    - `x`: 0-9 and a-f
+    - Hyphens (-) separate sections
+    - The `4` in the third section indicates it's a version 4 UUID
+    - `y`: 8, 9, a, or b
+  - ```lua
+      local table = {}
+      local function test()
+        print("Hello, World!")
+      end
+
+      table[cryptography.uuid_v4()] = test
+    ```
 
 ### Bitwise Operations
 
@@ -541,7 +560,7 @@
       print("End")
     ```
 
-- `isType(value, type_of_object)`
+- `is_type(value, type_of_object)`
   - Checks if `value` is a `type_of_object`
   - Available types:
     - |`nil`|`number`|`string`|`boolean`|`table`|`function`|`thread`|`userdata`|
@@ -552,7 +571,12 @@
     ```
 
 - `benchmark(func, iterations)`
-  - Performance testing.
+  - Runs `func` `iterations` times  
+  - NOTE: If `iterations` is not given, the code will run 10 times
+  - Returns:
+    - `Total Execution Time`
+    - `Average Execution Time Per Run`
+    - `The Last Result (if return is added in the code)`
   - ```lua
       local function test()
         for i = 1, 1000000 do
@@ -565,7 +589,7 @@
     ```
 
 - `execution_time(func)`
-  - Single execution timing.
+  - Runs `func` and returns the time it takes to run `func`
   - ```lua
       local time, _ = execution_time(function()
         for i = 1, 1000000 do
