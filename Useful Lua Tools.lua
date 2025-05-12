@@ -975,6 +975,13 @@ function math.factorial(x)
   return fact
 end
 
+---***SRG Custom Function***
+---
+---Calculates the number of ways to arrange r items from x items
+---@param x number
+---@param r number
+---@return number
+---@nodiscard
 function math.permutation(x, r)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(r) ~= "number" then errorMsg("Number", "r", r) end
@@ -983,6 +990,13 @@ function math.permutation(x, r)
   return math.factorial(x) / math.factorial(x - r)
 end
 
+---***SRG Custom Function***
+---
+---Calculates the number of ways to choose r items from x items
+---@param x number
+---@param r number
+---@return number
+---@nodiscard
 function math.combination(x, r)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(r) ~= "number" then errorMsg("Number", "r", r) end
