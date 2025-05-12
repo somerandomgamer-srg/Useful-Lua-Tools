@@ -74,6 +74,18 @@
 
 - `math.is_odd(x)`
   - Checks if `x` is an odd number.
+
+
+- `table.freeze(t)`
+  - Makes a table immutable by preventing modifications to its values.
+
+- `table.is_frozen(t)`
+  - Checks if a table is frozen.
+
+- `table.unfreeze(t)`
+  - Removes the immutability from a frozen table.
+
+
   - NOTE: Floats are neither odd nor even.
 
 - `math.is_even(x)`

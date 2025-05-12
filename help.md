@@ -291,6 +291,35 @@
       -- shuffled = {3, 1, 5, 2, 4} (random order)
     ```
 
+
+
+### Table Freezing
+
+- `table.freeze(t)`
+  - Makes a table immutable by preventing modifications to its values.
+  - ```lua
+      local t = {x = 1, y = 2}
+      table.freeze(t)
+      t.x = 3 --> Error: Attempt to modify frozen table
+    ```
+
+- `table.is_frozen(t)`
+  - Checks if a table is frozen.
+  - ```lua
+      local t = {x = 1}
+      table.freeze(t)
+      print(table.is_frozen(t)) --> true
+    ```
+
+- `table.unfreeze(t)`
+  - Removes the immutability from a frozen table.
+  - ```lua
+      local t = {x = 1}
+      table.freeze(t)
+      t = table.unfreeze(t)
+      t.x = 2 --> Works now
+    ```
+
 - `table.count_keys(t)`
   - Counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences.
   - ```lua
