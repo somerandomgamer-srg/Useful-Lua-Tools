@@ -1077,6 +1077,11 @@ end
 ---***SRG Custom Function***
 ---
 ---Calculates the z-score of a value in a dataset
+---- Z = 0 → Exactly average (equal to the mean)
+---- Z > 0 → Above the mean
+---- Z < 0 → Below the mean
+---- Z > 2 or Z < -2 → Unusual (more than 2 standard deviations away)
+---- Z > 3 or Z < -3 → Extremely rare
 ---@param x number
 ---@param t table
 ---@return number
