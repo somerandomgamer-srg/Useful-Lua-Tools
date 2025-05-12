@@ -1305,14 +1305,34 @@ end
 function table.freeze(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
-  t.__newindex = function(_, key, value)
+  t.__newindex = function(tbl, key, value)
     if not value then
-      error(string.format("Attempt to delete `%s` from a frozen table", key))
+      error(string.format("Attemp to delete `%s` from `%s`, a frozen table", key, table))
     else
-      error(string.format("Attempt to add `%s` with a value of `%s` to a frozen table", key, value))
+      error(string.format("Attempt to add `%s` with a value of `%s` to `%s`, a frozen table", key, value, tbl))
     end
-  t.__metatable = "frozen"
   end
+end
+
+---***SRG Custom Function***
+---
+---Checks if a table is frozen
+---@param t table
+---@return boolean
+function table.is_frozen(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  return t.__newindex ~= nil
+end
+
+---***SRG Custom Function***
+---
+---Unfreezes a frozen table
+---@param t table
+---@return table
+function table.unfreeze(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  t.__newindex = nil
+  return t
 end
 ---------Global Functions---------
 
