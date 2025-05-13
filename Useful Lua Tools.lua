@@ -47,6 +47,9 @@ local morseCodeTable = {
   [","]="--..--", ["."]=".-.-.-", ["/"]="-..-.", ["?"]="..--.."
 }
 
+local sha256Constants = {0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19}
+
+
 ---------Initiate Variables---------
 
 -- ---The golden ratio (math`(1 + math.sqrt(5)) / 2`)
@@ -137,7 +140,7 @@ function cryptography.text_to_binary(s)
   for i = 1, #s do
     local charCode = string.byte(s, i)
     local binary = string.format("%08b", charCode)
-    binaryCode = binaryCode .. binary .. " "
+    binaryCode = binaryCode .. binary
   end
   return string.trim(binaryCode)
 end
@@ -252,12 +255,18 @@ end
 
 ---***SRG Custom Function***
 ---
----Converts `x` to a 32-bit integer, normalizing it to the valid bit range.
+---Converts `x` to its binary representation.
 ---@param x number
----@return number
+---@return string
 function cryptography.number_to_bit(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  return x & 0xFFFFFFFF
+
+  local binary = ""
+  for i = 31, 0, -1 do
+    local bit = (x >> i) & 1
+    binary = binary .. bit
+  end
+  return binary
 end
 
 ---***SRG Custom Function***
@@ -297,34 +306,6 @@ function cryptography.extract(n, field, width)
 
   width = width or 1
   return (n >> field) & ((1 << width) - 1)
-end
-
----***SRG Custom Function***
----
----Returns the number `x` rotated `disp` bits to the right. Negative displacements rotate to the left.
----@param x number
----@param disp number
----@return number
-function cryptography.rrotate(x, disp)
-  if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
-
-  disp = disp % 32
-  return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
-end
-
----***SRG Custom Function***
----
----Returns the number `x` rotated `disp` bits to the left. Negative displacements rotate to the right.
----@param x number
----@param disp number
----@return number
-function cryptography.lrotate(x, disp)
-  if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
-
-  disp = disp % 32
-  return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
 end
 
 ---***SRG Custom Function***
@@ -1140,7 +1121,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Calculates the inverse secant of x (arccos(1/x))
+---Calculates the inverse secant of x (acos(1/x))
 ---@param x number
 ---@return number
 ---@nodiscard
@@ -1151,7 +1132,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Calculates the inverse cosecant of x (arcsin(1/x))
+---Calculates the inverse cosecant of x (asin(1/x))
 ---@param x number
 ---@return number
 ---@nodiscard
@@ -1162,13 +1143,38 @@ end
 
 ---***SRG Custom Function***
 ---
----Calculates the inverse cotangent of x (arctan(1/x))
+---Calculates the inverse cotangent of x (atan(1/x))
 ---@param x number
 ---@return number
 ---@nodiscard
 function math.acotangent(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.atan(1 / x)
+end
+
+---***SRG Custom Function***
+---
+---Calculates the midpoint between `x` and `y`
+---@param x number
+---@param y number
+---@return number
+---@nodiscard
+function math.midpoint(x, y)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(y) ~= "number" then errorMsg("Number", "y", y) end
+
+  return (x + y) / 2
+end
+
+---***SRG Custom Function***
+---
+---Checks if `x` is a whole number
+---@param x number
+---@return boolean
+---@nodiscard
+function math.is_whole(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return x == math.floor(x)
 end
 
 ---------String Library Extension---------
@@ -1388,9 +1394,12 @@ function table.csv_to_table(s)
   while i <= #s do
     local char = s:sub(i, i)
 
-    if char == '"' then
+    if char == '"' or char == "'" then
       if inQuotes and s:sub(i + 1, i + 1) == '"' then
         field = field .. '"'
+        i = i + 2
+      elseif inQuotes and s:sub(i + 1, i + 1) == "'" then
+        field = field .. "'"
         i = i + 2
       else
         inQuotes = not inQuotes
@@ -1519,6 +1528,63 @@ function table.deep_count_keys(t, separator)
   return countRecursive(t, separator)
 end
 
+---***SRG Custom Function***
+---
+---Returns a table containing the similarities between `t1` and `t2`
+---
+---NOTE: This function ONLY works on lists/arrays
+---@param t1 table
+---@param t2 table
+---@return table
+function table.intersection(t1, t2)
+  if type(t1) ~= "table" then errorMsg("Table", "t1", t1) end
+  if type(t2) ~= "table" then errorMsg("Table", "t2", t2) end
+
+  local intersectionTable = {}
+  for _, v in pairs(t1) do
+    if table.contains(t2, v) then intersectionTable:insert(v) end
+  end
+  return intersectionTable
+end
+
+---***SRG Custom Function***
+---
+---Returns a table containing the differences between `t1` and `t2`
+---
+---NOTE: This function ONLY works on lists/arrays
+---@param t1 table
+---@param t2 table
+---@return table
+function table.difference(t1, t2)
+  if type(t1) ~= "table" then errorMsg("Table", "t1", t1) end
+  if type(t2) ~= "table" then errorMsg("Table", "t2", t2) end
+
+  local differenceTable = {}
+  for _, v in pairs(t1) do
+    if not table.contains(t2, v) then differenceTable:insert(v) end
+  end
+  return differenceTable
+end
+
+---***SRG Custom Function***
+---
+---Shuffles the order of elements in `t` `n` times using the randomseed (`seed`)
+---
+---NOTE: If `n` is not given, `t` will only shuffle once
+---@param t table
+---@param n? number
+---@return table
+---@nodiscard
+function table.shuffle_randomseed(t, seed, n)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if type(seed) ~= "number" then errorMsg("Number", "seed", seed) end
+
+  math.randomseed(seed)
+  local shuffled = table.shuffle(t, n)
+  math.randomseed(os.time())
+  return shuffled
+end
+
 ---------Global Functions---------
 
 ---***SRG Custom Function***
@@ -1562,8 +1628,7 @@ function benchmark(func, iterations)
   if type(func) ~= "function" then errorMsg("Function", "func", func) end
   if iterations then
     if type(iterations) ~= "number" then errorMsg("Number", "iterations", iterations) end
-  else
-    iterations = 10
+  else iterations = 10
   end
 
   local startTime = os.clock()
