@@ -425,15 +425,32 @@
 56. `table.intersection(t1, t2)`
   - Returns a table containing the similarities between `t1` and `t2`
   - NOTE: This function ONLY works on lists/arrays
+  - ```lua
+      local t1 = {1, 2, 3, 4, 5}
+      local t2 = {4, 5, 6, 7, 8}
+      local common = table.intersection(t1, t2)
+      -- common = {4, 5}
+    ```
 
 57. `table.difference(t1, t2)`
   - Returns a table containing the differences between `t1` and `t2`
   - NOTE: This function ONLY works on lists/arrays
+  - ```lua
+      local t1 = {1, 2, 3, 4, 5}
+      local t2 = {4, 5, 6, 7, 8}
+      local diff = table.difference(t1, t2)
+      -- diff = {1, 2, 3, 6, 7, 8}
+    ```
 
 58. `table.shuffle_randomseed(t, seed, n)`
   - Shuffles the order of elements in `t` `n` times using the randomseed (`seed`)
   - NOTE: If `n` is not given, `t` will only shuffle once
-  - 
+  - ```lua
+      local t = {1, 2, 3, 4, 5}
+      local shuffled = table.shuffle_randomseed(t, 12345, 2)
+      -- Using seed 12345 will always produce the same shuffle
+      -- shuffled = {3, 1, 5, 2, 4}
+    ``` 
 
 ## Input Library
 59. `input.string(message)`
