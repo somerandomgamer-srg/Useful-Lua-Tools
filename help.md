@@ -701,9 +701,23 @@
       end)
       print(string.format("Time: %.3fs", time))
     ```
-    
+
 89. `delay(t, func)`
   - Yields `t` seconds before running `func` without stopping other code.
+  - ```lua
+      print("Start")
+      delay(2, function()
+        print("This prints after 2 seconds")
+      end)
+      print("This prints immediately")
+    ```
 
 90. `delay_stop(t, func)`
   - Yields `t` seconds before running `func` while stopping other code.
+  - ```lua
+      print("Start")
+      delay_stop(2, function()
+        print("This prints after 2 seconds")
+      end)
+      print("This only prints after the delay")
+    ```
