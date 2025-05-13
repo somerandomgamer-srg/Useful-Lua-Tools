@@ -163,7 +163,7 @@
     ```
 
 - `math.is_perfect_square(x)`
-  - Checks if a number has an integer square root
+  - Checks if `x` has a whole number square root
   - ```lua
       print(math.is_perfect_square(16)) --> true
       print(math.is_perfect_square(18)) --> false
@@ -216,6 +216,18 @@
       print(math.z_score(7, data)) --> 1.5
     ```
 
+- `math.permutation(x, r)`
+  - Calculates the number of ways to arrange `r` items from `x` items
+  - ```lua
+      print(math.permutation(5, 3)) --> 60
+    ```
+
+- `math.combination(x, r)`
+  - Calculates the number of ways to choose `r` items from `x` items
+  - ```lua
+      print(math.combination(5, 3)) --> 10
+    ```
+
 - `math.secant(x)`
   - Calculates the secant of `x`
   - ```lua
@@ -223,45 +235,33 @@
     ```
 
 - `math.cosecant(x)`
-  - Calculates the cosecant of x
+  - Calculates the cosecant of `x`
   - ```lua
       print(math.cosecant(math.pi/6)) --> 2.0
     ```
 
 - `math.cotangent(x)`
-  - Calculates the cotangent of x
+  - Calculates the cotangent of `x`
   - ```lua
       print(math.cotangent(math.pi/4)) --> 1.0
     ```
 
 - `math.asecant(x)`
-  - Calculates the inverse secant of x
+  - Calculates the inverse secant of `x`
   - ```lua
-      print(math.asecant(2)) --> 1.0472 (≈π/3)
+      print(math.asecant(2)) --> 1.0472
     ```
 
 - `math.acosecant(x)`
-  - Calculates the inverse cosecant of x
+  - Calculates the inverse cosecant of `x`
   - ```lua
-      print(math.acosecant(2)) --> 0.5236 (≈π/6)
+      print(math.acosecant(2)) --> 0.5236
     ```
 
 - `math.acotangent(x)`
-  - Calculates the inverse cotangent of x
+  - Calculates the inverse cotangent of `x`
   - ```lua
-      print(math.acotangent(1)) --> 0.7854 (≈π/4)
-    ```
-
-- `math.permutation(x, r)`
-  - Calculates the number of ways to arrange r items from x items
-  - ```lua
-      print(math.permutation(5, 3)) --> 60
-    ```
-
-- `math.combination(x, r)`
-  - Calculates the number of ways to choose r items from x items
-  - ```lua
-      print(math.combination(5, 3)) --> 10
+      print(math.acotangent(1)) --> 0.7854
     ```
 
 ## String Library Extensions
