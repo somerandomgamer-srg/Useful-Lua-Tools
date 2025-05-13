@@ -253,8 +253,21 @@
       print(math.acotangent(1)) --> 0.7854
     ```
 
+39. `math.midpoint(x, y)`
+    - Calculates the midpoint between `x` and `y`
+    - ```lua
+        math.midpoint(1, 5) --> 3
+      ```
+
+40. `math.is_whole(x)`
+  - Checks if `x` is a whole number
+  - ```lua
+      math.is_whole(5) --> true
+      math.is_whole(2.5) --> false
+    ```
+
 ## String Library Extensions
-39. `string.clean_number(s)`
+41. `string.clean_number(s)`
   - Unlike simple `tonumber()` conversion, this function properly cleans a string (`s`) to ensure it's a valid number format:
     - Extracts numeric values from mixed text (e.g., "22 km" → "22")
     - Handles and corrects multiple decimal points (e.g., "3.23.3" → "3.233")
@@ -275,13 +288,13 @@
       print(string.clean_number("$52.99")) --> "52.99"
     ```
 
-40. `string.trim(s)`
+41. `string.trim(s)`
   - Removes whitespace from both ends of a string.
   - ```lua
       print(string.trim("  hello  ")) --> "hello"
     ```
 
-41. `string.split(s, pattern)`
+42. `string.split(s, pattern)`
   - Splits `s` into a table based on `pattern`.
   - Example:
   - ```lua
@@ -296,46 +309,46 @@
       -- words = {"hello", "world"}
     ```
 
-42. `string.starts_with(s, letter)`
+43. `string.starts_with(s, letter)`
   - Checks if `s` starts with `letter`.
   - ```lua
       print(string.starts_with("Hello", "H")) --> true
     ```
 
-43. `string.ends_with(s, letter)`
+44. `string.ends_with(s, letter)`
   - Checks if `s` ends with `letter`.
   - ```lua
       print(string.ends_with("World", "d")) --> true
     ```
 
-44. `string.pad(s, string_char, length, include_start, include_end)`
+45. `string.pad(s, string_char, length, include_start, include_end)`
   - Adds `string_char` to `s`'s start if `include_start` is true and to its end if `include_end` is true, repeating it `length` times.
   - ```lua
       print(string.pad("hello", "*", 2)) --> "**hello**"
       print(string.pad("hello", "-", 1, true, false)) --> "-hello"
     ```
 
-45. `string.capitalize(s)`
+46. `string.capitalize(s)`
   - Capitalizes the first character of a string.
   - ```lua
       print(string.capitalize("hello")) --> "Hello"
     ```
 
-46. `string.title_case(s, sep)`
+47. `string.title_case(s, sep)`
   - Capitalizes the first letter of each word in `s` using the specified separator `sep` (default is space).
   - ```lua
       print(string.title_case("hello world")) --> "Hello World"
       print(string.title_case("hello-world", "-")) --> "Hello-World"
     ```
 
-47. `string.count(s, pattern)`
+48. `string.count(s, pattern)`
   - Returns the amount of occurrences `pattern` occurs in `s`.
   - ```lua
       print(string.count("hello world", "l")) --> 3
       print(string.count("hello hello", "hello")) --> 2
     ```
 
-48. `string.is_palindrome(s)`
+49. `string.is_palindrome(s)`
   - Checks if a string reads the same forwards and backwards
   - ```lua
       print(string.is_palindrome("racecar")) --> true
@@ -343,7 +356,7 @@
     ```
 
 ## Table Library Extensions
-49. `table.contains(t, value)`
+50. `table.contains(t, value)`
   - Recursively checks if `t` contains `value`.
   - Returns (`true`, `number of instances`) or (`false`, `0`).
   - ```lua
@@ -352,7 +365,7 @@
       print(found, count) --> true, 1
     ```
 
-50. `table.csv_to_table(s)`
+51. `table.csv_to_table(s)`
   - Converts a CSV string (`s`) into a table.
   - ```lua
       local csv = "1,2,3\n4,5,6"
@@ -360,14 +373,14 @@
       -- t = {{1,2,3}, {4,5,6}}
     ```
 
-51. `table.to_csv(t)`
+52. `table.to_csv(t)`
   - Converts a table (`t`) to a CSV string.
   - ```lua
       local csv_string = table.to_csv(t)
       -- csv_string = "1,2,3\n4,5,6"
     ```
 
-52. `table.reverse(t)`
+53. `table.reverse(t)`
   - Reverses the order of elements in `t`.
   - ```lua
       local t = {1, 2, 3}
@@ -375,7 +388,7 @@
       -- reversed = {3, 2, 1}
     ```
 
-53. `table.shuffle(t, n)`
+54. `table.shuffle(t, n)`
   - Shuffles the order of elements in `t` `n` times.
   - ```lua
       local t = {1, 2, 3, 4, 5}
@@ -383,7 +396,7 @@
       -- shuffled = {3, 1, 5, 2, 4} (random order)
     ```
 
-54. `table.count_keys(t)`
+55. `table.count_keys(t)`
   - Counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences.
   - ```lua
       local t = {
@@ -401,7 +414,7 @@
       -- }
     ```
 
-55. `table.deep_count_keys(t, separator)`
+56. `table.deep_count_keys(t, separator)`
   - Recursively counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences.
   - The keys in nested tables are joined using `separator` (defaults to ".").
   - ```lua
@@ -422,7 +435,7 @@
       --   "values.fruits.oranges" = 1
       -- }
     ```
-56. `table.intersection(t1, t2)`
+57. `table.intersection(t1, t2)`
   - Returns a table containing the similarities between `t1` and `t2`
   - NOTE: This function ONLY works on lists/arrays
   - ```lua
@@ -432,7 +445,7 @@
       -- common = {4, 5}
     ```
 
-57. `table.difference(t1, t2)`
+58. `table.difference(t1, t2)`
   - Returns a table containing the differences between `t1` and `t2`
   - NOTE: This function ONLY works on lists/arrays
   - ```lua
@@ -442,7 +455,7 @@
       -- diff = {1, 2, 3, 6, 7, 8}
     ```
 
-58. `table.shuffle_randomseed(t, seed, n)`
+59. `table.shuffle_randomseed(t, seed, n)`
   - Shuffles the order of elements in `t` `n` times using the randomseed (`seed`)
   - NOTE: If `n` is not given, `t` will only shuffle once
   - ```lua
@@ -453,7 +466,7 @@
     ``` 
 
 ## Input Library
-59. `input.string(message)`
+60. `input.string(message)`
   - Gets string input.
   - ```lua
       local name = input.string("Enter your name")
@@ -461,7 +474,7 @@
       -- name = "John"
     ```
 
-60. `input.table(message, number_of_inputs)`
+61. `input.table(message, number_of_inputs)`
   - Collects multiple strings.
   - ```lua
       local names = input.table("Enter 3 names", 3)
@@ -472,7 +485,7 @@
       -- names = {"John", "Jane", "Bob"}
     ```
 
-61. `input.number(message)`
+62. `input.number(message)`
   - Gets validated numeric input.
   - ```lua
       local age = input.number("Enter your age")
@@ -480,7 +493,7 @@
       -- age = 25
     ```
 
-62. `input.number_table(message, number_of_inputs)`
+63. `input.number_table(message, number_of_inputs)`
   - Collects multiple numbers.
   - ```lua
       local scores = input.number_table("Enter 3 scores", 3)
@@ -491,7 +504,7 @@
       -- scores = {95, 87, 92}
     ```
 
-63. `input.loop(message)` / `input.number_loop(message)`
+64. `input.loop(message)` / `input.number_loop(message)`
   - Collects inputs until empty submission.
   - ```lua
       local names = input.loop("Enter names")
@@ -503,55 +516,55 @@
     ```
 
 ## Cryptography Library
-64. `cryptography.text_to_ascii(s)`
+65. `cryptography.text_to_ascii(s)`
   - Converts a string from plaintext to ASCII code numbers.
   - ```lua
       print(cryptography.text_to_ascii("Hello")) --> "72 101 108 108 111"
     ```
 
-65. `cryptography.ascii_to_text(s)`
+66. `cryptography.ascii_to_text(s)`
   - Converts ASCII code numbers back to text.
   - ```lua
       print(cryptography.ascii_to_text("72 101 108 108 111")) --> "Hello"
     ```
 
-66. `cryptography.text_to_hex(s)`
+67. `cryptography.text_to_hex(s)`
   - Converts a string from plaintext to hexadecimal.
   - ```lua
       print(cryptography.text_to_hex("Hello")) --> "48656C6C6F"
     ```
 
-67. `cryptography.hex_to_text(s)`
+68. `cryptography.hex_to_text(s)`
   - Converts hexadecimal back to text.
   - ```lua
       print(cryptography.hex_to_text("48656C6C6F")) --> "Hello"
     ```
 
-68. `cryptography.text_to_binary(s)`
+69. `cryptography.text_to_binary(s)`
   - Converts a string from plaintext to binary.
   - ```lua
       print(cryptography.text_to_binary("Hello")) --> "0100100001100101011011000110110001101111"
     ```
 
-69. `cryptography.binary_to_text(s)`
+70. `cryptography.binary_to_text(s)`
   - Converts binary back to text.
   - ```lua
       print(cryptography.binary_to_text("0100100001100101011011000110110001101111")) --> "Hello"
     ```
 
-70. `cryptography.text_to_morse(s)`
+71. `cryptography.text_to_morse(s)`
   - Converts plaintext to morse code.
   - ```lua
       print(cryptography.text_to_morse("SOS")) --> "... --- ..."
     ```
 
-71. `cryptography.morse_to_text(s)`
+72. `cryptography.morse_to_text(s)`
   - Converts morse code back to plaintext.
   - ```lua
       print(cryptography.morse_to_text("... --- ...")) --> "sos"
     ```
 
-72. `cryptography.xor(s, key)`
+73. `cryptography.xor(s, key)`
   - Performs XOR encryption/decryption on a string using a key.
   - Note: XOR is symmetric - use the same key to decrypt.
   - ```lua
@@ -562,18 +575,18 @@
       print(decrypted) --> "Hello"
     ```
 
-73. `cryptography.caesar_cipher(s, shift)`
+74. `cryptography.caesar_cipher(s, shift)`
   - Applies Caesar cipher encryption to a string with specified shift.
   - ```lua
       print(cryptography.caesar_cipher("Hello", 3)) --> "Khoor"
     ```
 
-74. `cryptography.rot13(s)`
+75. `cryptography.rot13(s)`
   - Applies ROT13 encryption (Caesar cipher with shift of 13).
   - ```lua
       print(cryptography.rot13("Hello")) --> "Uryyb"
     ```
-75. `cryptography.uuid_v4()`
+76. `cryptography.uuid_v4()`
   - Generates a random UUID (version 4)
   - UUID V4 format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
     - `x`: 0-9 and a-f
@@ -592,49 +605,49 @@
       --- }
     ```
 
-76. `cryptography.bswap(x)`
+77. `cryptography.bswap(x)`
   - Performs bitwise SWAP operation.
   - ```lua
       print(cryptography.bswap(0x12345678)) --> 0x78563412
     ```
 
-77. `cryptography.rol(x, disp)`
+78. `cryptography.rol(x, disp)`
   - Performs a bitwise left rotation by specified positions.
   - ```lua
       print(cryptography.rol(0x12345678, 4)) --> 0x23456781
     ```
 
-78. `cryptography.ror(x, disp)`
+79. `cryptography.ror(x, disp)`
   - Performs a bitwise right rotation by specified positions.
   - ```lua
       print(cryptography.ror(0x12345678, 4)) --> 0x81234567
     ```
 
-79. `cryptography.number_to_bit(x)`
+80. `cryptography.number_to_bit(x)`
   - Converts a number to its binary representation.
   - ```lua
       print(cryptography.number_to_bit(12345)) --> 000000000000000011000000111001
     ```
 
-80. `cryptography.number_to_hex(x)`
+81. `cryptography.number_to_hex(x)`
   - Converts a number to its hexadecimal representation.
   - ```lua
       print(cryptography.number_to_hex(255)) --> "ff"
     ```
 
-81. `cryptography.btest(a, b)`
+82. `cryptography.btest(a, b)`
   - Tests if bitwise AND of operands is non-zero.
   - ```lua
       print(cryptography.btest(3, 2)) --> true
     ```
 
-82. `cryptography.extract(n, field, width)`
+83. `cryptography.extract(n, field, width)`
   - Extracts bits from a number.
   - ```lua
       print(cryptography.extract(0xFF, 4, 4)) --> 0xF
     ```
 
-83. `cryptography.replace(n, v, field, width)`
+84. `cryptography.replace(n, v, field, width)`
   - Replaces bits in a number with another value.
   - ```lua
       print(cryptography.replace(0x1234, 0xF, 4, 4)) --> 0x12F4
@@ -642,7 +655,7 @@
 
 ## Global Functions
 
-84. `wait(x)`
+85. `wait(x)`
   - Yields the code for `x` seconds. (Similar to python's wait function)
   - ```lua
       print("Start")
@@ -650,7 +663,7 @@
       print("End")
     ```
 
-85. `is_type(value, type_of_object)`
+86. `is_type(value, type_of_object)`
   - Checks if `value` is a `type_of_object`
   - Available types:
     - |`nil`|`number`|`string`|`boolean`|`table`|`function`|`thread`|`userdata`|
@@ -660,7 +673,7 @@
       print(isType("hello", "string")) --> true
     ```
 
-86. `benchmark(func, iterations)`
+87. `benchmark(func, iterations)`
   - Runs `func` `iterations` times  
   - NOTE: If `iterations` is not given, the code will run 10 times
   - Returns:
@@ -678,7 +691,7 @@
       print(string.format("Total: %.3fs, Average: %.3fs", total, avg))
     ```
 
-87. `execution_time(func)`
+88. `execution_time(func)`
   - Runs `func` and returns the time it takes to run `func`
   - ```lua
       local time, _ = execution_time(function()
@@ -689,8 +702,8 @@
       print(string.format("Time: %.3fs", time))
     ```
     
-88. `delay(t, func)`
+89. `delay(t, func)`
   - Yields `t` seconds before running `func` without stopping other code.
 
-89. `delay_stop(t, func)`
+90. `delay_stop(t, func)`
   - Yields `t` seconds before running `func` while stopping other code.

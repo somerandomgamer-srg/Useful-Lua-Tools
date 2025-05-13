@@ -261,30 +261,24 @@
 82. `cryptography.extract(n, field, width)`
     - Extracts bits from a number.
 
-83. `cryptography.rrotate(x, disp)`
-    - Rotates bits right (negative for left).
-
-84. `cryptography.lrotate(x, disp)`
-    - Rotates bits left (negative for right).
-
-85. `cryptography.replace(n, v, field, width)`
+83. `cryptography.replace(n, v, field, width)`
     - Replaces bits in a number with another value.
 
 ## Global Functions
-86. `wait(x)`
+84. `wait(x)`
     - Yields the code for `x` seconds. (Similar to python's wait function)
 
-87. `is_type(value, type_of_object)`
+85. `is_type(value, type_of_object)`
     - Checks if `value` is a `type_of_object`
 
-88. `benchmark(func, iterations)`
+86. `benchmark(func, iterations)`
     - Runs `func` `iterations` times
 
-89. `execution_time(func)`
+87. `execution_time(func)`
     - Runs `func` and returns the time it takes to run `func`
 
-90. `delay(t, func)`
+88. `delay(t, func)`
     - Yields `t` seconds before running `func` without stopping other code.
 
-91. `delay_stop(t, func)`
+89. `delay_stop(t, func)`
     - Yields `t` seconds before running `func` while stopping other code.
