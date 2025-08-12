@@ -257,6 +257,17 @@ ult.contributors = {
   "SRG (Some Random Gamer)"
 }
 
+---***SRG Custom Variable***
+---
+---The minimum version of Lua required to run Useful Lua Tools
+---@type string
+---@nodiscard
+ult.min_lua_version = "5.3"
+
+---***SRG Custom Variable***
+---
+---
+
 ------------System Library------------
 
 ---***SRG Custom Variable***
