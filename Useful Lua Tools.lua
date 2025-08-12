@@ -2,7 +2,7 @@
 
 ---Error message formatter
 local function errorMsg(expected, name, value)
-  error(string.format("%s expected for '%s', given: %s (%s)", expected, name, tostring(value), type(value)))
+  error(string.format("%s expected for '%s', given: %s (%s).", expected, name, tostring(value), type(value)))
 end
 
 ---Main function for table.shuffle
@@ -11,8 +11,8 @@ local function shuffleTable(t)
   while #t > 0 do
     local random = t[math.random(#t)]
 
-    shuffled:insert(random)
-    t:remove(random)
+    table.insert(shuffled, random)
+    table.remove(t, random)
   end
 
   return shuffled
@@ -37,24 +37,192 @@ local function countRecursive(t, prefix, separator)
   return amount, keyTable
 end
 
+---Function for system.version
+local function getSystemVersion()
+  if system.is_windows() then
+    return io.popen("Get-ComputerInfo | Select-Object WindowsProductName, WindowsVersion"):read()
+  elseif system.is_linux() then
+    return io.popen("uname -r"):read()
+  elseif system.is_mac() then
+    return io.popen("sw_vers"):read()
+  else
+    return nil
+  end
+end
+
+---Function for system.os
+local function getOS()
+  if package.config:sub(1, 1) == "\\" then
+    return "Windows"
+  elseif package.config:sub(1,1) == "/" and io.popen("uname"):read() == "Darwin" then
+    return "macOS"
+  elseif package.config:sub(1,1) == "/" and io.popen("uname"):read() == "Linux" then
+    return "Linux"
+  end
+  return nil
+end
+
+
 local morseCodeTable = {
-  a=".-", b="-...", c="-.-.", d="-..", e=".", f="..-.", g="--.", h="....", i="..", j=".---", k="-.-",
-  l=".-..", m="--", n="-.", o="---", p=".--.", q="--.-", r=".-.", s="...", t="-", u="..-", v="...-",
-  w=".--", x="-..-", y="-.--", z="--..", ["1"]=".----", ["2"]="..---", ["3"]="...--", ["4"]="....-",
-  ["5"]=".....", ["6"]="-....", ["7"]="--...", ["8"]="---..", ["9"]="----.", ["0"]="-----",
-  [" "] = "/", ["!"]="-.-.--", ["@"]=".--.-.", ["&"]=".-...", ["("]="-.--.", [")"]="-.--.-",
-  ["-"]="-....-", ["="]="-...-", ["+"]=".-.-.", [":"]="---...", ["'"]=".----.", ['"']=".-..-.",
-  [","]="--..--", ["."]=".-.-.-", ["/"]="-..-.", ["?"]="..--.."
+  ["a"] = ".-",
+  ["b"] = "-...",
+  ["c"] = "-.-.",
+  ["d"] = "-..",
+  ["e"] = ".",
+  ["f"] = "..-.",
+  ["g"] = "--.",
+  ["h"] = "....",
+  ["i"] = "..",
+  ["j"] = ".---",
+  ["k"] = "-.-",
+  ["l"] = ".-..",
+  ["m"] = "--",
+  ["n"] = "-.",
+  ["o"] = "---",
+  ["p"] = ".--.",
+  ["q"] = "--.-",
+  ["r"] = ".-.",
+  ["s"] = "...",
+  ["t"] = "-",
+  ["u"] = "..-",
+  ["v"] = "...-",
+  ["w"] = ".--",
+  ["x"] = "-..-",
+  ["y"] = "-.--",
+  ["z"] = "--..",
+  ["1"] = ".----",
+  ["2"] = "..---",
+  ["3"] = "...--",
+  ["4"] = "....-",
+  ["5"] = ".....",
+  ["6"] = "-....",
+  ["7"] = "--...",
+  ["8"] = "---..",
+  ["9"] = "----.",
+  ["0"] = "-----",
+  [" "] = "/",
+  ["!"] = "-.-.--",
+  ["@"] = ".--.-.",
+  ["&"] = ".-...",
+  ["("] = "-.--.",
+  [")"] = "-.--.-",
+  ["-"] = "-....-",
+  ["="] = "-...-",
+  ["+"] = ".-.-.",
+  [":"] = "---...",
+  ["'"] = ".----.",
+  ['"'] = ".-..-.",
+  [","] = "--..--",
+  ["."] = ".-.-.-",
+  ["/"] = "-..-.",
+  ["?"] = "..--.."
 }
 
-local sha256Constants = {0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19}
+local base64Chars = {
+  ["000000"] = "A",
+  ["000001"] = "B",
+  ["000010"] = "C",
+  ["000011"] = "D",
+  ["000100"] = "E",
+  ["000101"] = "F",
+  ["000110"] = "G",
+  ["000111"] = "H",
+  ["001000"] = "I",
+  ["001001"] = "J",
+  ["001010"] = "K",
+  ["001011"] = "L",
+  ["001100"] = "M",
+  ["001101"] = "N",
+  ["001110"] = "O",
+  ["001111"] = "P",
+  ["010000"] = "Q",
+  ["010001"] = "R",
+  ["010010"] = "S",
+  ["010011"] = "T",
+  ["010100"] = "U",
+  ["010101"] = "V",
+  ["010110"] = "W",
+  ["010111"] = "X",
+  ["011000"] = "Y",
+  ["011001"] = "Z",
+  ["011010"] = "a",
+  ["011011"] = "b",
+  ["011100"] = "c",
+  ["011101"] = "d",
+  ["011110"] = "e",
+  ["011111"] = "f",
+  ["100000"] = "g",
+  ["100001"] = "h",
+  ["100010"] = "i",
+  ["100011"] = "j",
+  ["100100"] = "k",
+  ["100101"] = "l",
+  ["100110"] = "m",
+  ["100111"] = "n",
+  ["101000"] = "o",
+  ["101001"] = "p",
+  ["101010"] = "q",
+  ["101011"] = "r",
+  ["101100"] = "s",
+  ["101101"] = "t",
+  ["101110"] = "u",
+  ["101111"] = "v",
+  ["110000"] = "w",
+  ["110001"] = "x",
+  ["110010"] = "y",
+  ["110011"] = "z",
+  ["110100"] = "0",
+  ["110101"] = "1",
+  ["110110"] = "2",
+  ["110111"] = "3",
+  ["111000"] = "4",
+  ["111001"] = "5",
+  ["111010"] = "6",
+  ["111011"] = "7",
+  ["111100"] = "8",
+  ["111101"] = "9",
+  ["111110"] = "+",
+  ["111111"] = "/"
+}
 
+local base32Chars = {
+  ["00000"] = "A",
+  ["00001"] = "B",
+  ["00010"] = "C",
+  ["00011"] = "D",
+  ["00100"] = "E",
+  ["00101"] = "F",
+  ["00110"] = "G",
+  ["00111"] = "H",
+  ["01000"] = "I",
+  ["01001"] = "J",
+  ["01010"] = "K",
+  ["01011"] = "L",
+  ["01100"] = "M",
+  ["01101"] = "N",
+  ["01110"] = "O",
+  ["01111"] = "P",
+  ["10000"] = "Q",
+  ["10001"] = "R",
+  ["10010"] = "S",
+  ["10011"] = "T",
+  ["10100"] = "U",
+  ["10101"] = "V",
+  ["10110"] = "W",
+  ["10111"] = "X",
+  ["11000"] = "Y",
+  ["11001"] = "Z",
+  ["11010"] = "2",
+  ["11011"] = "3",
+  ["11100"] = "4",
+  ["11101"] = "5",
+  ["11110"] = "6",
+  ["11111"] = "7"
+}
 
----------Initiate Variables---------
-
--- ---The golden ratio (math`(1 + math.sqrt(5)) / 2`)
--- ---@type number
--- math.gr = (1 + math.sqrt(5)) / 2
+local morseReverse = table.keypair_reverse(morseCodeTable)
+local base64Reverse = table.keypair_reverse(base64Chars)
+local base32Reverse = table.keypair_reverse(base32Chars)
 
 ---------Initiate Libraries---------
 
@@ -64,36 +232,105 @@ cryptography = {}
 ---@class inputlib
 input = {}
 
+---@class systemlib
+system = {}
+
+---@class ultlib
+ult = {}
+
+-----------ULT Main Library-----------
+
+---***SRG Custom Variable***
+---
+---The version of Useful Lua Tools
+---"Major Update"."Minor Update"."Patch"
+---@type string
+---@nodiscard
+ult.version = "1.1.0"
+
+---***SRG Custom Variable***
+---
+---The people who contributed to Useful Lua Tools
+---@type table
+---@nodiscard
+ult.contributors = {
+  "SRG (Some Random Gamer)"
+}
+
+------------System Library------------
+
+---***SRG Custom Variable***
+---
+---The OS the system is running on. Can be "Windows", "macOS", "Linux", or nil if it cannot be determined
+---@type string?
+---@nodiscard
+system.os = getOS()
+
+---***SRG Custom Variable***
+---
+---true if the host system is running on Windows, false otherwise
+---@type boolean
+---@nodiscard
+system.is_windows = system.os == "Windows"
+
+---***SRG Custom Variable***
+---
+---true if the host system is running on macOS, false otherwise
+---@type boolean
+---@nodiscard
+system.is_mac = system.os == "macOS"
+
+---***SRG Custom Variable***
+---
+---true if the host system is running on Linux, false otherwise
+---@type boolean
+---@nodiscard
+system.is_linux = system.os == "Linux"
+
+---***SRG Custom Variable***
+---
+---The system version, or nil if it cannot be determined
+---@type string?
+---@nodiscard
+system.version = getSystemVersion()
+
+---***SRG Custom Variable***
+---
+---The system unix name, or nil if it cannot be determined
+---@type string?
+---@nodiscard
+system.uname = io.popen("uname"):read() or nil
+
 ---------Cryptography Library---------
 
 ---***SRG Custom Function***
 ---
----Converts a string (`s`) from plaintext to ascii
+---Converts plaintext to ASCII code numbers.
 ---@param s string
 ---@return string
 ---@nodiscard
 function cryptography.text_to_ascii(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
-  local asciiCode = ""
-  for i in s do asciiCode = asciiCode .. s[i]:byte() .. " " end
-  return string.trim(asciiCode)
+  local ascii = ""
+  for i in s do ascii = ascii .. s[i]:byte() .. " " end
+  return string.trim(ascii)
 end
 
 ---***SRG Custom Function***
 ---
----Converts ASCII codes to text
+---Converts ASCII code numbers to plaintext.
 ---@param s string
 ---@return string
 ---@nodiscard
 function cryptography.ascii_to_text(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if not s:match("^%d+%s*") then error("Input must be space-separated ASCII numbers") end
+  if not s:match("^%d+%s*") then error("Input must be space-separated ASCII numbers.") end
 
   local text = ""
   for num in s:gmatch("%d+") do
     local n = tonumber(num)
-    if n < 0 or n > 255 then error("ASCII values must be between 0 and 255") end
+    if n < 0 or n > 255 then error("ASCII values must be between 0 and 255.") end
     text = text .. string.char(n)
   end
   return text
@@ -101,26 +338,27 @@ end
 
 ---***SRG Custom Function***
 ---
----Converts a string (`s`) from plaintext to hexadecimal
+---Converts plaintext to hexadecimal.
 ---@param s string
 ---@return string
 ---@nodiscard
 function cryptography.text_to_hex(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
-  local hexCode = ""
-  for i = 1, #s do hexCode = hexCode .. string.format("%02X", s[i]:byte()) end
-  return hexCode
+  local hex = ""
+  for i = 1, #s do hex = hex .. string.format("%02X", s[i]:byte()) .. " " end
+  return hex
 end
 
 ---***SRG Custom Function***
 ---
----Converts hexadecimal to text
+---Converts hexadecimal to plaintext.
 ---@param s string
 ---@return string
 ---@nodiscard
 function cryptography.hex_to_text(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if not s:match("^%d+%s*") then error("Input must be space-seperated.") end
 
   local text = ""
   for hex in s:gmatch("..") do text = text .. string.char(tonumber(hex, 16)) end
@@ -129,39 +367,86 @@ end
 
 ---***SRG Custom Function***
 ---
----Converts a string (`s`) from plaintext to binary
+---Converts plaintext to binary (`x` bits).
+---
+---`x` defaults to `8` if not given.
 ---@param s string
+---@param x? number
 ---@return string
 ---@nodiscard
-function cryptography.text_to_binary(s)
+function cryptography.text_to_binary(s, x)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
-  local binaryCode = ""
-  for i = 1, #s do
-    local charCode = string.byte(s, i)
-    local binary = string.format("%08b", charCode)
-    binaryCode = binaryCode .. binary
+  if x then
+    if type(x) ~= "number" then errorMsg("Number", "x", x) end
+    if x <= 0 then error("'x' cannot be less than or equal to 0. Given: " .. tostring(x)) end
+    if not math.is_whole(x) then error("'x' must be a whole number. Given: " .. tostring(x)) end
+  else
+    x = 8
   end
-  return string.trim(binaryCode)
+
+  local binary = ""
+  for i = 1, #s do binary = binary .. string.format("%0*b", x, s:byte(i)) end
+  return string.trim(binary)
 end
 
 ---***SRG Custom Function***
 ---
----Converts binary string to text
+---Converts binary (`x` bits) to plaintext.
+---
+---`x` defaults to `8` if not given.
 ---@param s string
+---@param x? number
 ---@return string
 ---@nodiscard
-function cryptography.binary_to_text(s)
+function cryptography.binary_to_text(s, x)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
+  if x then
+    if type(x) ~= "number" then errorMsg("Number", "x", x) end
+    if x <= 0 then error("'x' cannot be less than or equal to 0. Given: " .. tostring(x)) end
+    if not math.is_whole(x) then error("'x' must be a whole number. Given: " .. tostring(x)) end
+  else
+    x = 8
+  end
+
   local text = ""
-  for binary in s:gmatch("%d+") do text = text .. string.char(tonumber(binary, 2)) end
+  for i = 1, #s, x do text = text .. string.char(tonumber(s:sub(i, i + x - 1), 2)) end
   return text
 end
 
 ---***SRG Custom Function***
 ---
----Converts plaintext to morse code
+---Converts plaintext to space-seperated octal.
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.text_to_octal(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  local octal = ""
+  for i = 1, #s do octal = octal .. string.format("%o", s[i]:byte()) .. " " end
+  return string.trim(octal)
+end
+
+---***SRG Custom Function***
+---
+---Converts space-seperated octal to plaintext.
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.octal_to_text(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if not s:match("^%d+%s*") then error("Input must be space-seperated.") end
+
+  local text = ""
+  for octal in s:gmatch("%d+") do text = text .. string.char(tonumber(octal, 8)) end
+  return text
+end
+
+---***SRG Custom Function***
+---
+---Converts plaintext to morse code.
 ---@param s string
 ---@return string
 ---@nodiscard
@@ -169,8 +454,8 @@ function cryptography.text_to_morse(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   local morse = ""
-  for c in s:lower():gmatch(".") do
-    local code = morseCodeTable[c]
+  for char in #s:lower() do
+    local code = morseCodeTable[char]
     if code then morse = morse .. code .. " " end
   end
   return string.trim(morse)
@@ -178,24 +463,111 @@ end
 
 ---***SRG Custom Function***
 ---
----Converts a string (`s`) from morse code to plaintext
+---Converts morse code to plaintext.
 ---@param s string
 ---@return string
 ---@nodiscard
 function cryptography.morse_to_text(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
-  local text = ""
-  local morseToText = {}
-
-  for char, morse in pairs(morseCodeTable) do morseToText[morse] = char end
-
   s = s:gsub(" / ", "  ")
+
+  local text = ""
   for symbol in s:gmatch("%S+") do
-    local char = morseToText[symbol]
+    local char = morseReverse[symbol]
     if char then text = text .. char end
   end
-  return string.trim(text)
+  return text
+end
+
+---***SRG Custom Function***
+---
+---Converts plaintext to base64.
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.text_to_base64(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  local bits = {}
+  local encoded = ""
+  local binary = cryptography.text_to_binary(s)
+
+  for i = 1, #binary, 6 do
+    local chunk = binary:sub(i, i + 5)
+    while #chunk < 6 do chunk = chunk .. "0" end
+    table.insert(bits, chunk)
+  end
+
+  for i = 1, #bits do encoded = encoded .. base64Chars[bits[i]] end
+
+  if #s % 3 ~= 0 then encoded = encoded .. string.rep("=", 3 - (#s % 3)) end
+  return encoded
+end
+
+---***SRG Custom Function***
+---
+---Converts base64 to plaintext.
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.base64_to_text(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  s = s:gsub("=", "")
+
+  local binary = ""
+
+  for i = 1, #s do binary = binary .. base64Reverse[s[i]] end
+
+  if #binary % 8 ~= 0 then binary = binary:sub(1, #binary - (#binary % 8)) end
+
+  return cryptography.binary_to_text(binary)
+end
+
+---***SRG Custom Function***
+---
+---Converts plaintext to base32.
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.text_to_base32(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  local bits = {}
+  local encoded = ""
+  local binary = cryptography.text_to_binary(s)
+
+  for i = 1, #binary, 5 do
+    local chunk = binary:sub(i, i + 4)
+    while #chunk < 5 do chunk = chunk .. "0" end
+    table.insert(bits, chunk)
+  end
+
+  for i = 1, #bits do encoded = encoded .. base32Chars[bits[i]] end
+
+  if #s % 8 ~= 0 then encoded = encoded .. string.rep("=", 8 - (#s % 8)) end
+  return encoded
+end
+
+---***SRG Custom Function***
+---
+---Converts base32 to plaintext.
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.base32_to_text(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  s = s:gsub("=", "")
+
+  local binary = ""
+
+  for i = 1, #s do binary = binary .. base32Reverse[s[i]] end
+
+  if #binary % 8 ~= 0 then binary = binary:sub(1, #binary - (#binary % 8)) end
+
+  return cryptography.binary_to_text(binary)
 end
 
 ---***SRG Custom Function***
@@ -230,8 +602,8 @@ end
 ---***SRG Custom Function***
 ---
 ---performs a bitwise left rotation on `x` by `disp` positions.
----@param x number The number to rotate
----@param disp number The number of positions to rotate left
+---@param x number
+---@param disp number
 ---@return number
 function cryptography.rol(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
@@ -243,8 +615,8 @@ end
 ---***SRG Custom Function***
 ---
 ---Performs a bitwise right rotation on `x` by `disp` positions.
----@param x number The number to rotate
----@param disp number The number of positions to rotate right
+---@param x number
+---@param disp number
 ---@return number
 function cryptography.ror(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
@@ -370,7 +742,8 @@ function cryptography.caesar_cipher(s, shift)
     if character:match("%a") then
       local base = character:match("%u") and 65 or 97
       encrypted = encrypted .. string.char(((string.byte(character) - base + shift) % 26) + base)
-    else encrypted = encrypted .. character
+    else
+      encrypted = encrypted .. character
     end
   end
 
@@ -400,7 +773,8 @@ end
 function input.string(message)
   if message then
     if type(message) ~= "string" then errorMsg("String", "message", message) end
-  else message = ""
+  else
+    message = ""
   end
 
   io.write(message .. ": ")
@@ -422,7 +796,8 @@ end
 function input.table(message, number_of_inputs)
   if message then
     if type(message) ~= "string" then errorMsg("String", "message", message) end
-  else message = ""
+  else
+    message = ""
   end
 
   if type(number_of_inputs) ~= "number" then
@@ -457,7 +832,8 @@ end
 function input.number(message)
   if message then
     if type(message) ~= "string" then errorMsg("String", "message", message) end
-  else message = ""
+  else
+    message = ""
   end
 
   io.write(message .. ": ")
@@ -485,7 +861,8 @@ end
 function input.number_table(message, number_of_inputs)
   if message then
     if type(message) ~= "string" then errorMsg("String", "message", message) end
-  else message = ""
+  else
+    message = ""
   end
 
   if type(number_of_inputs) ~= "number" then
@@ -518,7 +895,8 @@ end
 function input.loop(message)
   if message then
     if type(message) ~= "string" then errorMsg("String", "message", message) end
-  else message = ""
+  else
+    message = ""
   end
 
   local inputs = {}
@@ -543,10 +921,11 @@ end
 ---@return table
 ---@nodiscard
 function input.number_loop(message)
-if message then
-  if type(message) ~= "string" then errorMsg("String", "message", message) end
-else message = ""
-end
+  if message then
+    if type(message) ~= "string" then errorMsg("String", "message", message) end
+  else
+    message = ""
+  end
 
   local inputs = {}
   local current = 1
@@ -593,10 +972,12 @@ end
 function math.median(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
-  t:sort()
+  table.sort(t)
   local middle = math.floor(#t / 2) + 1
-  if #t % 2 == 1 then return t[middle]
-  else return (t[middle] + t[middle - 1]) / 2
+  if #t % 2 == 1 then
+    return t[middle]
+  else
+    return (t[middle] + t[middle - 1]) / 2
   end
 end
 
@@ -609,8 +990,8 @@ end
 function math.range(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
-  local minimum = math.min(t:unpack())
-  local maximum = math.max(t:unpack())
+  local minimum = math.min(table.unpack(t))
+  local maximum = math.max(table.unpack(t))
 
   return maximum - minimum
 end
@@ -626,8 +1007,10 @@ function math.mode(t)
 
   local freq = {}
   for i = 1, #t do
-    if freq[t[i]] then freq[t[i]] = freq[t[i]] + 1
-    else freq[t[i]] = 1
+    if freq[t[i]] then
+      freq[t[i]] = freq[t[i]] + 1
+    else
+      freq[t[i]] = 1
     end
   end
 
@@ -651,7 +1034,7 @@ function math.standard_deviation(t)
 
   local deviation = 0
   local avg = math.average(t)
-  for i = 1, #t do deviation = deviation + (t[i] - avg)^2 end
+  for i = 1, #t do deviation = deviation + (t[i] - avg) ^ 2 end
   return math.sqrt(deviation / #t)
 end
 
@@ -683,9 +1066,12 @@ function math.gcd(x, y)
   local result
   local biggest = math.max(x, y)
 
-  if x == y then result = x
-  elseif x == 0 or y == 0 then result = "N/A"
-  elseif x == 1 or y == 1 then result = 1
+  if x == y then
+    result = x
+  elseif x == 0 or y == 0 then
+    result = "N/A"
+  elseif x == 1 or y == 1 then
+    result = 1
   else
     for i = 1, biggest do
       if x % i == 0 and y % i == 0 then result = i end
@@ -704,7 +1090,8 @@ end
 function math.is_prime(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
-  if x < 2 then return false
+  if x < 2 then
+    return false
   else
     local prime = true
     for i = 2, x - 1 do
@@ -834,7 +1221,7 @@ end
 ---@nodiscard
 function math.acosh(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  return math.log(x + math.sqrt(x^2 - 1))
+  return math.log(x + math.sqrt(x ^ 2 - 1))
 end
 
 ---***SRG Custom Function***
@@ -845,7 +1232,7 @@ end
 ---@nodiscard
 function math.atanh(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  return math.log((1 + x)/(1 - x)) / 2
+  return math.log((1 + x) / (1 - x)) / 2
 end
 
 ---***SRG Custom Function***
@@ -856,7 +1243,7 @@ end
 ---@nodiscard
 function math.asinh(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  return math.log(x + math.sqrt(x^2 + 1))
+  return math.log(x + math.sqrt(x ^ 2 + 1))
 end
 
 ---***SRG Custom Function***
@@ -869,7 +1256,7 @@ function math.round(x, precision)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(precision) ~= "number" then errorMsg("Number", "precision", precision) end
 
-  local mult = 10^(precision or 0)
+  local mult = 10 ^ (precision or 0)
   return math.floor(x * mult + 0.5) / mult
 end
 
@@ -881,10 +1268,14 @@ end
 function math.fib(n)
   if type(n) ~= "number" then errorMsg("Number", "n", n) end
 
-  if n <= 0 then return 0
-  elseif n == 1 then return 0
-  elseif n == 2 then return 1
-  else return math.fib(n-1) + math.fib(n-2)
+  if n <= 0 then
+    return 0
+  elseif n == 1 then
+    return 0
+  elseif n == 2 then
+    return 1
+  else
+    return math.fib(n - 1) + math.fib(n - 2)
   end
 end
 
@@ -923,8 +1314,10 @@ function math.random_sign(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
   local r = math.random(2)
-  if r == 2 then return -math.abs(x)
-  else return math.abs(x)
+  if r == 2 then
+    return -math.abs(x)
+  else
+    return math.abs(x)
   end
 end
 
@@ -998,9 +1391,9 @@ function math.factors(x)
   if math.floor(x) ~= x then error("`x` must be a whole number") end
 
 
-  local factors = {1, x}
+  local factors = { 1, x }
   for i = 2, x - 1 do
-    if x % i == 0 then factors:insert(i) end
+    if x % i == 0 then table.insert(factors, i) end
   end
 
   return factors
@@ -1048,10 +1441,14 @@ end
 function math.classify_number(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
-  if math.is_perfect(x) then return "Perfect"
-  elseif math.is_deficient(x) then return "Deficient"
-  elseif math.is_abundant(x) then return "Abundant"
-  else return "Unknown"
+  if math.is_perfect(x) then
+    return "Perfect"
+  elseif math.is_deficient(x) then
+    return "Deficient"
+  elseif math.is_abundant(x) then
+    return "Abundant"
+  else
+    return "Unknown"
   end
 end
 
@@ -1183,7 +1580,7 @@ end
 ---
 ---Cleans a `s` to ensure it's a valid number format
 ---@param s string
----@return string 
+---@return string
 ---@nodiscard
 function string.clean_number(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
@@ -1191,7 +1588,7 @@ function string.clean_number(s)
   local cleaned = s:gsub("[^0-9%.%-]", "")
 
   local firstDecimal = cleaned:find("%.")
-  if firstDecimal then cleaned = cleaned:sub(1, firstDecimal)..cleaned:sub(firstDecimal + 1):gsub("%.", "") end
+  if firstDecimal then cleaned = cleaned:sub(1, firstDecimal) .. cleaned:sub(firstDecimal + 1):gsub("%.", "") end
 
   local hasHyphen = cleaned:find("%-")
   if hasHyphen then
@@ -1230,7 +1627,7 @@ function string.split(s, pattern)
   for i = 1, #s do
     if s:sub(i, i) == pattern then
       local string = s:sub(start, i - 1)
-      toReturn:insert(string)
+      table.insert(toReturn, string)
       start = i + 1
     end
   end
@@ -1303,7 +1700,7 @@ end
 ---
 ---Capitalizes the first letter of each word in `s`, seperating each word by the specified separator `sep` (default is space)
 ---@param s string
----@param sep? string 
+---@param sep? string
 ---@return string
 ---@nodiscard
 function string.title_case(s, sep)
@@ -1326,7 +1723,7 @@ end
 ---
 ---Returns the amount of occurrences `pattern` occurs in `s`
 ---@param s string
----@param pattern? string 
+---@param pattern? string
 ---@return number
 ---@nodiscard
 function string.count(s, pattern)
@@ -1366,7 +1763,8 @@ function table.contains(t, value)
 
   local amount = 0
   for _, v in pairs(t) do
-    if v == value then amount = amount + 1
+    if v == value then
+      amount = amount + 1
     elseif type(v) == "table" then
       local contains, instances = table.contains(v, value)
       if contains then amount = amount + instances end
@@ -1377,7 +1775,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Converts a CSV string (`s`) into a table 
+---Converts a CSV string (`s`) into a table
 ---@param s string
 ---@return table
 ---@nodiscard
@@ -1463,7 +1861,7 @@ function table.reverse(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   local reversed = {}
-  for i = #t, 1, -1 do reversed:insert(i) end
+  for i = #t, 1, -1 do table.insert(reversed, i) end
   return reversed
 end
 
@@ -1542,7 +1940,7 @@ function table.intersection(t1, t2)
 
   local intersectionTable = {}
   for _, v in pairs(t1) do
-    if table.contains(t2, v) then intersectionTable:insert(v) end
+    if table.contains(t2, v) then table.insert(intersectionTable, v) end
   end
   return intersectionTable
 end
@@ -1561,7 +1959,7 @@ function table.difference(t1, t2)
 
   local differenceTable = {}
   for _, v in pairs(t1) do
-    if not table.contains(t2, v) then differenceTable:insert(v) end
+    if not table.contains(t2, v) then table.insert(differenceTable, v) end
   end
   return differenceTable
 end
@@ -1585,20 +1983,59 @@ function table.shuffle_randomseed(t, seed, n)
   return shuffled
 end
 
----------Global Functions---------
+---***SRG Custom Function***
+---
+---Returns a reversed key-pair table of `t` in which each `key = value` turns into `value = key`.
+---@param t table
+---@return table
+---@nodiscard
+function table.keypair_reverse(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  local reverse = {}
+  for k, v in pairs(t) do reverse[v] = k end
+
+  return reverse
+end
 
 ---***SRG Custom Function***
 ---
----Yields the code for `x` seconds (Similar to the python wait() function)
+---Returns the last element in `t`
+---@param t table
+---@return table
+---@nodiscard
+function table.last(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  return table[#t]
+end
+
+---***SRG Custom Function***
+---
+---Returns the first element in `t`
+---@param t table
+---@return table
+---@nodiscard
+function table.first(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  return table[1]
+end
+
+---***SRG Custom Function***
+---
+---Yields the code for `x` seconds. (Similar to python's wait function).
 ---@param x number
 function wait(x)
   if x then
     if type(x) ~= "number" then errorMsg("Number", "x", x) end
-    if x < 0 then error("'x' cannot be less than 0") end
-  else x = 0.001
+  else
+    x = 1
   end
 
-  os.execute(string.format("sleep %d", x))
+  if package.config:sub(1, 1) == "\\" then
+    os.execute("timeout /t " .. x .. " /nobreak >nul")
+  else
+    os.execute("sleep " .. x)
+  end
 end
 
 ---***SRG Custom Function***
@@ -1628,7 +2065,8 @@ function benchmark(func, iterations)
   if type(func) ~= "function" then errorMsg("Function", "func", func) end
   if iterations then
     if type(iterations) ~= "number" then errorMsg("Number", "iterations", iterations) end
-  else iterations = 10
+  else
+    iterations = 10
   end
 
   local startTime = os.clock()
