@@ -266,7 +266,10 @@ ult.min_lua_version = "5.3"
 
 ---***SRG Custom Variable***
 ---
----
+---The current build of Useful Lua Tools
+---@type string
+---@nodiscard
+ult.build = "ult-08.12.2025-
 
 ------------System Library------------
 
