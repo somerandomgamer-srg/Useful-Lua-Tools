@@ -40,7 +40,7 @@ end
 ---Function for system.version
 local function getSystemVersion()
   if system.is_windows() then
-    return io.popen("Get-ComputerInfo | Select-Object WindowsProductName, WindowsVersion"):read()
+    return io.popen('powershell -Command "systeminfo | findstr /C:"OS Name""'):read("*l") .. io.popen("Get-ComputerInfo | Select-Object WindowsProductName, OSDisplayVersion"):read()
   elseif system.is_linux() then
     return io.popen("uname -r"):read()
   elseif system.is_mac() then
@@ -58,6 +58,8 @@ local function getOS()
     return "macOS"
   elseif package.config:sub(1,1) == "/" and io.popen("uname"):read() == "Linux" then
     return "Linux"
+  elseif package.config:sub(1,1) == "/" and io.popen("uname"):read() == "Chrome" then
+    return "Chrome OS"
   end
   return nil
 end
@@ -267,9 +269,17 @@ ult.min_lua_version = "5.3"
 ---***SRG Custom Variable***
 ---
 ---The current build of Useful Lua Tools
+---Project-version-date-minimum lua version
 ---@type string
 ---@nodiscard
-ult.build = "ult-08.12.2025-
+ult.build = string.format("ult-%s-08.12.2025-lua %s", ult.version, ult.min_lua_version)
+
+---***SRG Custom Variable***
+---
+---The release date of the current ULT version
+---@type string
+---@nodiscard
+ult.release_date = "08/12/2025"
 
 ------------System Library------------
 
@@ -303,6 +313,13 @@ system.is_linux = system.os == "Linux"
 
 ---***SRG Custom Variable***
 ---
+---true if the host system is running on Chrome OS, false otherwise
+---@type boolean
+---@nodiscard
+system.is_chrome = system.os == "Chrome OS"
+
+---***SRG Custom Variable***
+---
 ---The system version, or nil if it cannot be determined
 ---@type string?
 ---@nodiscard
@@ -314,6 +331,13 @@ system.version = getSystemVersion()
 ---@type string?
 ---@nodiscard
 system.uname = io.popen("uname"):read() or nil
+
+---***SRG Custom Variable***
+---
+---
+---@type string?
+---@nodiscard
+
 
 ---------Cryptography Library---------
 
