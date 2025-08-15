@@ -54,12 +54,19 @@ end
 local function getOS()
   if package.config:sub(1, 1) == "\\" then
     return "Windows"
-  elseif package.config:sub(1,1) == "/" and io.popen("uname"):read() == "Darwin" then
-    return "macOS"
-  elseif package.config:sub(1,1) == "/" and io.popen("uname"):read() == "Linux" then
-    return "Linux"
-  elseif package.config:sub(1,1) == "/" and io.popen("uname"):read() == "Chrome" then
-    return "Chrome OS"
+  elseif package.config:sub(1,1) == "/" then
+    local uname = io.popen("uname"):read()
+    if uname == "Darwin" then
+      return "macOS"
+    elseif uname == "Linux" then
+      -- Check if it's Chrome OS by looking for Chrome OS specific files/directories
+      local chromeOSCheck = io.popen("test -d /opt/google/chrome && echo 'chromeos' || echo 'linux'"):read()
+      if chromeOSCheck == "chromeos" then
+        return "Chrome OS"
+      else
+        return "Linux"
+      end
+    end
   end
   return nil
 end
@@ -283,9 +290,18 @@ ult.release_date = "08/12/2025"
 
 ------------System Library------------
 
+---***SRG Custom Function***
+---
+---Checks if the system is running Chrome OS
+---@return boolean
+---@nodiscard
+function system.is_chromeos()
+  return system.os == "Chrome OS"
+end
+
 ---***SRG Custom Variable***
 ---
----The OS the system is running on. Can be "Windows", "macOS", "Linux", or nil if it cannot be determined
+---The OS the system is running on. Can be "Windows", "macOS", "Linux", "Chrome OS", or nil if it cannot be determined
 ---@type string?
 ---@nodiscard
 system.os = getOS()
