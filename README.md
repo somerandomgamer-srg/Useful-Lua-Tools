@@ -1,8 +1,8 @@
-# Useful Lua Tools (Version 1)
+# Useful Lua Tools (Version 1.3.0)
 ## (A message from the creator)
 ### About Me
 Hello, I am SRG (short for `Some Random Gamer`).
-- I have been scripting for less than a year.
+- I have been into coding for about a year.
 - I know how to:
   - Code with Lua
   - Code with Luau, a sub-version of Lua that was specifically made for Roblox
@@ -10,9 +10,9 @@ Hello, I am SRG (short for `Some Random Gamer`).
 - I originally got into coding because of my friend Michialok.
 - I started coding in Roblox and self-taught myself most of the things I know.
 - I have taken 5 Computer Science classes.
-- I've taken 3 different Engineering classes and I am currently in another one as I'm typing this (Probably should focus more on my class but my grades should be good enough for me to get distracted lol).
-- I can barely code with Python
-- I'm also planning to learn Javascript.
+- I've taken 4 different Engineering classes.
+- I can barely code with Python.
+- I'm planning to learn Javascript.
 
 ## Usage
 Nothing much to say here.
@@ -35,13 +35,13 @@ For questions, suggestions, or contributions related to this template:
 
 ## License
 Copyright 2025 Some Random Gamer (SRG)
-
+```
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+```
 ## Disclaimers
 1. **No Support Obligation**: SRG is under no obligation to provide support, updates, or maintenance for this software.
 

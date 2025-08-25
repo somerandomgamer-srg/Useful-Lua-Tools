@@ -2,7 +2,7 @@
 
 ---Error message formatter
 local function errorMsg(expected, name, value)
-  error(string.format("%s expected for '%s', given: %s (%s).", expected, name, tostring(value), type(value)))
+  error(("%s expected for '%s', given: %s (%s)."):format(expected, name, tostring(value), type(value)))
 end
 
 ---Main function for table.shuffle
@@ -37,32 +37,18 @@ local function countRecursive(t, prefix, separator)
   return amount, keyTable
 end
 
----Function for system.version
-local function getSystemVersion()
-  if system.is_windows() then
-    return io.popen('powershell -Command "systeminfo | findstr /C:"OS Name""'):read("*l") .. io.popen("Get-ComputerInfo | Select-Object WindowsProductName, OSDisplayVersion"):read()
-  elseif system.is_linux() then
-    return io.popen("uname -r"):read()
-  elseif system.is_mac() then
-    return io.popen("sw_vers"):read()
-  else
-    return nil
-  end
-end
-
 ---Function for system.os
 local function getOS()
   if package.config:sub(1, 1) == "\\" then
     return "Windows"
-  elseif package.config:sub(1,1) == "/" then
+  elseif package.config:sub(1, 1) == "/" then
     local uname = io.popen("uname"):read()
     if uname == "Darwin" then
-      return "macOS"
+      return "MacOS"
     elseif uname == "Linux" then
-      -- Check if it's Chrome OS by looking for Chrome OS specific files/directories
       local chromeOSCheck = io.popen("test -d /opt/google/chrome && echo 'chromeos' || echo 'linux'"):read()
       if chromeOSCheck == "chromeos" then
-        return "Chrome OS"
+        return "ChromeOS"
       else
         return "Linux"
       end
@@ -71,6 +57,36 @@ local function getOS()
   return nil
 end
 
+---Function for system.uname
+local function getUname()
+  if system.is_windows then
+    return nil
+  else
+    return io.popen("uname"):read()
+  end
+end
+
+---Function for system.cores
+local function getNumCores()
+  if system.is_windows then
+    return tonumber(io.popen('powershell -Command "(Get-CimInstance Win32_Processor).NumberOfLogicalProcessors"'):read()) or
+        nil
+  elseif system.is_mac then
+    return tonumber(io.popen("sysctl -n hw.logicalcpu"):read()) or nil
+  elseif system.is_linux or system.is_chrome then
+    return tonumber(io.popen("nproc"):read()) or nil
+  end
+end
+
+---Function for system.architecture
+local function getArchitecture()
+  if system.is_windows then
+    return io.popen('powershell -Command "Get-CimInstance Win32_Processor | Select-Object -ExpandProperty Architecture"')
+        :read() or nil
+  elseif system.is_mac or system.is_chrome or system.is_linux then
+    return io.popen("uname -m"):read() or nil
+  end
+end
 
 local morseCodeTable = {
   ["a"] = ".-",
@@ -247,20 +263,22 @@ system = {}
 ---@class ultlib
 ult = {}
 
+---@class colorlib
+color = {}
+
 -----------ULT Main Library-----------
 
 ---***SRG Custom Variable***
 ---
 ---The version of Useful Lua Tools
+---
 ---"Major Update"."Minor Update"."Patch"
----@type string
 ---@nodiscard
-ult.version = "1.1.0"
+ult.version = "1.3.0"
 
 ---***SRG Custom Variable***
 ---
 ---The people who contributed to Useful Lua Tools
----@type table
 ---@nodiscard
 ult.contributors = {
   "SRG (Some Random Gamer)"
@@ -269,91 +287,302 @@ ult.contributors = {
 ---***SRG Custom Variable***
 ---
 ---The minimum version of Lua required to run Useful Lua Tools
----@type string
 ---@nodiscard
-ult.min_lua_version = "5.3"
-
----***SRG Custom Variable***
----
----The current build of Useful Lua Tools
----Project-version-date-minimum lua version
----@type string
----@nodiscard
-ult.build = string.format("ult-%s-08.12.2025-lua %s", ult.version, ult.min_lua_version)
+ult.min_lua_ver = "5.3"
 
 ---***SRG Custom Variable***
 ---
 ---The release date of the current ULT version
----@type string
 ---@nodiscard
-ult.release_date = "08/12/2025"
-
-------------System Library------------
-
----***SRG Custom Function***
----
----Checks if the system is running Chrome OS
----@return boolean
----@nodiscard
-function system.is_chromeos()
-  return system.os == "Chrome OS"
-end
+ult.release_date = "08/22/2025"
 
 ---***SRG Custom Variable***
 ---
----The OS the system is running on. Can be "Windows", "macOS", "Linux", "Chrome OS", or nil if it cannot be determined
----@type string?
+---The current build of Useful Lua Tools
+---
+---"Project"-"version"-"date of release"-"minimum lua version"
+---@nodiscard
+ult.build = ("ult-%s-%s-%s"):format(ult.version, ult.release_date, ult.min_lua_ver)
+
+------------System Library------------
+
+---***SRG Custom Variable***
+---
+---The OS the system is running on, or nil if it cannot be determined
 ---@nodiscard
 system.os = getOS()
 
 ---***SRG Custom Variable***
 ---
 ---true if the host system is running on Windows, false otherwise
----@type boolean
 ---@nodiscard
 system.is_windows = system.os == "Windows"
 
 ---***SRG Custom Variable***
 ---
----true if the host system is running on macOS, false otherwise
----@type boolean
+---true if the host system is running on MacOS, false otherwise
 ---@nodiscard
-system.is_mac = system.os == "macOS"
+system.is_mac = system.os == "MacOS"
 
 ---***SRG Custom Variable***
 ---
 ---true if the host system is running on Linux, false otherwise
----@type boolean
 ---@nodiscard
 system.is_linux = system.os == "Linux"
 
 ---***SRG Custom Variable***
 ---
 ---true if the host system is running on Chrome OS, false otherwise
----@type boolean
 ---@nodiscard
-system.is_chrome = system.os == "Chrome OS"
+system.is_chrome = system.os == "ChromeOS"
 
 ---***SRG Custom Variable***
 ---
----The system version, or nil if it cannot be determined
----@type string?
+---The system Unix Name, or nil if it cannot be determine
 ---@nodiscard
-system.version = getSystemVersion()
+system.uname = getUname()
 
 ---***SRG Custom Variable***
 ---
----The system unix name, or nil if it cannot be determined
----@type string?
+---Amount of CPU Cores the host system has, or nil if it cannot be determined
 ---@nodiscard
-system.uname = io.popen("uname"):read() or nil
+system.cores = getNumCores()
 
 ---***SRG Custom Variable***
 ---
----
----@type string?
+---The CPU architecture of the host system, or nil if it cannot be determined
 ---@nodiscard
+system.architecture = getArchitecture()
 
+---***SRG Custom Variable***
+---
+---true if the host system is built on Linux, false otherwise
+---@nodiscard
+system.is_linux_based = io.popen("uname"):read() ~= nil
+
+-------------Color Library------------
+
+---***SRG Custom Function***
+---
+---Converts RGB(`r`,`g`,`b`) to HEX(`RRGGBB`)
+---@param rgb table
+---@return string hex
+---@nodiscard
+function color.rgb_to_hex(rgb)
+  if type(rgb) ~= "table" then errorMsg("Table", "rgb", rgb) end
+
+  local r, g, b = tonumber(rgb[1]), tonumber(rgb[2]), tonumber(rgb[3])
+
+  if not r or not math.is_whole(r) then
+    error("R must be a whole number. Given: " .. tostring(r))
+  elseif r < 0 or r > 255 then
+    error("R cannot be greater than 255 or less than 0. Given: " .. tostring(r))
+  elseif not g or not math.is_whole(g) then
+    error("G must be a whole number. Given: " .. tostring(g))
+  elseif g < 0 or g > 255 then
+    error("G cannot be greater than 255 or less than 0. Given: " .. tostring(g))
+  elseif not b or not math.is_whole(b) then
+    error("B must be a whole number. Given: " .. tostring(b))
+  elseif b < 0 or b > 255 then
+    error("B cannot be greater than 255 or less than 0. Given: " .. tostring(b))
+  end
+
+  local function process(n, nn, nnn)
+    n, nn, nnn = n + 1, nn + 1, nnn + 1
+    local str = "0123456789ABCDEF"
+    return str:sub(n, n), str:sub(nn, nn), str:sub(nnn, nnn)
+  end
+
+  local n1, n3, n5 = process(math.floor(r / 16), math.floor(g / 16), math.floor(b / 16))
+
+  local n2, n4, n6 = process(r % 16, g % 16, b % 16)
+
+  return "#" .. n1 .. n2 .. n3 .. n4 .. n5 .. n6
+end
+
+---***SRG Custom Function***
+---
+---Converts RGB(`r`,`g`,`b`) to HSV(`h`,`s`,`v`)
+---@param rgb table
+---@return table hsv
+---@nodiscard
+function color.rgb_to_hsv(rgb)
+  if type(rgb) ~= "table" then errorMsg("Table", "rgb", rgb) end
+
+  local h, s, v
+
+  local r, g, b = tonumber(rgb[1]), tonumber(rgb[2]), tonumber(rgb[3])
+
+  if not r or not math.is_whole(r) then
+    error("R must be a whole number. Given: " .. tostring(r))
+  elseif r < 0 or r > 255 then
+    error("R cannot be greater than 255 or less than 0. Given: " .. tostring(r))
+  elseif not g or not math.is_whole(g) then
+    error("G must be a whole number. Given: " .. tostring(g))
+  elseif g < 0 or g > 255 then
+    error("G cannot be greater than 255 or less than 0. Given: " .. tostring(g))
+  elseif not b or not math.is_whole(b) then
+    error("B must be a whole number. Given: " .. tostring(b))
+  elseif b < 0 or b > 255 then
+    error("B cannot be greater than 255 or less than 0. Given: " .. tostring(b))
+  end
+
+  r, g, b = r / 255, g / 255, b / 255
+
+  v = math.max(r, g, b)
+
+  local c = v - math.min(r, g, b)
+
+  if v == 0 then
+    s = 0
+  else
+    s = c / v
+  end
+
+  if c == 0 then
+    h = 0
+  elseif v == r then
+    h = 60 * ((g - b) / c)
+  elseif v == g then
+    h = 60 * ((b - r) / c + 2)
+  elseif v == b then
+    h = 60 * ((r - g) / c + 4)
+  end
+
+  h = (h + 360) % 360
+  if h == 0 and c ~= 0 then h = 360 end
+
+  return { h, s, v }
+end
+
+---***SRG Custom Function***
+---
+---Converts HEX(`RRGGBB`) to RGB(`r`,`g`,`b`)
+---@param hex string
+---@return table rgb
+---@nodiscard
+function color.hex_to_rgb(hex)
+  if type(hex) ~= "string" then errorMsg("String", "hex", hex) end
+  hex = (hex:gsub("%s", "")):gsub("#", ""):upper()
+
+  if hex:find("%X") then
+    error("Invalid hex code. Can only contain 1-9, a-f, and A-F. Given: " .. hex)
+  end
+
+  if #hex ~= 6 then
+    error("Hex code must be exactly 6 characters. Given: " .. hex)
+  end
+
+
+  local rgb = ""
+  local rgbTable = {}
+  local replace = { f = 15, e = 14, d = 13, c = 12, b = 11, a = 10 }
+
+  for i = 1, #hex do
+    local char = tonumber(hex:sub(i, i))
+    rgb = rgb .. (char and char or replace[hex:sub(i, i):lower()]) .. " "
+  end
+
+  local t = string.split(rgb, " ")
+
+  for i = 1, #t, 2 do
+    table.insert(
+      rgbTable,
+      tonumber(t[i]) * 16 + tonumber(t[i + 1])
+    )
+  end
+
+  return rgbTable
+end
+
+---***SRG Custom Function***
+---
+---Converts HEX(`RRGGBB`) to HSV(`h`,`s`,`v`)
+---@param hex string
+---@return table hsv
+---@nodiscard
+function color.hex_to_hsv(hex)
+  if type(hex) ~= "string" then errorMsg("String", "hex", hex) end
+  hex = (hex:gsub("%s", "")):gsub("#", ""):upper()
+
+  if hex:find("%X") then
+    error("Invalid hex code. Can only contain 1-9, a-f, and A-F. Given: " .. hex)
+  end
+
+  if #hex ~= 6 then
+    error("Hex code must be exactly 6 characters. Given: " .. hex)
+  end
+
+  return color.rgb_to_hsv(color.hex_to_rgb(hex))
+end
+
+---***SRG Custom Function***
+---
+---Converts HSV(`h`,`s`,`v`) to RGB(`r`,`g`,`b`)
+---@param hsv table
+---@return table rgb
+---@nodiscard
+function color.hsv_to_rgb(hsv)
+  if type(hsv) ~= "table" then errorMsg("Table", "hsv", hsv) end
+
+  local h, s, v = tonumber(hsv[1]), tonumber(hsv[2]), tonumber(hsv[3])
+
+  if not h or h < 0 or h > 360 then
+    error("Hue must be between 0 and 360. Given: " .. tostring(h))
+  elseif not s or s < 0 or s > 1 then
+    error("Saturation must be between 0 and 1. Given: " .. tostring(s))
+  elseif not v or v < 0 or v > 1 then
+    error("Value must be between 0 and 1. Given: " .. tostring(v))
+  end
+
+  h = h / 60
+  local c = v * s
+  local x = c * (1 - math.abs(h % 2 - 1))
+  local r, g, b
+
+  if h < 1 then
+    r, g, b = c, x, 0
+  elseif h < 2 then
+    r, g, b = x, c, 0
+  elseif h < 3 then
+    r, g, b = 0, c, x
+  elseif h < 4 then
+    r, g, b = 0, x, c
+  elseif h < 5 then
+    r, g, b = x, 0, c
+  else
+    r, g, b = c, 0, x
+  end
+
+  local m = v - c
+  r = (r + m) * 255
+  g = (g + m) * 255
+  b = (b + m) * 255
+
+  return { math.floor(r + 0.5), math.floor(g + 0.5), math.floor(b + 0.5) }
+end
+
+---***SRG Custom Function***
+---
+---Converts HSV(`h`,`s`,`v`) to HEX(`RRGGBB`)
+---@param hsv table
+---@return string hex
+---@nodiscard
+function color.hsv_to_hex(hsv)
+  if type(hsv) ~= "table" then errorMsg("Table", "hsv", hsv) end
+
+  local h, s, v = tonumber(hsv[1]), tonumber(hsv[2]), tonumber(hsv[3])
+
+  if not h or h < 0 or h > 360 then
+    error("Hue must be between 0 and 360. Given: " .. tostring(h))
+  elseif not s or s < 0 or s > 1 then
+    error("Saturation must be between 0 and 1. Given: " .. tostring(s))
+  elseif not v or v < 0 or v > 1 then
+    error("Value must be between 0 and 1. Given: " .. tostring(v))
+  end
+
+  return color.rgb_to_hex(color.hsv_to_rgb(hsv))
+end
 
 ---------Cryptography Library---------
 
@@ -383,9 +612,9 @@ function cryptography.ascii_to_text(s)
 
   local text = ""
   for num in s:gmatch("%d+") do
-    local n = tonumber(num)
+    local n = string.clean_number(num)
     if n < 0 or n > 255 then error("ASCII values must be between 0 and 255.") end
-    text = text .. string.char(n)
+    text = text .. n:char()
   end
   return text
 end
@@ -400,7 +629,7 @@ function cryptography.text_to_hex(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   local hex = ""
-  for i = 1, #s do hex = hex .. string.format("%02X", s[i]:byte()) .. " " end
+  for i = 1, #s do hex = hex .. ("%02X"):format(s[i]:byte()) .. " " end
   return hex
 end
 
@@ -415,7 +644,7 @@ function cryptography.hex_to_text(s)
   if not s:match("^%d+%s*") then error("Input must be space-seperated.") end
 
   local text = ""
-  for hex in s:gmatch("..") do text = text .. string.char(tonumber(hex, 16)) end
+  for hex in s:gmatch("..") do text = text .. tostring(tonumber(hex, 16)):char() end
   return text
 end
 
@@ -440,7 +669,7 @@ function cryptography.text_to_binary(s, x)
   end
 
   local binary = ""
-  for i = 1, #s do binary = binary .. string.format("%0*b", x, s:byte(i)) end
+  for i = 1, #s do binary = binary .. ("%0*b"):format(x, s:byte(i)) end
   return string.trim(binary)
 end
 
@@ -465,7 +694,7 @@ function cryptography.binary_to_text(s, x)
   end
 
   local text = ""
-  for i = 1, #s, x do text = text .. string.char(tonumber(s:sub(i, i + x - 1), 2)) end
+  for i = 1, #s, x do text = text .. tostring(tonumber(s:sub(i, i + x - 1), 2)):char() end
   return text
 end
 
@@ -479,7 +708,7 @@ function cryptography.text_to_octal(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   local octal = ""
-  for i = 1, #s do octal = octal .. string.format("%o", s[i]:byte()) .. " " end
+  for i = 1, #s do octal = octal .. ("%o"):format(s[i]:byte()) .. " " end
   return string.trim(octal)
 end
 
@@ -494,7 +723,7 @@ function cryptography.octal_to_text(s)
   if not s:match("^%d+%s*") then error("Input must be space-seperated.") end
 
   local text = ""
-  for octal in s:gmatch("%d+") do text = text .. string.char(tonumber(octal, 8)) end
+  for octal in s:gmatch("%d+") do text = text .. tostring(tonumber(octal, 8)):char() end
   return text
 end
 
@@ -555,7 +784,7 @@ function cryptography.text_to_base64(s)
 
   for i = 1, #bits do encoded = encoded .. base64Chars[bits[i]] end
 
-  if #s % 3 ~= 0 then encoded = encoded .. string.rep("=", 3 - (#s % 3)) end
+  if #s % 3 ~= 0 then encoded = encoded .. ("="):rep(3 - (#s % 3)) end
   return encoded
 end
 
@@ -600,7 +829,7 @@ function cryptography.text_to_base32(s)
 
   for i = 1, #bits do encoded = encoded .. base32Chars[bits[i]] end
 
-  if #s % 8 ~= 0 then encoded = encoded .. string.rep("=", 8 - (#s % 8)) end
+  if #s % 8 ~= 0 then encoded = encoded .. ("="):rep(8 - (#s % 8)) end
   return encoded
 end
 
@@ -637,8 +866,8 @@ end
 ---@nodiscard
 function cryptography.uuid_v4()
   local returnValue = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-  returnValue = string.gsub(returnValue, "x", function() return ("0123456789abcdef")[math.random(16)] end)
-  returnValue = string.gsub(returnValue, "y", function() return ("89ab")[math.random(4)] end)
+  returnValue = returnValue:gsub("x", function() return ("0123456789abcdef")[math.random(16)] end)
+  returnValue = returnValue:gsub("y", function() return ("89ab")[math.random(4)] end)
   return returnValue
 end
 
@@ -655,7 +884,7 @@ end
 
 ---***SRG Custom Function***
 ---
----performs a bitwise left rotation on `x` by `disp` positions.
+---Performs a bitwise left rotation on `x` by `disp` positions.
 ---@param x number
 ---@param disp number
 ---@return number
@@ -702,7 +931,7 @@ end
 ---@return string
 function cryptography.number_to_hex(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  return string.format("%x", x & 0xFFFFFFFF)
+  return ("%x"):format(x & 0xFFFFFFFF)
 end
 
 ---***SRG Custom Function***
@@ -769,10 +998,10 @@ function cryptography.xor(s, key)
   local encrypted = ""
 
   for i = 1, #s do
-    local charByte = string.byte(s:sub(i, i))
-    local keyByte = string.byte(key:sub((i - 1) % #key + 1, (i - 1) % #key + 1))
+    local charByte = s:sub(i, i):byte()
+    local keyByte = key:sub((i - 1) % #key + 1, (i - 1) % #key + 1):byte()
     local encryptedByte = charByte ~ keyByte
-    encrypted = encrypted .. string.char(encryptedByte)
+    encrypted = encrypted .. encryptedByte:char()
   end
 
   return encrypted
@@ -795,7 +1024,7 @@ function cryptography.caesar_cipher(s, shift)
     local character = s:sub(i, i)
     if character:match("%a") then
       local base = character:match("%u") and 65 or 97
-      encrypted = encrypted .. string.char(((string.byte(character) - base + shift) % 26) + base)
+      encrypted = encrypted .. tostring(((character:byte() - base + shift) % 26) + base):char()
     else
       encrypted = encrypted .. character
     end
@@ -816,11 +1045,24 @@ function cryptography.rot13(s)
   return cryptography.caesar_cipher(s, 13)
 end
 
+---***SRG Custom Function***
+---
+---Performs sha256, an irreversable hashing algorithm, on `s`
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.sha256(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  s = cryptography.text_to_binary(
+  return s
+end
+
 ---------Input Library---------
 
 ---***SRG Custom Function***
 ---
----Gets a single string input from the user
+---Gets string input with an optional print `message`.
 ---@param message? string
 ---@return string
 ---@nodiscard
@@ -842,7 +1084,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Collects multiple string inputs from the user
+---Returns a table with `number_of_inputs` string inputs with an optional print `message`.
 ---@param message? string
 ---@param number_of_inputs number
 ---@return table inputs
@@ -866,7 +1108,7 @@ function input.table(message, number_of_inputs)
   io.write(message)
   local inputs = {}
   for i = 1, number_of_inputs do
-    io.write(string.format("\ninput %d:", i))
+    io.write("\ninput " .. i)
     local inp = io.read()
     if not inp then
       print("Failed to read input at input #" .. i)
@@ -879,7 +1121,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Gets a single numeric input from the user with validation
+---Gets numeric input with an optional print `message`.
 ---@param message? string
 ---@return number input
 ---@nodiscard
@@ -907,7 +1149,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Collects multiple numeric inputs from the user
+---Returns a table with `number_of_inputs` numberic inputs with an optional print `message.
 ---@param message? string
 ---@param number_of_inputs number
 ---@return table
@@ -932,9 +1174,9 @@ function input.number_table(message, number_of_inputs)
 
   local inputs = {}
   for i = 1, number_of_inputs do
-    io.write(string.format("\ninput %d:", i))
+    io.write(("\ninput %d:"):format(i))
     local num = tonumber(string.clean_number(io.read()))
-    if not num then print(string.format("Invalid number at input %d", i)) end
+    if not num then print(("Invalid number at input %d:"):format(i)) end
     inputs[i] = num and tonumber(num) or 0
   end
   return inputs
@@ -942,7 +1184,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Collects string inputs until the user submits an empty input
+---Returns a table of string inputs until empty submission with an optional print `message`.
 ---@param message? string
 ---@return table
 ---@nodiscard
@@ -958,7 +1200,7 @@ function input.loop(message)
 
   io.write("(press enter with nothing typed to submit) " .. message)
   while true do
-    io.write(string.format("\nInput %d:", current))
+    io.write(("\nInput %d:"):format(current))
     local inp = io.read()
     if inp == "" then break end
     inputs[current] = tostring(inp)
@@ -970,7 +1212,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Collects numeric inputs until the user submits an empty input
+---Returns a table of numeric inputs until empty submission with an optional print `message`.
 ---@param message? string
 ---@return table
 ---@nodiscard
@@ -986,12 +1228,12 @@ function input.number_loop(message)
 
   io.write("(press enter with nothing typed to submit) " .. message)
   while true do
-    io.write(string.format("\nInput %d:", current))
+    io.write(("\nInput %d:"):format(current))
     local inp = io.read()
     if inp == "" then break end
 
     local num = tonumber(string.clean_number(inp))
-    if not num then print(string.format("Invalid number at input %d", current)) end
+    if not num then print("Invalid number at input " .. current) end
     inputs[current] = num and tonumber(num) or 0
     current = current + 1
   end
@@ -1308,7 +1550,7 @@ end
 ---@return number
 function math.round(x, precision)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(precision) ~= "number" then errorMsg("Number", "precision", precision) end
+  if precision and type(precision) ~= "number" then errorMsg("Number", "precision", precision) end
 
   local mult = 10 ^ (precision or 0)
   return math.floor(x * mult + 0.5) / mult
@@ -1675,7 +1917,7 @@ function string.split(s, pattern)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
   if type(pattern) ~= "string" then errorMsg("String", "pattern", pattern) end
 
-  toReturn = {}
+  local toReturn = {}
   local start = 1
 
   for i = 1, #s do
@@ -1716,23 +1958,23 @@ end
 ---
 ---Adds `string_char` to `s`'s start if `include_start` is true and to its end if `include_end` is true, repeating it `length` times.
 ---@param s string
----@param string_char string
+---@param str_char string
 ---@param length number
 ---@param include_start? boolean
 ---@param include_end? boolean
 ---@return string
 ---@nodiscard
-function string.pad(s, string_char, length, include_start, include_end)
+function string.pad(s, str_char, length, include_start, include_end)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if type(string_char) ~= "string" then errorMsg("String", "string_char", string_char) end
+  if type(str_char) ~= "string" then errorMsg("String", "strChar", str_char) end
   if type(length) ~= "number" then errorMsg("Number", "length", length) end
   if include_start and type(include_start) ~= "boolean" then errorMsg("Boolean", "include_start", include_start) end
   if include_end and type(include_end) ~= "boolean" then errorMsg("Boolean", "include_end", include_end) end
 
-  if not include_start or not include_end then include_start, include_end = true, true end
+  if not include_start and not include_end then include_start, include_end = true, true end
 
-  if include_start then s = string.rep(string_char, length) .. s end
-  if include_start then s = s .. string.rep(string_char, length) end
+  if include_start then s = str_char:rep(length) .. s end
+  if include_end then s = s .. str_char:rep(length) end
 
   return s
 end
@@ -1785,7 +2027,7 @@ function string.count(s, pattern)
   if not pattern or #pattern == 0 then pattern = " " end
 
   local amount = 0
-  for _ in string.gmatch(s, pattern) do count = count + 1 end
+  for _ in s:gmatch(pattern) do count = count + 1 end
   return amount
 end
 
