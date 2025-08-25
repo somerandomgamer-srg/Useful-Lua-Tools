@@ -1054,7 +1054,23 @@ end
 function cryptography.sha256(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
-  s = cryptography.text_to_binary(
+  local words = {}
+  local chunks = {}
+  local encrypted = "1" .. cryptography.text_to_binary(s) .. ("0"):rep(512 - 64 - (#s * 8))
+
+  for i = 7, 0, -1 do
+    encrypted = encrypted .. string.format("%08s", cryptography.number_to_bit((#s * 8 >> (i * 8)) & 0xFF):sub(-8))
+  end
+
+  for i = 1, #encrypted, 512 do
+    table.insert(chunks, encrypted:sub(i, i + 511))
+  end
+
+  for _, chunk in ipairs(chunks) do
+    for i = 1, #chunk, 32 do
+      table.insert(words, chunk:sub(i, i + 31))
+    end
+  end
   return s
 end
 
