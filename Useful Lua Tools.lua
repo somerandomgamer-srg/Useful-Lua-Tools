@@ -1054,24 +1054,41 @@ end
 function cryptography.sha256(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
-  local words = {}
-  local chunks = {}
-  local encrypted = "1" .. cryptography.text_to_binary(s) .. ("0"):rep(512 - 64 - (#s * 8))
-
+  local messageLen = #s * 8
+  local binary = cryptography.text_to_binary(s)
+  
+  -- Step 1: Add '1' bit
+  local padded = binary .. "1"
+  
+  -- Step 2: Add padding zeros (message + 1 + padding should be 64 bits less than multiple of 512)
+  local paddingLen = (448 - (#padded % 512)) % 512
+  padded = padded .. ("0"):rep(paddingLen)
+  
+  -- Step 3: Append 64-bit big-endian length
   for i = 7, 0, -1 do
-    encrypted = encrypted .. string.format("%08s", cryptography.number_to_bit((#s * 8 >> (i * 8)) & 0xFF):sub(-8))
+    local byte = (messageLen >> (i * 8)) & 0xFF
+    padded = padded .. string.format("%08s", cryptography.number_to_bit(byte):sub(-8))
   end
-
-  for i = 1, #encrypted, 512 do
-    table.insert(chunks, encrypted:sub(i, i + 511))
+  
+  -- Step 4: Break into 512-bit chunks
+  local chunks = {}
+  for i = 1, #padded, 512 do
+    table.insert(chunks, padded:sub(i, i + 511))
   end
-
+  
+  -- Step 5: Break chunks into 32-bit words (for future processing)
+  local words = {}
   for _, chunk in ipairs(chunks) do
+    local chunkWords = {}
     for i = 1, #chunk, 32 do
-      table.insert(words, chunk:sub(i, i + 31))
+      table.insert(chunkWords, chunk:sub(i, i + 31))
     end
+    table.insert(words, chunkWords)
   end
-  return s
+  
+  -- TODO: Implement actual SHA-256 processing rounds here
+  -- For now, return indication that preprocessing is complete
+  return "Preprocessing complete - " .. #chunks .. " chunks created"
 end
 
 ---------Input Library---------
