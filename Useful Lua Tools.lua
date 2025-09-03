@@ -369,7 +369,7 @@ ult.build = ("ult-%s-%s-%s"):format(ult.version, ult.release_date, ult.min_lua_v
 
 ---***SRG Custom Function***
 ---
----Registers `name`. once `remote.call()` is ran on `name`, executes `func`.
+---Registers a function under the given `name`. When `remote.call()` is called with this `name`, the registered `func` will be executed.
 ---@param name string
 ---@param func function
 function remote.register(name, func)
