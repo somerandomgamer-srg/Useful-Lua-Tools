@@ -382,7 +382,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Unregisters `name`.
+---Removes the function registered under the given `name`, making it unavailable for `remote.call()`.
 ---@param name string
 function remote.unregister(name)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
