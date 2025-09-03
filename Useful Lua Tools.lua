@@ -393,7 +393,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Calls `name`, running `func`.
+---Calls the function registered under the given `name` and returns its result (if any).
 ---@param name string
 ---@return any? return_value
 function remote.call(name)
