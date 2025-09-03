@@ -232,88 +232,91 @@
 77. `table.first(t)`
   - Returns the first element in `t`.
 
-78. `input.string(message)`
+78. `table.copy(t)`
+  - Returns a copy of the table `t`.
+
+79. `input.string(message)`
   - Gets string input with an optional print `message`.
 
-79. `input.table(message, number_of_inputs)`
+80. `input.table(message, number_of_inputs)`
   - Returns a table with `number_of_inputs` string inputs with an optional print `message`.
 
-80. `input.number(message)`
+81. `input.number(message)`
   - Gets numeric input with an optional print `message`.
 
-81. `input.number_table(message, number_of_inputs)`
+82. `input.number_table(message, number_of_inputs)`
   - Returns a table with `number_of_inputs` numberic inputs with an optional print `message`.
 
-82. `input.loop(message)`
+83. `input.loop(message)`
   - Returns a table of string inputs until empty submission with an optional print `message`.
 
-83. `input.number_loop(message)`
+84. `input.number_loop(message)`
   - Returns a table of numeric inputs until empty submission with an optional print `message`.
 
-84. `cryptography.text_to_ascii(s)`
+85. `cryptography.text_to_ascii(s)`
   - Converts plaintext to ASCII code numbers.
 
-85. `cryptography.ascii_to_text(s)`
+86. `cryptography.ascii_to_text(s)`
   - Converts ASCII code numbers to plaintext.
 
-86. `cryptography.text_to_hex(s)`
+87. `cryptography.text_to_hex(s)`
   - Converts plaintext to hexadecimal.
 
-87. `cryptography.hex_to_text(s)`
+88. `cryptography.hex_to_text(s)`
   - Converts hexadecimal to text.
 
-88. `cryptography.text_to_binary(s)`
+89. `cryptography.text_to_binary(s)`
   - Converts plaintext to binary.
 
-89. `cryptography.binary_to_text(s)`
+90. `cryptography.binary_to_text(s)`
   - Converts binary to plaintext.
 
-90. `cryptography.text_to_octal(s)`
+91. `cryptography.text_to_octal(s)`
   - Converts plaintext to octal.
 
-91. `cryptography.octal_to_text(s)`
+92. `cryptography.octal_to_text(s)`
   - Converts octal to plaintext.
 
-92. `cryptography.text_to_morse(s)`
+93. `cryptography.text_to_morse(s)`
   - Converts plaintext to morse code.
 
-93. `cryptography.morse_to_text(s)`
+94. `cryptography.morse_to_text(s)`
   - Converts morse code to plaintext.
 
-94. `cryptography.text_to_base64(s)`
+95. `cryptography.text_to_base64(s)`
   - Converts plaintext to base64.
 
-95. `cryptography.base64_to_text(s)`
+96. `cryptography.base64_to_text(s)`
   - Converts base64 to plaintext.
 
-96. `cryptography.text_to_base32(s)`
+97. `cryptography.text_to_base32(s)`
   - Converts plaintext to base32.
 
-97. `cryptography.base32_to_text(s)`
+98. `cryptography.base32_to_text(s)`
   - Converts base32 to plaintext.
 
-98. `cryptography.xor(s, key)`
+99. `cryptography.xor(s, key)`
   - Performs XOR encryption/decryption on `s` using a `key`.
 
-99. `cryptography.caesar_cipher(s, shift)`
+100. `cryptography.caesar_cipher(s, shift)`
   - Applies Caesar cipher encryption to `s` with specified `shift`.
 
-100. `cryptography.rot13(s)`
+101. `cryptography.rot13(s)`
   - Applies ROT13 encryption on `s` (Caesar cipher with shift of 13).
 
-101. `cryptography.uuid_v4()`
+102. `cryptography.uuid_v4()`
   - Generates a random UUID (version 4)
 
-102. `cryptography.bswap(x)`
+103. `cryptography.bswap(x)`
   - Performs bitwise SWAP operation on `x`.
 
-103. `cryptography.rol(x, disp)`
+104. `cryptography.rol(x, disp)`
   - Performs a bitwise left rotation on `x` by specified positions (`disp`).
 
-104. `cryptography.ror(x, disp)`
+105. `cryptography.ror(x, disp)`
   - Performs a bitwise right rotation on `x` by specified positions (`disp`).
 
-105. `cryptography.number_to_bit(x)`
+106. `cryptography.number_to_bit(x)`
   - Converts `x` to its binary representation.
 
 106. `cryptography.number_to_hex(x)`
@@ -328,41 +331,38 @@
 109. `cryptography.replace(n, v, field, width)`
   - Returns a copy of `n` with the bits `field` to `field + width - 1` replaced by the value `v`.
 
-110. `cryptography.sha256(s)`
-  - Performs sha256, an irreversable hashing algorithm, on `s`
-
-111. `color.rgb_to_hex(rgb)`
+110. `color.rgb_to_hex(rgb)`
   - Converts RGB(`r`,`g`,`b`) to HEX(`RRGGBB`)
 
-112. `color.rgb_to_hsv(rgb)`
+111. `color.rgb_to_hsv(rgb)`
   - Converts RGB(`r`,`g`,`b`) to HSV(`h`,`s`,`v`)
 
-113. `color.hex_to_rgb(hex)`
+112. `color.hex_to_rgb(hex)`
   - Converts HEX(`RRGGBB`) to RGB(`r`,`g`,`b`)
 
-114. `color.hex_to_hsv(hex)`
+113. `color.hex_to_hsv(hex)`
   - Converts HEX(`RRGGBB`) to hsv(`h`,`s`,`v`)
 
-115. `color.hsv_to_rgb(hsv)`
+114. `color.hsv_to_rgb(hsv)`
   - Converts HSV(`h`,`s`,`v`) to RGB(`r`,`g`,`b`)
 
-116. `color.hsv_to_hex(hsv)`
+115. `color.hsv_to_hex(hsv)`
   - Converts HSV(`h`,`s`,`v`) to HEX(`RRGGBB`)
 
-117. `wait(x)`
+116. `wait(x)`
   - Yields the code for `x` seconds. (Similar to python's wait function).
 
-118. `is_type(value, type_of_object)`
+117. `is_type(value, type_of_object)`
   - Checks if `value` is a `type_of_object`.
 
-119. `benchmark(func, iterations)`
+118. `benchmark(func, iterations)`
   - Runs `func` `iterations` times.
 
-120. `execution_time(func)`
+119. `execution_time(func)`
   - Runs `func` and returns the time it takes to run `func`.
 
-121. `delay(t, func)`
+120. `delay(t, func)`
   - Yields `t` seconds before running `func` without stopping other code.
 
-122. `delay_stop(t, func)`
+121. `delay_stop(t, func)`
   - Yields `t` seconds before running `func` while stopping other code.

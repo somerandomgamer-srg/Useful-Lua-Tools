@@ -9,3 +9,6 @@ pattern = "**/*.lua"
 
 [languages.lua.languageServer]
 start = ["lua-language-server"]
+
+[agent]
+expertMode = true

@@ -5,6 +5,62 @@ local function errorMsg(expected, name, value)
   error(("%s expected for '%s', given: %s (%s)."):format(expected, name, tostring(value), type(value)))
 end
 
+---Error handler for color.rgb functions
+local function rgbProcess(rgb)
+  if type(rgb) ~= "table" then errorMsg("Table", "rgb", rgb) end
+
+  local r, g, b = tonumber(rgb[1]), tonumber(rgb[2]), tonumber(rgb[3])
+
+  if not r or not math.is_whole(r) then
+    error("R must be a whole number. Given: " .. tostring(r))
+  elseif r < 0 or r > 255 then
+    error("R cannot be greater than 255 or less than 0. Given: " .. tostring(r))
+  elseif not g or not math.is_whole(g) then
+    error("G must be a whole number. Given: " .. tostring(g))
+  elseif g < 0 or g > 255 then
+    error("G cannot be greater than 255 or less than 0. Given: " .. tostring(g))
+  elseif not b or not math.is_whole(b) then
+    error("B must be a whole number. Given: " .. tostring(b))
+  elseif b < 0 or b > 255 then
+    error("B cannot be greater than 255 or less than 0. Given: " .. tostring(b))
+  end
+
+  return r, g, b
+end
+
+---Error handler for color.hex functions
+local function hexProcess(hex)
+  if type(hex) ~= "string" then errorMsg("String", "hex", hex) end
+  hex = (hex:gsub("%s", "")):gsub("#", ""):upper()
+
+  if hex:find("%X") then
+    error("Invalid hex code. Can only contain 1-9, a-f, and A-F. Given: " .. hex)
+  end
+
+  if #hex ~= 6 then
+    error("Hex code must be exactly 6 characters. Given: " .. hex)
+  end
+
+  return hex
+end
+
+---Error handler for color.hsv functions
+local function hsvProcess(hsv)
+  if type(hsv) ~= "table" then errorMsg("Table", "hsv", hsv) end
+
+  local h, s, v = tonumber(hsv[1]), tonumber(hsv[2]), tonumber(hsv[3])
+
+  if not h or h < 0 or h > 360 then
+    error("Hue must be between 0 and 360. Given: " .. tostring(h))
+  elseif not s or s < 0 or s > 1 then
+    error("Saturation must be between 0 and 1. Given: " .. tostring(s))
+  elseif not v or v < 0 or v > 1 then
+    error("Value must be between 0 and 1. Given: " .. tostring(v))
+  end
+
+  return h, s, v
+end
+
 ---Main function for table.shuffle
 local function shuffleTable(t)
   local shuffled = {}
@@ -245,6 +301,8 @@ local base32Chars = {
   ["11111"] = "7"
 }
 
+local remotes = {}
+
 local morseReverse = table.keypair_reverse(morseCodeTable)
 local base64Reverse = table.keypair_reverse(base64Chars)
 local base32Reverse = table.keypair_reverse(base32Chars)
@@ -266,15 +324,18 @@ ult = {}
 ---@class colorlib
 color = {}
 
+---@class remotelib
+remote = {}
+
 -----------ULT Main Library-----------
 
 ---***SRG Custom Variable***
 ---
 ---The version of Useful Lua Tools
 ---
----"Major Update"."Minor Update"."Patch"
+---"Major Update"."Minor Update"."Patch/Very Minor Update"
 ---@nodiscard
-ult.version = "1.3.0"
+ult.version = "1.2.1"
 
 ---***SRG Custom Variable***
 ---
@@ -294,7 +355,7 @@ ult.min_lua_ver = "5.3"
 ---
 ---The release date of the current ULT version
 ---@nodiscard
-ult.release_date = "08/22/2025"
+ult.release_date = "08/27/2025"
 
 ---***SRG Custom Variable***
 ---
@@ -303,6 +364,46 @@ ult.release_date = "08/22/2025"
 ---"Project"-"version"-"date of release"-"minimum lua version"
 ---@nodiscard
 ult.build = ("ult-%s-%s-%s"):format(ult.version, ult.release_date, ult.min_lua_ver)
+
+------------Remote Library------------
+
+---***SRG Custom Function***
+---
+---Registers `name`. once `remote.call()` is ran on `name`, executes `func`.
+---@param name string
+---@param func function
+function remote.register(name, func)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if type(func) ~= "function" then errorMsg("Function", "func", func) end
+  if remotes[name] then error(string.format("'%s' is already registered. Either unregister it or put it under a different name.", name)) end
+
+  remotes[name] = func
+end
+
+---***SRG Custom Function***
+---
+---Unregisters `name`.
+---@param name string
+function remote.unregister(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not remotes[name] then error(string.format("'%s' is not registered.", name)) end
+
+  remotes[name] = nil
+end
+
+---***SRG Custom Function***
+---
+---Calls `name`, running `func`.
+---@param name string
+---@return any? return_value
+function remote.call(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not remotes[name] then error(string.format("'%s' is not registered.", name)) end
+
+  local toReturn = remotes[name]()
+
+  if toReturn then return toReturn end
+end
 
 ------------System Library------------
 
@@ -369,23 +470,7 @@ system.is_linux_based = io.popen("uname"):read() ~= nil
 ---@return string hex
 ---@nodiscard
 function color.rgb_to_hex(rgb)
-  if type(rgb) ~= "table" then errorMsg("Table", "rgb", rgb) end
-
-  local r, g, b = tonumber(rgb[1]), tonumber(rgb[2]), tonumber(rgb[3])
-
-  if not r or not math.is_whole(r) then
-    error("R must be a whole number. Given: " .. tostring(r))
-  elseif r < 0 or r > 255 then
-    error("R cannot be greater than 255 or less than 0. Given: " .. tostring(r))
-  elseif not g or not math.is_whole(g) then
-    error("G must be a whole number. Given: " .. tostring(g))
-  elseif g < 0 or g > 255 then
-    error("G cannot be greater than 255 or less than 0. Given: " .. tostring(g))
-  elseif not b or not math.is_whole(b) then
-    error("B must be a whole number. Given: " .. tostring(b))
-  elseif b < 0 or b > 255 then
-    error("B cannot be greater than 255 or less than 0. Given: " .. tostring(b))
-  end
+  local r, g, b = rgbProcess(rgb)
 
   local function process(n, nn, nnn)
     n, nn, nnn = n + 1, nn + 1, nnn + 1
@@ -407,25 +492,8 @@ end
 ---@return table hsv
 ---@nodiscard
 function color.rgb_to_hsv(rgb)
-  if type(rgb) ~= "table" then errorMsg("Table", "rgb", rgb) end
-
+  local r, g, b = rgbProcess(rgb)
   local h, s, v
-
-  local r, g, b = tonumber(rgb[1]), tonumber(rgb[2]), tonumber(rgb[3])
-
-  if not r or not math.is_whole(r) then
-    error("R must be a whole number. Given: " .. tostring(r))
-  elseif r < 0 or r > 255 then
-    error("R cannot be greater than 255 or less than 0. Given: " .. tostring(r))
-  elseif not g or not math.is_whole(g) then
-    error("G must be a whole number. Given: " .. tostring(g))
-  elseif g < 0 or g > 255 then
-    error("G cannot be greater than 255 or less than 0. Given: " .. tostring(g))
-  elseif not b or not math.is_whole(b) then
-    error("B must be a whole number. Given: " .. tostring(b))
-  elseif b < 0 or b > 255 then
-    error("B cannot be greater than 255 or less than 0. Given: " .. tostring(b))
-  end
 
   r, g, b = r / 255, g / 255, b / 255
 
@@ -462,17 +530,7 @@ end
 ---@return table rgb
 ---@nodiscard
 function color.hex_to_rgb(hex)
-  if type(hex) ~= "string" then errorMsg("String", "hex", hex) end
-  hex = (hex:gsub("%s", "")):gsub("#", ""):upper()
-
-  if hex:find("%X") then
-    error("Invalid hex code. Can only contain 1-9, a-f, and A-F. Given: " .. hex)
-  end
-
-  if #hex ~= 6 then
-    error("Hex code must be exactly 6 characters. Given: " .. hex)
-  end
-
+  hex = hexProcess(hex)
 
   local rgb = ""
   local rgbTable = {}
@@ -502,16 +560,7 @@ end
 ---@return table hsv
 ---@nodiscard
 function color.hex_to_hsv(hex)
-  if type(hex) ~= "string" then errorMsg("String", "hex", hex) end
-  hex = (hex:gsub("%s", "")):gsub("#", ""):upper()
-
-  if hex:find("%X") then
-    error("Invalid hex code. Can only contain 1-9, a-f, and A-F. Given: " .. hex)
-  end
-
-  if #hex ~= 6 then
-    error("Hex code must be exactly 6 characters. Given: " .. hex)
-  end
+  hex = hexProcess(hex)
 
   return color.rgb_to_hsv(color.hex_to_rgb(hex))
 end
@@ -523,17 +572,7 @@ end
 ---@return table rgb
 ---@nodiscard
 function color.hsv_to_rgb(hsv)
-  if type(hsv) ~= "table" then errorMsg("Table", "hsv", hsv) end
-
-  local h, s, v = tonumber(hsv[1]), tonumber(hsv[2]), tonumber(hsv[3])
-
-  if not h or h < 0 or h > 360 then
-    error("Hue must be between 0 and 360. Given: " .. tostring(h))
-  elseif not s or s < 0 or s > 1 then
-    error("Saturation must be between 0 and 1. Given: " .. tostring(s))
-  elseif not v or v < 0 or v > 1 then
-    error("Value must be between 0 and 1. Given: " .. tostring(v))
-  end
+  local h, s, v = hsvProcess(hsv)
 
   h = h / 60
   local c = v * s
@@ -569,17 +608,7 @@ end
 ---@return string hex
 ---@nodiscard
 function color.hsv_to_hex(hsv)
-  if type(hsv) ~= "table" then errorMsg("Table", "hsv", hsv) end
-
-  local h, s, v = tonumber(hsv[1]), tonumber(hsv[2]), tonumber(hsv[3])
-
-  if not h or h < 0 or h > 360 then
-    error("Hue must be between 0 and 360. Given: " .. tostring(h))
-  elseif not s or s < 0 or s > 1 then
-    error("Saturation must be between 0 and 1. Given: " .. tostring(s))
-  elseif not v or v < 0 or v > 1 then
-    error("Value must be between 0 and 1. Given: " .. tostring(v))
-  end
+  local _, _, _ = hsvProcess(hsv)
 
   return color.rgb_to_hex(color.hsv_to_rgb(hsv))
 end
@@ -1043,52 +1072,6 @@ function cryptography.rot13(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   return cryptography.caesar_cipher(s, 13)
-end
-
----***SRG Custom Function***
----
----Performs sha256, an irreversable hashing algorithm, on `s`
----@param s string
----@return string
----@nodiscard
-function cryptography.sha256(s)
-  if type(s) ~= "string" then errorMsg("String", "s", s) end
-
-  local messageLen = #s * 8
-  local binary = cryptography.text_to_binary(s)
-  
-  -- Step 1: Add '1' bit
-  local padded = binary .. "1"
-  
-  -- Step 2: Add padding zeros (message + 1 + padding should be 64 bits less than multiple of 512)
-  local paddingLen = (448 - (#padded % 512)) % 512
-  padded = padded .. ("0"):rep(paddingLen)
-  
-  -- Step 3: Append 64-bit big-endian length
-  for i = 7, 0, -1 do
-    local byte = (messageLen >> (i * 8)) & 0xFF
-    padded = padded .. string.format("%08s", cryptography.number_to_bit(byte):sub(-8))
-  end
-  
-  -- Step 4: Break into 512-bit chunks
-  local chunks = {}
-  for i = 1, #padded, 512 do
-    table.insert(chunks, padded:sub(i, i + 511))
-  end
-  
-  -- Step 5: Break chunks into 32-bit words (for future processing)
-  local words = {}
-  for _, chunk in ipairs(chunks) do
-    local chunkWords = {}
-    for i = 1, #chunk, 32 do
-      table.insert(chunkWords, chunk:sub(i, i + 31))
-    end
-    table.insert(words, chunkWords)
-  end
-  
-  -- TODO: Implement actual SHA-256 processing rounds here
-  -- For now, return indication that preprocessing is complete
-  return "Preprocessing complete - " .. #chunks .. " chunks created"
 end
 
 ---------Input Library---------
@@ -2351,6 +2334,20 @@ end
 
 ---***SRG Custom Function***
 ---
+---Returns a copy of the table `t`
+---@param t table
+---@return table
+---@nodiscard
+function table.copy(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  local copy = {}
+  for i, v in ipairs(t) do copy[i] = v end
+  return copy
+end
+
+---***SRG Custom Function***
+---
 ---Yields the code for `x` seconds. (Similar to python's wait function).
 ---@param x number
 function wait(x)
@@ -2366,6 +2363,8 @@ function wait(x)
     os.execute("sleep " .. x)
   end
 end
+
+------------Global Library------------
 
 ---***SRG Custom Function***
 ---
