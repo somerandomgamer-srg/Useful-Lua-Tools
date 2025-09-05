@@ -998,7 +998,7 @@ end
 ---@param n number
 ---@param v number
 ---@param field number
----@param width number
+---@param width? number
 ---@return number
 function cryptography.replace(n, v, field, width)
   if type(n) ~= "number" then errorMsg("Number", "n", n) end
@@ -1064,7 +1064,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Applies ROT13 encryption (Caesar cipher with shift of 13) to a string (`s`)
+---Applies ROT13 encryption on `s` (Caesar cipher with shift of 13).
 ---@param s string
 ---@return string
 ---@nodiscard
@@ -1101,11 +1101,11 @@ end
 ---***SRG Custom Function***
 ---
 ---Returns a table with `number_of_inputs` string inputs with an optional print `message`.
----@param message? string
 ---@param number_of_inputs number
+---@param message? string
 ---@return table inputs
 ---@nodiscard
-function input.table(message, number_of_inputs)
+function input.table(number_of_inputs, message)
   if message then
     if type(message) ~= "string" then errorMsg("String", "message", message) end
   else
@@ -2035,13 +2035,12 @@ end
 ---
 ---Returns the amount of occurrences `pattern` occurs in `s`
 ---@param s string
----@param pattern? string
+---@param pattern string
 ---@return number
 ---@nodiscard
 function string.count(s, pattern)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if not pattern or #pattern == 0 then pattern = " " end
-
+  if type(pattern) ~= "string" then errorMsg("String", "pattern", pattern) end
   local amount = 0
   for _ in s:gmatch(pattern) do count = count + 1 end
   return amount
@@ -2282,6 +2281,7 @@ end
 ---
 ---NOTE: If `n` is not given, `t` will only shuffle once
 ---@param t table
+---@param seed number
 ---@param n? number
 ---@return table
 ---@nodiscard
@@ -2314,7 +2314,7 @@ end
 ---
 ---Returns the last element in `t`
 ---@param t table
----@return table
+---@return any
 ---@nodiscard
 function table.last(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
@@ -2325,7 +2325,7 @@ end
 ---
 ---Returns the first element in `t`
 ---@param t table
----@return table
+---@return any
 ---@nodiscard
 function table.first(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
