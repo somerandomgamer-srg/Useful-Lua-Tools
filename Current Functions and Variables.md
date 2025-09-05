@@ -953,3 +953,11 @@
 - **R**: Required parameter
 - **O**: Optional parameter
 
+---
+
+## Summary
+
+**Total Functions**: 133
+**Total Variables**: 9
+**Total Functions and Variables**: 142
+
