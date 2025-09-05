@@ -2346,10 +2346,12 @@ function table.copy(t)
   return copy
 end
 
+------------Global Library------------
+
 ---***SRG Custom Function***
 ---
 ---Yields the code for `x` seconds. (Similar to python's wait function).
----@param x number
+---@param x? number
 function wait(x)
   if x then
     if type(x) ~= "number" then errorMsg("Number", "x", x) end
@@ -2363,8 +2365,6 @@ function wait(x)
     os.execute("sleep " .. x)
   end
 end
-
-------------Global Library------------
 
 ---***SRG Custom Function***
 ---
@@ -2385,7 +2385,7 @@ function is_type(value, type_of_object) return type(value) == type_of_object end
 ---- `Average Execution Time Per Run`
 ---- `The Last Result (if return is added in the code)`
 ---@param func function
----@param iterations number
+---@param iterations? number
 ---@return number Total_Timer
 ---@return number Average_Time_Per_Run
 ---@return string Last_Result
