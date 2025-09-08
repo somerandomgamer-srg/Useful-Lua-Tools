@@ -5,20 +5,64 @@ local function errorMsg(expected, name, value)
   error(("%s expected for '%s', given: %s (%s)."):format(expected, name, tostring(value), type(value)))
 end
 
----Generates a random UUID (version 4)
----
----UUID V4 format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
----- `x`: 0-9 and a-f
----- Hyphens (-) separate sections
----- The `4` in the third section indicates it's a version 4 UUID
----- `y`: 8, 9, a, or b
----@return string
----@nodiscard
+--Function for both uuid1 and uuid6
+local function uuid1and6(v)
+  local timestamp = (os.time() + 12219292800) * 10000000
+  local clockSeq = math.random(0, 16383)
+
+  local function randomMac()
+    local mac = {}
+    for i = 1, 6 do
+      mac[i] = math.random(0, 255)
+    end
+
+    mac[1] = mac[1] | 0x01
+    return mac
+  end
+
+  local macAddr
+  if v == 1 then
+    macAddr = string.split(system.mac_address, ":") or randomMac()
+  else
+    macAddr = randomMac()
+  end
+
+  local low = timestamp & 0xFFFFFFFF
+  local middle = (timestamp >> 32) & 0xFFFF
+  local high = ((timestamp >> 48) & 0x0FFF) | 0x1000
+
+  local cHigh = ((clockSeq >> 8) & 0x3F) | 0x80
+  local cLow = clockSeq & 0xFF
+
+  return low, middle, high, cHigh, cLow, macAddr
+end
+
+--Function for random.uuid(4)
 local function uuid4()
   local returnValue = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
   returnValue = returnValue:gsub("x", function() return ("0123456789abcdef")[math.random(16)] end)
   returnValue = returnValue:gsub("y", function() return ("89ab")[math.random(4)] end)
   return returnValue
+end
+
+--Function for random.uuid(1)
+local function uuid1()
+  local low, middle, high, cHigh, cLow, macAddr = uuid1and6(1)
+  return string.format(
+    "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+    low, middle, high, cHigh, cLow,
+    macAddr[1], macAddr[2], macAddr[3], macAddr[4], macAddr[5], macAddr[6]
+  )
+end
+
+--Function for random.uuid(6)
+local function uuid6(6)
+  local low, middle, high, cHigh, cLow, macAddr = uuid1and6()
+  return string.format(
+    "%04x-%04x-%08x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+    high, middle, low, cHigh, cLow,
+    macAddr[1], macAddr[2], macAddr[3], macAddr[4], macAddr[5], macAddr[6]
+  )
 end
 
 ---Error handler for color.rgb functions
@@ -157,6 +201,23 @@ local function getArchitecture()
         :read() or nil
   elseif system.is_mac or system.is_chrome or system.is_linux then
     return io.popen("uname -m"):read() or nil
+  end
+end
+
+---Function for system.mac_address
+local function getMac()
+  if system.is_windows then
+    return io.popen(
+          "powershell -Command \"Get-NetAdapter | Where-Object {$_.Status -eq \'Up\'} | Select-Object -First 1 -ExpandProperty MacAddress\"")
+        :read() or nil
+  elseif system.is_mac then
+    return io.popen("ipconfig en0"):read() or io.popen("ipconfig en1"):read() or nil
+  elseif system.is_linux then
+    return io.popen("ip link | awk '/ether/ {print $2}' | head -n 1"):read() or nil
+  elseif system.is_chrome then
+    print(
+      "Cannot get Mac Address on ChromeOS. ChromeOS doesn't have a command to get Mac Address due to security reasons")
+    return nil
   end
 end
 
@@ -395,7 +456,10 @@ ult.build = ("ult-%s-%s-%s"):format(ult.version, ult.release_date, ult.min_lua_v
 function remote.register(name, func)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if type(func) ~= "function" then errorMsg("Function", "func", func) end
-  if remotes[name] then error(string.format("'%s' is already registered. Either unregister it or put it under a different name.", name)) end
+  if remotes[name] then
+    error(string.format(
+      "'%s' is already registered. Either unregister it or put it under a different name.", name))
+  end
 
   remotes[name] = func
 end
@@ -427,8 +491,36 @@ end
 
 ------------Random Library------------
 
-function random.uuid()
-  
+---Generates a uuid
+---
+---UUID V1:
+---- Generates a time-based UUID (version 1) using MAC address and timestamp
+---- Format: `time_low-time_mid-time_high_and_version-clock_seq_high_and_reserved+clock_seq_low-mac_address`
+---- Based on timestamp and MAC address
+---- Guarantees uniqueness across time and space
+---
+---UUID V4:
+---- Generates a purely random UUID(version 4)
+---- Format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
+---- `x`: 0-9 or a-f
+---- Hyphens (-) separate sections
+---- The `4` in the third section indicates it's a version 4 UUID
+---- `y`: 8, 9, a, or b
+---
+---UUID V6:
+---- UUID V1 but reformated for chronological sorting
+---@return string
+function random.uuid(v)
+  if type(v) ~= "number" then errorMsg("Number", "v", v) end
+
+  local funcs = {
+    [1] = uuid1,
+    [4] = uuid4,
+    [6] = uuid6
+  }
+
+  return funcs[v]()
+end
 
 ------------System Library------------
 
@@ -485,6 +577,11 @@ system.architecture = getArchitecture()
 ---true if the host system is built on Linux, false otherwise
 ---@nodiscard
 system.is_linux_based = io.popen("uname"):read() ~= nil
+
+---***SRG Custom Variable***
+---
+---Returns the Mac
+system.mac_address = getMac()
 
 -------------Color Library------------
 
