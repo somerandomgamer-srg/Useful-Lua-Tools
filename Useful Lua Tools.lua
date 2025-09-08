@@ -500,12 +500,16 @@ end
 ---- Guarantees uniqueness across time and space
 ---
 ---UUID V4:
----- Generates a purely random UUID(version 4)
+---- Generates a purely random UUID (version 4)
 ---- Format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
----- `x`: 0-9 or a-f
----- Hyphens (-) separate sections
----- The `4` in the third section indicates it's a version 4 UUID
----- `y`: 8, 9, a, or b
+---- `x`: 0-9 or a-f, `4` indicates version 4, `y`: 8, 9, a, or b
+---- Extremely low collision probability
+---
+---UUID V6:
+---- Generates a time-based UUID (version 6) with reordered timestamp for chronological sorting
+---- Format: `time_high-time_mid-time_low_and_version-clock_seq_and_variant-random_node`
+---- Uses random node ID instead of MAC address for privacy
+---- Maintains v1 uniqueness with better database performance
 ---@return string
 function random.uuid(v)
   if type(v) ~= "number" then errorMsg("Number", "v", v) end
@@ -1694,6 +1698,17 @@ end
 
 ---***SRG Custom Function***
 ---
+---Checks if `x` is a whole number
+---@param x number
+---@return boolean
+---@nodiscard
+function math.is_whole(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  return x == math.floor(x)
+end
+
+---***SRG Custom Function***
+---
 ---Checks if `x` is an odd number
 ---
 ---NOTE: Floats are neither odd nor even
@@ -1974,17 +1989,6 @@ function math.midpoint(x, y)
   if type(y) ~= "number" then errorMsg("Number", "y", y) end
 
   return (x + y) / 2
-end
-
----***SRG Custom Function***
----
----Checks if `x` is a whole number
----@param x number
----@return boolean
----@nodiscard
-function math.is_whole(x)
-  if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  return x == math.floor(x)
 end
 
 ---------String Library Extension---------
