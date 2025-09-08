@@ -494,21 +494,46 @@ end
 ---Generates a uuid
 ---
 ---UUID V1:
----- Generates a time-based UUID (version 1) using MAC address and timestamp
----- Format: `time_low-time_mid-time_high_and_version-clock_seq_high_and_reserved+clock_seq_low-mac_address`
----- Based on timestamp and MAC address
----- Guarantees uniqueness across time and space
+---- **Step 1: Timestamp Generation**: Creates 60-bit timestamp in 100-nanosecond intervals since October 15, 1582 (UUID epoch)
+---- **Step 2: Clock Sequence**: 14-bit counter (0-16383) preventing duplicates during rapid generation or clock regression
+---- **Step 3: Node ID**: Extracts 48-bit MAC address or uses random fallback with multicast bit set
+---- **Step 4: Field Arrangement**: 
+------ Time Low (32 bits): Lower 32 bits of timestamp
+------ Time Mid (16 bits): Middle 16 bits of timestamp
+------ Time High + Version (16 bits): Upper 12 bits of timestamp + version bits (0001)
+------ Clock Seq + Reserved (8 bits): Upper 6 bits of clock sequence + variant bits (10)
+------ Clock Seq Low (8 bits): Lower 8 bits of clock sequence
+------ Node (48 bits): MAC address or random node ID
+---- **Step 5: UUID Construction**: Combines all fields into time-based UUID
+---- **Step 6: String Formatting**: Converts to `time_low-time_mid-time_high_and_version-clock_seq_and_variant-node`
+---- **Guarantees**: Uniqueness across time and space, sortable by creation time on same machine
 ---
 ---UUID V4:
----- Generates a purely random UUID(version 4)
----- Format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
----- `x`: 0-9 or a-f
----- Hyphens (-) separate sections
----- The `4` in the third section indicates it's a version 4 UUID
----- `y`: 8, 9, a, or b
+---- **Step 1: Random Generation**: Creates 122 random bits (6 bits reserved for version/variant)
+---- **Step 2: Version Setting**: Sets version bits to 0100 (4 in binary) in positions 12-15
+---- **Step 3: Variant Setting**: Sets variant bits to 10 in positions 16-17 for RFC 4122 compliance
+---- **Step 4: Format Application**: Arranges as `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
+------ `x`: Random hex digits (0-9, a-f)
+------ `4`: Version identifier (always 4)
+------ `y`: Variant bits (8, 9, a, or b)
+---- **Step 5: String Conversion**: Converts 128-bit value to hyphenated hex string
+---- **Guarantees**: Extremely low collision probability (1 in 2^122)
 ---
 ---UUID V6:
----- UUID V1 but reformated for chronological sorting
+---- **Step 1: Timestamp Generation**: Same 60-bit timestamp as v1 but reordered for sorting
+---- **Step 2: Clock Sequence**: Identical 14-bit counter as v1 for uniqueness
+---- **Step 3: Node ID**: Always uses random 48-bit node ID (no MAC address)
+---- **Step 4: Timestamp Reordering**: Rearranges v1 timestamp bits for lexicographic sorting
+------ Original v1 order: time_low + time_mid + time_high
+------ New v6 order: time_high + time_mid + time_low
+---- **Step 5: Field Assembly**: 
+------ Time High (32 bits): Most significant 32 bits of timestamp
+------ Time Mid (16 bits): Middle 16 bits of timestamp
+------ Time Low + Version (16 bits): Least significant 12 bits + version (0110)
+------ Clock sequence and node same as v1
+---- **Step 6: UUID Construction**: Creates chronologically sortable time-based UUID
+---- **Step 7: String Formatting**: Same hyphenation as other versions
+---- **Advantages**: Maintains v1 uniqueness with better database performance and sorting
 ---@return string
 function random.uuid(v)
   if type(v) ~= "number" then errorMsg("Number", "v", v) end
