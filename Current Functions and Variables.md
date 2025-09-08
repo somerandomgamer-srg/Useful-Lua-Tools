@@ -1,5 +1,3 @@
-
-
 # Current Functions and Variables
 
 ## 1. ULT Library Variables
@@ -920,9 +918,10 @@
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
-  - `iterations`: `number` (R)
+  - `iterations`: `number` (o)
 - **Returns**: `number`, `number`, `any`
 - **Description**: Runs `func` `iterations` times. Returns Total Execution Time, Average Execution Time Per Run, The Last Result (if return is added in the code).
+- **NOTE: If `iterations` is not given, the code will run 10 times**
 
 ### 10.4 `execution_time(func)`
 - **Type**: `function`
@@ -947,17 +946,12 @@
 - **Returns**: `void`
 - **Description**: Yields `t` seconds before running `func` while stopping other code.
 
----
+# **Legend:**
+- ## **R**: Required parameter
+- ## **O**: Optional parameter
 
-**Legend:**
-- **R**: Required parameter
-- **O**: Optional parameter
+# Summary
 
----
-
-## Summary
-
-**Total Functions**: 133
-**Total Variables**: 9
-**Total Functions and Variables**: 142
-
+## **Total Functions**: 133
+## **Total Variables**: 9
+## **Total Functions and Variables**: 142

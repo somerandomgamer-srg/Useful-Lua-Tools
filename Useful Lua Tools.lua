@@ -5,6 +5,22 @@ local function errorMsg(expected, name, value)
   error(("%s expected for '%s', given: %s (%s)."):format(expected, name, tostring(value), type(value)))
 end
 
+---Generates a random UUID (version 4)
+---
+---UUID V4 format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
+---- `x`: 0-9 and a-f
+---- Hyphens (-) separate sections
+---- The `4` in the third section indicates it's a version 4 UUID
+---- `y`: 8, 9, a, or b
+---@return string
+---@nodiscard
+local function uuid4()
+  local returnValue = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+  returnValue = returnValue:gsub("x", function() return ("0123456789abcdef")[math.random(16)] end)
+  returnValue = returnValue:gsub("y", function() return ("89ab")[math.random(4)] end)
+  return returnValue
+end
+
 ---Error handler for color.rgb functions
 local function rgbProcess(rgb)
   if type(rgb) ~= "table" then errorMsg("Table", "rgb", rgb) end
@@ -324,8 +340,12 @@ ult = {}
 ---@class colorlib
 color = {}
 
+---Inspired by Roblox `Remote Events` in Roblox Studio
 ---@class remotelib
 remote = {}
+
+---@class randomlib
+random = {}
 
 -----------ULT Main Library-----------
 
@@ -335,7 +355,7 @@ remote = {}
 ---
 ---"Major Update"."Minor Update"."Patch/Very Minor Update"
 ---@nodiscard
-ult.version = "1.2.1"
+ult.version = "1.2.2"
 
 ---***SRG Custom Variable***
 ---
@@ -355,7 +375,7 @@ ult.min_lua_ver = "5.3"
 ---
 ---The release date of the current ULT version
 ---@nodiscard
-ult.release_date = "08/27/2025"
+ult.release_date = "09/05/2025"
 
 ---***SRG Custom Variable***
 ---
@@ -404,6 +424,11 @@ function remote.call(name)
 
   if toReturn then return toReturn end
 end
+
+------------Random Library------------
+
+function random.uuid()
+  
 
 ------------System Library------------
 
@@ -880,24 +905,6 @@ function cryptography.base32_to_text(s)
   if #binary % 8 ~= 0 then binary = binary:sub(1, #binary - (#binary % 8)) end
 
   return cryptography.binary_to_text(binary)
-end
-
----***SRG Custom Function***
----
----Generates a random UUID (version 4)
----
----UUID V4 format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
----- `x`: 0-9 and a-f
----- Hyphens (-) separate sections
----- The `4` in the third section indicates it's a version 4 UUID
----- `y`: 8, 9, a, or b
----@return string
----@nodiscard
-function cryptography.uuid_v4()
-  local returnValue = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-  returnValue = returnValue:gsub("x", function() return ("0123456789abcdef")[math.random(16)] end)
-  returnValue = returnValue:gsub("y", function() return ("89ab")[math.random(4)] end)
-  return returnValue
 end
 
 ---***SRG Custom Function***
@@ -2359,7 +2366,7 @@ function wait(x)
     x = 1
   end
 
-  if package.config:sub(1, 1) == "\\" then
+  if system.is_windows then
     os.execute("timeout /t " .. x .. " /nobreak >nul")
   else
     os.execute("sleep " .. x)
