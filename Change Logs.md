@@ -42,7 +42,6 @@
     - Moved `math.random_sign(x)` to `random.sign(x)`
     - Added `random.number(min, max, decimals)` function for generating random numbers with optional decimal places
     - Added `random.choice(t, amount)` function for randomly selecting elements from tables
-    - Added LuaDoc annotations for all random library functions
     - Fixed compatibility issues with bitwise operators for older Lua versions
     - Fixed function ordering bug with `table.keypair_reverse` dependency
     - Random library now has 4 functions total (uuid, sign, number, choice)
