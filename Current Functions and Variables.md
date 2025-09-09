@@ -888,7 +888,8 @@
 - **Description**: Calls the function registered under the given `name` and returns its result (if any).
 
 ## 10. Random Library
-### 10.1 `uuid(v)`
+
+### 10.1 `random.uuid(v)`
 - **Type**: `function`
 - **Arguments**: 
   - `v`: `1 = UUID V1`, `4 = UUID V4`, `6 = UUID V6` (R)
@@ -909,6 +910,30 @@
     - Format: `time_high-time_mid-time_low_and_version-clock_seq_and_variant-random_node`
     - Uses random node ID instead of MAC address for privacy
     - Maintains v1 uniqueness with better database performance
+
+### 10.2 `random.sign(x)`
+- **Type**: `function`
+- **Arguments**: 
+  - `x`: `number` (R)
+- **Returns**: `number`
+- **Description**: Randomly makes `x` positive or negative.
+
+### 10.3 `random.number(min, max, decimals)`
+- **Type**: `function`
+- **Arguments**: 
+  - `min`: `number` (R)
+  - `max`: `number` (R)
+  - `decimals`: `number` (O)
+- **Returns**: `number`
+- **Description**: Generates a random number between `min` and `max` with optional decimal places. If `decimals` is not provided, returns a whole number.
+
+### 10.4 `random.choice(t, amount)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+  - `amount`: `number` (O)
+- **Returns**: `any|table`
+- **Description**: Randomly selects element(s) from table `t`. Returns single element if `amount` < 2 or not provided, otherwise returns table of `amount` elements.
 
 ## 11. Global Functions
 
