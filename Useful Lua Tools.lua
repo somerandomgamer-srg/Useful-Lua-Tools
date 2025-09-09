@@ -16,7 +16,7 @@ local function uuid1and6(v)
       mac[i] = math.random(0, 255)
     end
 
-    mac[1] = mac[1] | 0x01
+    mac[1] = math.floor(mac[1]) + 1
     return mac
   end
 
@@ -27,12 +27,12 @@ local function uuid1and6(v)
     macAddr = randomMac()
   end
 
-  local low = timestamp & 0xFFFFFFFF
-  local middle = (timestamp >> 32) & 0xFFFF
-  local high = ((timestamp >> 48) & 0x0FFF) | 0x1000
+  local low = timestamp % 0x100000000
+  local middle = math.floor(timestamp / 0x100000000) % 0x10000
+  local high = math.floor(timestamp / 0x1000000000000) % 0x1000 + 0x1000
 
-  local cHigh = ((clockSeq >> 8) & 0x3F) | 0x80
-  local cLow = clockSeq & 0xFF
+  local cHigh = math.floor(clockSeq / 256) % 64 + 128
+  local cLow = clockSeq % 256
 
   return low, middle, high, cHigh, cLow, macAddr
 end
@@ -56,8 +56,8 @@ local function uuid1()
 end
 
 --Function for random.uuid(6)
-local function uuid6(6)
-  local low, middle, high, cHigh, cLow, macAddr = uuid1and6()
+local function uuid6()
+  local low, middle, high, cHigh, cLow, macAddr = uuid1and6(6)
   return string.format(
     "%04x-%04x-%08x-%02x%02x-%02x%02x%02x%02x%02x%02x",
     high, middle, low, cHigh, cLow,
@@ -380,9 +380,18 @@ local base32Chars = {
 
 local remotes = {}
 
-local morseReverse = table.keypair_reverse(morseCodeTable)
-local base64Reverse = table.keypair_reverse(base64Chars)
-local base32Reverse = table.keypair_reverse(base32Chars)
+-- Define table.keypair_reverse function early since it's needed here
+local function createKeypairReverse(t)
+  local reversed = {}
+  for k, v in pairs(t) do
+    reversed[v] = k
+  end
+  return reversed
+end
+
+local morseReverse = createKeypairReverse(morseCodeTable)
+local base64Reverse = createKeypairReverse(base64Chars)
+local base32Reverse = createKeypairReverse(base32Chars)
 
 ---------Initiate Libraries---------
 
@@ -521,6 +530,69 @@ function random.uuid(v)
   }
 
   return funcs[v]()
+end
+
+---***SRG Custom Function***
+---
+---Randomly makes `x` positive or negative
+---@param x number
+---@return number
+function random.sign(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+
+  local r = math.random(2)
+  if r == 2 then
+    return -x
+  else
+    return x
+  end
+end
+
+---***SRG Custom Function***
+---
+---Generates a random number between `min` and `max` with `decimals` places (whole number is `decimals` is not provided)
+---@param min number
+---@param max number  
+---@param decimals number?
+---@return number
+function random.number(min, max, decimals)
+  if type(min) ~= "number" then errorMsg("Number", "min", min) end
+  if type(max) ~= "number" then errorMsg("Number", "max", max) end
+  if decimals and type(decimals) ~= "number" then errorMsg("Number", "decimals", decimals) end
+
+  if not decimals or decimals < 1 then return math.random(min, max) end
+
+  local s = tostring(math.random(min, max)) .. "."
+
+  for _ = 1, decimals do
+    s = s .. tostring(math.random(0, 9))
+  end
+  return tonumber(s)
+end
+
+---***SRG Custom Function***
+---
+---Randomly selects element(s) from table `t`. Returns single element if `amount` < 2, otherwise returns table of `amount` elements
+---@param t table
+---@param amount number?
+---@return any
+function random.choice(t, amount)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if amount and type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
+
+  t = table.copy(t)
+
+  if not amount or amount < 2 then return t[math.random(#t)] end
+
+  local choices = {}
+
+  for _ = 1, amount do
+    local rng = math.random(#t)
+    table.insert(choices, t[rng])
+    table.remove(choices, rng)
+  end
+
+  return choices
 end
 
 ------------System Library------------
@@ -1013,7 +1085,11 @@ end
 ---@nodiscard
 function cryptography.bswap(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  return ((x & 0xFF) << 24) | ((x & 0xFF00) << 8) | ((x & 0xFF0000) >> 8) | ((x >> 24) & 0xFF)
+  local byte1 = (x % 256) * 16777216
+  local byte2 = (math.floor(x / 256) % 256) * 256
+  local byte3 = math.floor((x % 16777216) / 65536)
+  local byte4 = math.floor(x / 16777216) % 256
+  return byte1 + byte2 + byte3 + byte4
 end
 
 ---***SRG Custom Function***
@@ -1026,7 +1102,9 @@ function cryptography.rol(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
+  local left = (x * (2^disp)) % (2^32)
+  local right = math.floor(x / (2^(32 - disp)))
+  return (left + right) % (2^32)
 end
 
 ---***SRG Custom Function***
@@ -1039,7 +1117,9 @@ function cryptography.ror(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
+  local right = math.floor(x / (2^disp))
+  local left = (x * (2^(32 - disp))) % (2^32)
+  return (right + left) % (2^32)
 end
 
 ---***SRG Custom Function***
@@ -1052,7 +1132,7 @@ function cryptography.number_to_bit(x)
 
   local binary = ""
   for i = 31, 0, -1 do
-    local bit = (x >> i) & 1
+    local bit = math.floor(x / (2^i)) % 2
     binary = binary .. bit
   end
   return binary
@@ -1065,7 +1145,7 @@ end
 ---@return string
 function cryptography.number_to_hex(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  return ("%x"):format(x & 0xFFFFFFFF)
+  return ("%x"):format(x % 0x100000000)
 end
 
 ---***SRG Custom Function***
@@ -1078,7 +1158,7 @@ function cryptography.btest(a, b)
   if type(a) ~= "number" then errorMsg("Number", "a", a) end
   if type(b) ~= "number" then errorMsg("Number", "b", b) end
 
-  return (a & b) ~= 0
+  return math.floor(a) % 2 == 1 and math.floor(b) % 2 == 1
 end
 
 ---***SRG Custom Function***
@@ -1094,7 +1174,7 @@ function cryptography.extract(n, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
   width = width or 1
-  return (n >> field) & ((1 << width) - 1)
+  return math.floor(n / (2^field)) % (2^width)
 end
 
 ---***SRG Custom Function***
@@ -1112,8 +1192,10 @@ function cryptography.replace(n, v, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
   width = width or 1
-  local mask = ~(((1 << width) - 1) << field)
-  return (n & mask) | ((v & ((1 << width) - 1)) << field)
+  local mask = (2^width - 1) * (2^field)
+  local masked_n = n - (math.floor(n / (2^field)) % (2^width)) * (2^field)
+  local masked_v = (v % (2^width)) * (2^field)
+  return masked_n + masked_v
 end
 
 ---***SRG Custom Function***
@@ -1134,7 +1216,7 @@ function cryptography.xor(s, key)
   for i = 1, #s do
     local charByte = s:sub(i, i):byte()
     local keyByte = key:sub((i - 1) % #key + 1, (i - 1) % #key + 1):byte()
-    local encryptedByte = charByte ~ keyByte
+    local encryptedByte = charByte + keyByte - 2 * math.floor((charByte + keyByte) / 2)
     encrypted = encrypted .. encryptedByte:char()
   end
 
@@ -1729,24 +1811,6 @@ end
 function math.is_even(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return x % 2 == 0
-end
-
----***SRG Custom Function***
----
----Randomly makes `x` positive or negative
----
----NOTE: Floats are neither odd nor even
----@param x number
----@return number
-function math.random_sign(x)
-  if type(x) ~= "number" then errorMsg("Number", "x", x) end
-
-  local r = math.random(2)
-  if r == 2 then
-    return -math.abs(x)
-  else
-    return math.abs(x)
-  end
 end
 
 ---***SRG Custom Function***

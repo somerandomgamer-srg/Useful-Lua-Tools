@@ -1,6 +1,4 @@
-# Current Functions and Variables
-
-## 1. ULT Library Variables
+# 1. ULT Library Variables
 
 ### 1.1 `ult.version`
 - **Type**: `variable`
@@ -74,7 +72,7 @@
 - **Returns**: `boolean`
 - **Description**: True if the host system is built on Linux, false otherwise.
 
-## 3. Math Library Functions
+# 3. Math Library Functions
 
 ### 3.1 Statistical Functions
 
@@ -747,24 +745,16 @@
 - **Returns**: `string`
 - **Description**: Applies ROT13 encryption on `s` (Caesar cipher with shift of 13).
 
-### 7.3 UUID Generation
+### 7.3 Bitwise Operations
 
-#### 7.3.1 `cryptography.uuid_v4()`
-- **Type**: `function`
-- **Arguments**: None
-- **Returns**: `string`
-- **Description**: Generates a random UUID (version 4). UUID V4 format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx` where `x`: 0-9 and a-f, Hyphens (-) separate sections, The `4` in the third section indicates it's a version 4 UUID, `y`: 8, 9, a, or b.
-
-### 7.4 Bitwise Operations
-
-#### 7.4.1 `cryptography.bswap(x)`
+#### 7.3.1 `cryptography.bswap(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Performs bitwise SWAP operation on `x`.
 
-#### 7.4.2 `cryptography.rol(x, disp)`
+#### 7.3.2 `cryptography.rol(x, disp)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -772,7 +762,7 @@
 - **Returns**: `number`
 - **Description**: Performs a bitwise left rotation on `x` by specified positions (`disp`).
 
-#### 7.4.3 `cryptography.ror(x, disp)`
+#### 7.3.3 `cryptography.ror(x, disp)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -780,21 +770,21 @@
 - **Returns**: `number`
 - **Description**: Performs a bitwise right rotation on `x` by specified positions (`disp`).
 
-#### 7.4.4 `cryptography.number_to_bit(x)`
+#### 7.3.4 `cryptography.number_to_bit(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `string`
 - **Description**: Converts `x` to its binary representation.
 
-#### 7.4.5 `cryptography.number_to_hex(x)`
+#### 7.3.5 `cryptography.number_to_hex(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `string`
 - **Description**: Converts `x` to its hexadecimal representation.
 
-#### 7.4.6 `cryptography.btest(a, b)`
+#### 7.3.6 `cryptography.btest(a, b)`
 - **Type**: `function`
 - **Arguments**: 
   - `a`: `number` (R)
@@ -802,7 +792,7 @@
 - **Returns**: `boolean`
 - **Description**: Returns a boolean signaling whether the bitwise AND of its operands is different from zero.
 
-#### 7.4.7 `cryptography.extract(n, field, width)`
+#### 7.3.7 `cryptography.extract(n, field, width)`
 - **Type**: `function`
 - **Arguments**: 
   - `n`: `number` (R)
@@ -811,7 +801,7 @@
 - **Returns**: `number`
 - **Description**: Returns the unsigned number formed by the bits `field` to `field + width - 1` from `n`.
 
-#### 7.4.8 `cryptography.replace(n, v, field, width)`
+#### 7.3.8 `cryptography.replace(n, v, field, width)`
 - **Type**: `function`
 - **Arguments**: 
   - `n`: `number` (R)
@@ -897,16 +887,39 @@
 - **Returns**: `any?`
 - **Description**: Calls the function registered under the given `name` and returns its result (if any).
 
-## 10. Global Functions
+## 10. Random Library
+### 10.1 `uuid(v)`
+- **Type**: `function`
+- **Arguments**: 
+  - `v`: `1 = UUID V1`, `4 = UUID V4`, `6 = UUID V6` (R)
+- **Returns**: `string`
+- **Description**: Generates a Universally Unique Identifier (UUID).
+  - UUID V1:
+    - Generates a time-based UUID (version 1) using MAC address and timestamp
+    - Format: `time_low-time_mid-time_high_and_version-clock_seq-mac_address`
+    - Based on timestamp and MAC address
+    - Guarantees uniqueness across time and space
+  - UUID V4:
+    - Generates a purely random UUID (version 4)
+    - Format: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
+    - `x`: 0-9 or a-f, `4` indicates version 4, `y`: 8, 9, a, or b
+    - Extremely low collision probability
+  - UUID V6:
+    - Generates a time-based UUID (version 6) with reordered timestamp for chronological sorting
+    - Format: `time_high-time_mid-time_low_and_version-clock_seq_and_variant-random_node`
+    - Uses random node ID instead of MAC address for privacy
+    - Maintains v1 uniqueness with better database performance
 
-### 10.1 `wait(x)`
+## 11. Global Functions
+
+### 11.1 `wait(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `void`
 - **Description**: Yields the code for `x` seconds. (Similar to python's wait function).
 
-### 10.2 `is_type(value, type_of_object)`
+### 11.2 `is_type(value, type_of_object)`
 - **Type**: `function`
 - **Arguments**: 
   - `value`: `any` (R)
@@ -914,7 +927,7 @@
 - **Returns**: `boolean`
 - **Description**: Checks if `value` is a `type_of_object`.
 
-### 10.3 `benchmark(func, iterations)`
+### 11.3 `benchmark(func, iterations)`
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
@@ -923,14 +936,14 @@
 - **Description**: Runs `func` `iterations` times. Returns Total Execution Time, Average Execution Time Per Run, The Last Result (if return is added in the code).
 - **NOTE: If `iterations` is not given, the code will run 10 times**
 
-### 10.4 `execution_time(func)`
+### 11.4 `execution_time(func)`
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
 - **Returns**: `number`, `any`
 - **Description**: Runs `func` and returns the time it takes to run `func`.
 
-### 10.5 `delay(t, func)`
+### 11.5 `delay(t, func)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `number` (R)
@@ -938,7 +951,7 @@
 - **Returns**: `void`
 - **Description**: Yields `t` seconds before running `func` without stopping other code.
 
-### 10.6 `delay_stop(t, func)`
+### 11.6 `delay_stop(t, func)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `number` (R)

@@ -27,9 +27,22 @@
 # V1.2.2
 - ## Date: Aug 29, 2025 - Sep 5, 2025
   - ## Aug 29, 2025
-    - Description: Reformating
     - Made the code slightly shorter by combining similar code into singular functions
   - ## Sep 5, 2025
     - Reformatted `Current Functions and Variables.md`
     - 1 new library with 3 functions (remote)
       - Inspired by Roblox remote events in Roblox Studio
+
+# V1.3.0
+- ## Date: Sep 8, 2025 - Sep 9, 2025
+  - ## Sep 8, 2025
+    - 1 new library with 1 function (random)
+    - Removed `cryptography.uuid4()`
+  - ## Sep 9, 2025
+    - Moved `math.random_sign(x)` to `random.sign(x)`
+    - Added `random.number(min, max, decimals)` function for generating random numbers with optional decimal places
+    - Added `random.choice(t, amount)` function for randomly selecting elements from tables
+    - Added LuaDoc annotations for all random library functions
+    - Fixed compatibility issues with bitwise operators for older Lua versions
+    - Fixed function ordering bug with `table.keypair_reverse` dependency
+    - Random library now has 4 functions total (uuid, sign, number, choice)

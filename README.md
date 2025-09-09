@@ -27,7 +27,7 @@ Nothing much to say here.
 For questions, suggestions, or contributions related to this template:
 
 - **Creator**: Some Random Gamer (SRG)
-- **Discord**: [Join my Discord server!](https://discord.gg/w9aE98gKDs)
+- **Discord**: [Join my Discord Server!](https://discord.gg/w9aE98gKDs)
 - **Issues**: Please report any bugs to the [bugs-suggestions-and-feedback](https://discord.com/channels/1296889247176982528/1298419569135980564) channel
 - **Contributions**: DM me on Discord!
 
