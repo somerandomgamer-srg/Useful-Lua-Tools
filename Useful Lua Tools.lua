@@ -1217,7 +1217,7 @@ function cryptography.xor(s, key)
     local charByte = s:sub(i, i):byte()
     local keyByte = key:sub((i - 1) % #key + 1, (i - 1) % #key + 1):byte()
     local encryptedByte = charByte + keyByte - 2 * math.floor((charByte + keyByte) / 2)
-    encrypted = encrypted .. string.char(encryptedByte)
+    encrypted = encrypted .. encryptedByte:char()
   end
 
   return encrypted
@@ -1240,7 +1240,7 @@ function cryptography.caesar_cipher(s, shift)
     local character = s:sub(i, i)
     if character:match("%a") then
       local base = character:match("%u") and 65 or 97
-      encrypted = encrypted .. string.char(((character:byte() - base + shift) % 26) + base)
+      encrypted = encrypted .. tostring(((character:byte() - base + shift) % 26) + base):char()
     else
       encrypted = encrypted .. character
     end
