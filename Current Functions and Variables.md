@@ -935,6 +935,27 @@
 - **Returns**: `any`
 - **Description**: Randomly selects element(s) from table `t`. Returns single element if `amount` < 2 or not provided, otherwise returns table of `amount` elements.
 
+### 10.5 `random.hex(len)`
+- **Type**: `function`
+- **Arguments**: 
+  - `len`: `number` (R)
+- **Returns**: `string`
+- **Description**: Generates a random hexadecimal string of specified length.
+
+### 10.6 `random.boolean()`
+- **Type**: `function`
+- **Arguments**: None
+- **Returns**: `boolean`
+- **Description**: Generates a random boolean value (true or false).
+
+### 10.7 `random.string(len, charset)`
+- **Type**: `function`
+- **Arguments**: 
+  - `len`: `number` (R)
+  - `charset`: `string` (O)
+- **Returns**: `string`
+- **Description**: Generates a random string of specified length using provided character set. If no character set is provided, uses alphanumeric characters (a-z, A-Z, 0-9).
+
 ## 11. Global Functions
 
 ### 11.1 `wait(x)`
