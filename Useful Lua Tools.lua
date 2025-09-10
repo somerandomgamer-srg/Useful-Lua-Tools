@@ -604,8 +604,7 @@ end
 ---@return string
 function random.hex(len)
   if type(len) ~= "number" then errorMsg("Number", "len", len) end
-  if len < 1 then len = 1 end
-  len = math.floor(len)
+  len = l
 
   local s = "0123456789ABCDEF"
   local toReturn = ""
