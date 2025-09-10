@@ -17,7 +17,7 @@ local function uuid1and6(v)
     end
 
     -- Set locally administered bit (bit 1 of first octet)
-    mac[1] = mac[1] % 254 + 2  -- Ensures bit 1 is set, bit 0 is clear
+    mac[1] = mac[1] % 254 + 2 -- Ensures bit 1 is set, bit 0 is clear
     return mac
   end
 
@@ -25,12 +25,12 @@ local function uuid1and6(v)
     if not macStr or type(macStr) ~= "string" then
       return nil
     end
-    
+
     local macParts = string.split(macStr, ":")
     if not macParts or #macParts ~= 6 then
       return nil
     end
-    
+
     local mac = {}
     for i = 1, 6 do
       local num = tonumber(macParts[i], 16)
@@ -50,12 +50,12 @@ local function uuid1and6(v)
   local low = timestamp % 0x100000000
   local middle = math.floor(timestamp / 0x100000000) % 0x10000
   local high = math.floor(timestamp / 0x1000000000000) % 0x1000
-  
+
   -- Set version bits correctly
   if v == 1 then
-    high = high + 0x1000  -- Version 1
+    high = high + 0x1000 -- Version 1
   elseif v == 6 then
-    high = high + 0x6000  -- Version 6
+    high = high + 0x6000 -- Version 6
   end
 
   local cHigh = math.floor(clockSeq / 256) % 64 + 128
@@ -67,13 +67,13 @@ end
 --Function for random.uuid(4)
 local function uuid4()
   local returnValue = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-  returnValue = returnValue:gsub("x", function() 
+  returnValue = returnValue:gsub("x", function()
     local idx = math.random(16)
-    return ("0123456789abcdef"):sub(idx, idx) 
+    return ("0123456789abcdef"):sub(idx, idx)
   end)
-  returnValue = returnValue:gsub("y", function() 
+  returnValue = returnValue:gsub("y", function()
     local idx = math.random(4)
-    return ("89ab"):sub(idx, idx) 
+    return ("89ab"):sub(idx, idx)
   end)
   return returnValue
 end
@@ -91,13 +91,13 @@ end
 --Function for random.uuid(6)
 local function uuid6()
   local low, middle, high, cHigh, cLow, macAddr = uuid1and6(6)
-  
+
   -- UUID6 reorders timestamp fields for chronological sorting
   -- Format: time_high-time_mid-time_low_and_version-clock_seq-node
   local time_high = math.floor((high % 0x1000) * 0x10000) + middle
   local time_mid = math.floor(low / 0x10000)
-  local time_low_and_version = (low % 0x1000) + 0x6000  -- Version 6, preserve 12 bits
-  
+  local time_low_and_version = (low % 0x1000) + 0x6000 -- Version 6, preserve 12 bits
+
   return string.format(
     "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
     time_high, time_mid, time_low_and_version, cHigh, cLow,
@@ -592,7 +592,7 @@ end
 ---
 ---Generates a random number between `min` and `max` with `decimals` places (whole number is `decimals` is not provided)
 ---@param min number
----@param max number  
+---@param max number
 ---@param decimals number?
 ---@return number
 function random.number(min, max, decimals)
@@ -621,9 +621,9 @@ function random.choice(t, amount)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   if amount and type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
   if amount then amount = math.floor(amount) end
-  
+
   t = table.copy(t)
-  
+
   if not amount or amount < 2 then return t[math.random(#t)] end
 
   local choices = {}
@@ -679,8 +679,8 @@ function random.string(len, charset)
   if type(len) ~= "number" then errorMsg("Number", "len", len) end
   len = len >= 1 and math.floor(len) or 1
 
-  if not charset or type(charset) ~= "string" or #charset == 0 then 
-    charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" 
+  if not charset or type(charset) ~= "string" or #charset == 0 then
+    charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
   end
 
   local s = ""
@@ -2202,10 +2202,10 @@ function string.split(s, pattern)
       start = i + 1
     end
   end
-  
+
   -- Add the final segment after the last delimiter
   table.insert(toReturn, s:sub(start))
-  
+
   return toReturn
 end
 

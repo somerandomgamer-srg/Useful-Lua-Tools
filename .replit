@@ -23,16 +23,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Lua Library Test"
+args = "Lua Library"
 
 [[workflows.workflow]]
-name = "Lua Library Test"
+name = "Lua Library"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "lua test.lua"
+args = "lua main.lua"
 
 [workflows.workflow.metadata]
 outputType = "console"
-
