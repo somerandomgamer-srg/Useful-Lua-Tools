@@ -13,3 +13,26 @@ start = ["lua-language-server"]
 [agent]
 expertMode = true
 
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Lua Library Test"
+
+[[workflows.workflow]]
+name = "Lua Library Test"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "lua test.lua"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
