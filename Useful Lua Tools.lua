@@ -561,6 +561,7 @@ function random.number(min, max, decimals)
   if decimals and type(decimals) ~= "number" then errorMsg("Number", "decimals", decimals) end
 
   if not decimals or decimals < 1 then return math.random(min, max) end
+  decimals = math.floor(decimals)
 
   local s = tostring(math.random(min, max)) .. "."
 
@@ -579,6 +580,7 @@ end
 function random.choice(t, amount)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   if amount and type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
+  amount = math.floor(amount)
 
   t = table.copy(t)
 
@@ -593,6 +595,60 @@ function random.choice(t, amount)
   end
 
   return choices
+end
+
+---***SRG Custom Function***
+---
+---Generates a random hexadecimal string of specified length
+---@param len number
+---@return string
+function random.hex(len)
+  if type(len) ~= "number" then errorMsg("Number", "len", len) end
+  if len < 1 then len = 1 end
+  len = math.floor(len)
+
+  local s = "0123456789ABCDEF"
+  local toReturn = ""
+
+  for _ = 1, len do
+    toReturn = toReturn .. s:sub(math.random(16), math.random(16))
+  end
+
+  return toReturn
+end
+
+---***SRG Custom Function***
+---
+---Generates a random boolean value (true or false)
+---@return boolean
+function random.boolean()
+  if math.random(2) == 2 then
+    return true
+  else
+    return false
+  end
+end
+
+---***SRG Custom Function***
+---
+---Generates a random string of specified length using provided character set
+---@param len number
+---@param charset string?
+---@return string
+function random.string(len, charset)
+  if type(len) ~= "number" then errorMsg("Number", "len", len) end
+  if len < 1 then len = 1 end
+  len = math.floor(len)
+  if not charset or type(charset) ~= "string" or #charset == 0 then 
+    charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" 
+  end
+
+  local s = ""
+  for _ = 1, len do
+    s = s .. charset:sub(math.random(#charset), math.random(#charset))
+  end
+
+  return s
 end
 
 ------------System Library------------
@@ -1192,7 +1248,6 @@ function cryptography.replace(n, v, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
   width = width or 1
-  local mask = (2^width - 1) * (2^field)
   local masked_n = n - (math.floor(n / (2^field)) % (2^width)) * (2^field)
   local masked_v = (v % (2^width)) * (2^field)
   return masked_n + masked_v
@@ -1216,7 +1271,7 @@ function cryptography.xor(s, key)
   for i = 1, #s do
     local charByte = s:sub(i, i):byte()
     local keyByte = key:sub((i - 1) % #key + 1, (i - 1) % #key + 1):byte()
-    local encryptedByte = charByte + keyByte - 2 * math.floor((charByte + keyByte) / 2)
+    local encryptedByte = tostring(charByte + keyByte - 2 * math.floor((charByte + keyByte) / 2))
     encrypted = encrypted .. encryptedByte:char()
   end
 

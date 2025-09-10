@@ -932,7 +932,7 @@
 - **Arguments**: 
   - `t`: `table` (R)
   - `amount`: `number` (O)
-- **Returns**: `any|table`
+- **Returns**: `any`
 - **Description**: Randomly selects element(s) from table `t`. Returns single element if `amount` < 2 or not provided, otherwise returns table of `amount` elements.
 
 ## 11. Global Functions
