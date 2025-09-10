@@ -34,7 +34,7 @@
       - Inspired by Roblox remote events in Roblox Studio
 
 # V1.3.0
-- ## Date: Sep 8, 2025 - Sep 9, 2025
+- ## Date: Sep 8, 2025 - Sep 10, 2025
   - ## Sep 8, 2025
     - 1 new library with 1 function (random)
     - Removed `cryptography.uuid4()`
@@ -44,4 +44,10 @@
     - Added `random.choice(t, amount)` function for randomly selecting elements from tables
     - Fixed compatibility issues with bitwise operators for older Lua versions
     - Fixed function ordering bug with `table.keypair_reverse` dependency
-    - Random library now has 4 functions total (uuid, sign, number, choice)
+  - ## Sep 10, 2025
+    - Added `random.hex(len)` function for generating random hexadecimal strings
+    - Added `random.boolean()` function for generating random true/false values
+    - Added `random.string(len, charset)` function for generating random strings with custom character sets
+    - Added proper LuaDoc annotations for all new random functions
+    - Fixed bugs in random.hex and random.string functions
+    - Random library now has 7 functions total (uuid, sign, number, choice, hex, boolean, string)
