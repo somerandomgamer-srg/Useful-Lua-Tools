@@ -48,6 +48,5 @@
     - Added `random.hex(len)` function for generating random hexadecimal strings
     - Added `random.boolean()` function for generating random true/false values
     - Added `random.string(len, charset)` function for generating random strings with custom character sets
-    - Added proper LuaDoc annotations for all new random functions
     - Fixed bugs in random.hex and random.string functions
     - Random library now has 7 functions total (uuid, sign, number, choice, hex, boolean, string)

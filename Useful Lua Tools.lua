@@ -604,7 +604,7 @@ end
 ---@return string
 function random.hex(len)
   if type(len) ~= "number" then errorMsg("Number", "len", len) end
-  len = l
+  len = len >= 1 and math.floor(len) or 1
 
   local s = "0123456789ABCDEF"
   local toReturn = ""
@@ -636,8 +636,8 @@ end
 ---@return string
 function random.string(len, charset)
   if type(len) ~= "number" then errorMsg("Number", "len", len) end
-  if len < 1 then len = 1 end
-  len = math.floor(len)
+  len = len >= 1 and math.floor(len) or 1
+
   if not charset or type(charset) ~= "string" or #charset == 0 then 
     charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" 
   end
@@ -1140,11 +1140,11 @@ end
 ---@nodiscard
 function cryptography.bswap(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  local byte1 = (x % 256) * 16777216
-  local byte2 = (math.floor(x / 256) % 256) * 256
-  local byte3 = math.floor((x % 16777216) / 65536)
-  local byte4 = math.floor(x / 16777216) % 256
-  return byte1 + byte2 + byte3 + byte4
+  local byte1 = bit32.lshift(bit32.band(x, 0xFF), 24)
+  local byte2 = bit32.lshift(bit32.band(bit32.rshift(x, 8), 0xFF), 16)
+  local byte3 = bit32.lshift(bit32.band(bit32.rshift(x, 16), 0xFF), 8)
+  local byte4 = bit32.band(bit32.rshift(x, 24), 0xFF)
+  return bit32.bor(bit32.bor(byte1, byte2), bit32.bor(byte3, byte4))
 end
 
 ---***SRG Custom Function***
@@ -1157,9 +1157,7 @@ function cryptography.rol(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  local left = (x * (2^disp)) % (2^32)
-  local right = math.floor(x / (2^(32 - disp)))
-  return (left + right) % (2^32)
+  return bit32.lrotate(x, disp)
 end
 
 ---***SRG Custom Function***
@@ -1172,9 +1170,7 @@ function cryptography.ror(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  local right = math.floor(x / (2^disp))
-  local left = (x * (2^(32 - disp))) % (2^32)
-  return (right + left) % (2^32)
+  return bit32.rrotate(x, disp)
 end
 
 ---***SRG Custom Function***
@@ -1187,7 +1183,7 @@ function cryptography.number_to_bit(x)
 
   local binary = ""
   for i = 31, 0, -1 do
-    local bit = math.floor(x / (2^i)) % 2
+    local bit = bit32.extract(x, i, 1)
     binary = binary .. bit
   end
   return binary
@@ -1213,7 +1209,7 @@ function cryptography.btest(a, b)
   if type(a) ~= "number" then errorMsg("Number", "a", a) end
   if type(b) ~= "number" then errorMsg("Number", "b", b) end
 
-  return math.floor(a) % 2 == 1 and math.floor(b) % 2 == 1
+  return bit32.band(a, b) ~= 0
 end
 
 ---***SRG Custom Function***
@@ -1229,7 +1225,7 @@ function cryptography.extract(n, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
   width = width or 1
-  return math.floor(n / (2^field)) % (2^width)
+  return bit32.extract(n, field, width)
 end
 
 ---***SRG Custom Function***
@@ -1247,9 +1243,7 @@ function cryptography.replace(n, v, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
   width = width or 1
-  local masked_n = n - (math.floor(n / (2^field)) % (2^width)) * (2^field)
-  local masked_v = (v % (2^width)) * (2^field)
-  return masked_n + masked_v
+  return bit32.replace(n, v, field, width)
 end
 
 ---***SRG Custom Function***
