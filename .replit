@@ -23,15 +23,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Demo"
+args = "Comprehensive Demo"
 
 [[workflows.workflow]]
-name = "Demo"
+name = "Comprehensive Demo"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "lua demo.lua"
+args = "lua comprehensive_demo.lua"
 
 [workflows.workflow.metadata]
 outputType = "console"
