@@ -46,5 +46,4 @@
     - Added `random.hex(len)` function for generating random hexadecimal strings
     - Added `random.boolean()` function for generating random true/false values
     - Added `random.string(len, charset)` function for generating random strings with custom character sets
-    - Fixed compatibility issues with bitwise operators for older Lua versions
     - Random library now has 7 functions total (uuid, sign, number, choice, hex, boolean, string)

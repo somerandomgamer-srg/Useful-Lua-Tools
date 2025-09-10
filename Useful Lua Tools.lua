@@ -461,7 +461,7 @@ random = {}
 ---
 ---"Major Update"."Minor Update"."Patch/Very Minor Update"
 ---@nodiscard
-ult.version = "1.2.2"
+ult.version = "1.3.0"
 
 ---***SRG Custom Variable***
 ---
