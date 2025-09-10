@@ -40,8 +40,14 @@ end
 --Function for random.uuid(4)
 local function uuid4()
   local returnValue = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-  returnValue = returnValue:gsub("x", function() return ("0123456789abcdef")[math.random(16)] end)
-  returnValue = returnValue:gsub("y", function() return ("89ab")[math.random(4)] end)
+  returnValue = returnValue:gsub("x", function() 
+    local idx = math.random(16)
+    return ("0123456789abcdef"):sub(idx, idx) 
+  end)
+  returnValue = returnValue:gsub("y", function() 
+    local idx = math.random(4)
+    return ("89ab"):sub(idx, idx) 
+  end)
   return returnValue
 end
 
