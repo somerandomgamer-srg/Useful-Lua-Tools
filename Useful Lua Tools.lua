@@ -16,8 +16,7 @@ local function uuid1and6(v)
       mac[i] = math.random(0, 255)
     end
 
-    -- Set locally administered bit (bit 1 of first octet)
-    mac[1] = mac[1] % 254 + 2 -- Ensures bit 1 is set, bit 0 is clear
+    mac[1] = mac[1] % 254 + 2
     return mac
   end
 
@@ -51,11 +50,10 @@ local function uuid1and6(v)
   local middle = math.floor(timestamp / 0x100000000) % 0x10000
   local high = math.floor(timestamp / 0x1000000000000) % 0x1000
 
-  -- Set version bits correctly
   if v == 1 then
-    high = high + 0x1000 -- Version 1
-  elseif v == 6 then
-    high = high + 0x6000 -- Version 6
+    high = high + 0x1000
+  else
+    high = high + 0x6000
   end
 
   local cHigh = math.floor(clockSeq / 256) % 64 + 128
@@ -92,11 +90,9 @@ end
 local function uuid6()
   local low, middle, high, cHigh, cLow, macAddr = uuid1and6(6)
 
-  -- UUID6 reorders timestamp fields for chronological sorting
-  -- Format: time_high-time_mid-time_low_and_version-clock_seq-node
   local time_high = math.floor((high % 0x1000) * 0x10000) + middle
   local time_mid = math.floor(low / 0x10000)
-  local time_low_and_version = (low % 0x1000) + 0x6000 -- Version 6, preserve 12 bits
+  local time_low_and_version = (low % 0x1000) + 0x6000
 
   return string.format(
     "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
@@ -1181,11 +1177,11 @@ end
 ---@nodiscard
 function cryptography.bswap(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  local byte1 = bit32.lshift(bit32.band(x, 0xFF), 24)
-  local byte2 = bit32.lshift(bit32.band(bit32.rshift(x, 8), 0xFF), 16)
-  local byte3 = bit32.lshift(bit32.band(bit32.rshift(x, 16), 0xFF), 8)
-  local byte4 = bit32.band(bit32.rshift(x, 24), 0xFF)
-  return bit32.bor(bit32.bor(byte1, byte2), bit32.bor(byte3, byte4))
+  local byte1 = (x & 0xFF) << 24
+  local byte2 = ((x >> 8) & 0xFF) << 16
+  local byte3 = ((x >> 16) & 0xFF) << 8
+  local byte4 = (x >> 24) & 0xFF
+  return (byte1 | byte2) | (byte3 | byte4)
 end
 
 ---***SRG Custom Function***
