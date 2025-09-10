@@ -580,7 +580,7 @@ end
 function random.choice(t, amount)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   if amount and type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
-  amount = math.floor(amount)
+  if amount then amount = math.floor(amount) end
 
   t = table.copy(t)
 
