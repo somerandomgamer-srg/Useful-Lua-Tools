@@ -125,10 +125,10 @@ end
 local function shuffleTable(t)
   local shuffled = {}
   while #t > 0 do
-    local random = t[math.random(#t)]
+    local rng = math.random(#t)
 
-    table.insert(shuffled, random)
-    table.remove(t, random)
+    table.insert(shuffled, t[rng])
+    table.remove(t, rng)
   end
 
   return shuffled
@@ -147,7 +147,7 @@ local function countRecursive(t, prefix, separator)
       amount = amount + subAmount
       for k, v in pairs(subKeys) do keyTable[k] = v end
     end
-    keyTable[currentPath] = keyTable[currentPath] + 1 or 0
+    keyTable[currentPath] = (keyTable[currentPath] or 0) + 1
     amount = amount + 1
   end
   return amount, keyTable
@@ -581,9 +581,9 @@ function random.choice(t, amount)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
   if amount and type(amount) ~= "number" then errorMsg("Number", "amount", amount) end
   if amount then amount = math.floor(amount) end
-
+  
   t = table.copy(t)
-
+  
   if not amount or amount < 2 then return t[math.random(#t)] end
 
   local choices = {}
@@ -591,7 +591,7 @@ function random.choice(t, amount)
   for _ = 1, amount do
     local rng = math.random(#t)
     table.insert(choices, t[rng])
-    table.remove(choices, rng)
+    table.remove(t, rng)
   end
 
   return choices
@@ -1616,7 +1616,7 @@ function math.gcd(x, y)
   if x == y then
     result = x
   elseif x == 0 or y == 0 then
-    result = "N/A"
+    result = 0
   elseif x == 1 or y == 1 then
     result = 1
   else
@@ -2160,6 +2160,10 @@ function string.split(s, pattern)
       start = i + 1
     end
   end
+  
+  -- Add the final segment after the last delimiter
+  table.insert(toReturn, s:sub(start))
+  
   return toReturn
 end
 
@@ -2259,7 +2263,7 @@ function string.count(s, pattern)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
   if type(pattern) ~= "string" then errorMsg("String", "pattern", pattern) end
   local amount = 0
-  for _ in s:gmatch(pattern) do count = count + 1 end
+  for _ in s:gmatch(pattern) do amount = amount + 1 end
   return amount
 end
 
