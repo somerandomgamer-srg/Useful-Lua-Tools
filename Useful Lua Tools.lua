@@ -1181,11 +1181,11 @@ end
 ---@nodiscard
 function cryptography.bswap(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  local byte1 = bit32.lshift(bit32.band(x, 0xFF), 24)
-  local byte2 = bit32.lshift(bit32.band(bit32.rshift(x, 8), 0xFF), 16)
-  local byte3 = bit32.lshift(bit32.band(bit32.rshift(x, 16), 0xFF), 8)
-  local byte4 = bit32.band(bit32.rshift(x, 24), 0xFF)
-  return bit32.bor(bit32.bor(byte1, byte2), bit32.bor(byte3, byte4))
+  local byte1 = ((x & 0xFF) << 24)
+  local byte2 = (((x >> 8) & 0xFF) << 16)
+  local byte3 = (((x >> 16) & 0xFF) << 8)
+  local byte4 = ((x >> 24) & 0xFF)
+  return byte1 | byte2 | byte3 | byte4
 end
 
 ---***SRG Custom Function***
