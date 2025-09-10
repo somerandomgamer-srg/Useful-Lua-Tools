@@ -2,7 +2,7 @@
 
 ## Overview
 
-Useful Lua Tools (ULT) is a comprehensive Lua utility library that provides a collection of commonly used functions and variables organized into modular libraries. The project aims to simplify Lua development by offering pre-built solutions for cryptography, input handling, mathematical operations, string manipulation, table operations, system detection, color utilities, remote events, and random number generation. Currently at version 1.3.0, the library is designed to be cross-platform compatible and supports multiple Lua versions.
+Useful Lua Tools (ULT) is a comprehensive Lua utility library that provides a collection of commonly used functions and variables organized into modular libraries. The project aims to simplify Lua development by offering pre-built solutions for cryptography, input handling, mathematical operations, string manipulation, table operations, system detection, color utilities, remote events, and random number generation. Currently at version 1.2.2, the library is designed to be cross-platform compatible and supports Lua 5.2+.
 
 ## User Preferences
 
@@ -38,8 +38,8 @@ The system includes robust platform detection mechanisms:
 ## External Dependencies
 
 ### Runtime Dependencies
-- **Lua Runtime**: Minimum version specified in `ult.min_lua_ver`
-- **Standard Lua Libraries**: Built-in `os`, `math`, `string`, and `table` libraries
+- **Lua Runtime**: Minimum version 5.2 (uses bit32 library for bitwise operations)
+- **Standard Lua Libraries**: Built-in `os`, `math`, `string`, `table`, and `bit32` libraries
 - **Platform-Specific APIs**: OS detection relies on system-level calls
 
 ### Development Dependencies
