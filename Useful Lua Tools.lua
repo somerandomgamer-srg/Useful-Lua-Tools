@@ -16,20 +16,47 @@ local function uuid1and6(v)
       mac[i] = math.random(0, 255)
     end
 
-    mac[1] = math.floor(mac[1]) + 1
+    -- Set locally administered bit (bit 1 of first octet)
+    mac[1] = mac[1] % 254 + 2  -- Ensures bit 1 is set, bit 0 is clear
+    return mac
+  end
+
+  local function parseMacAddress(macStr)
+    if not macStr or type(macStr) ~= "string" then
+      return nil
+    end
+    
+    local macParts = string.split(macStr, ":")
+    if not macParts or #macParts ~= 6 then
+      return nil
+    end
+    
+    local mac = {}
+    for i = 1, 6 do
+      local num = tonumber(macParts[i], 16)
+      if not num then return nil end
+      mac[i] = num
+    end
     return mac
   end
 
   local macAddr
   if v == 1 then
-    macAddr = string.split(system.mac_address, ":") or randomMac()
+    macAddr = parseMacAddress(system.mac_address) or randomMac()
   else
     macAddr = randomMac()
   end
 
   local low = timestamp % 0x100000000
   local middle = math.floor(timestamp / 0x100000000) % 0x10000
-  local high = math.floor(timestamp / 0x1000000000000) % 0x1000 + 0x1000
+  local high = math.floor(timestamp / 0x1000000000000) % 0x1000
+  
+  -- Set version bits correctly
+  if v == 1 then
+    high = high + 0x1000  -- Version 1
+  elseif v == 6 then
+    high = high + 0x6000  -- Version 6
+  end
 
   local cHigh = math.floor(clockSeq / 256) % 64 + 128
   local cLow = clockSeq % 256
