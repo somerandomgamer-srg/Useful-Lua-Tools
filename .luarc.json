@@ -5,6 +5,7 @@
         "undefined-doc-name",
         "return-type-mismatch",
         "param-type-mismatch",
-        "assign-type-mismatch"
+        "assign-type-mismatch",
+        "deprecated"
     ]
 }
