@@ -8,8 +8,54 @@ print("\n--- Testing ULT version ---")
 print("Version:", ult.version)
 print("Build:", ult.build)
 
+-- Test UUID generation thoroughly
+print("\n--- Testing UUID Generation ---")
+
+-- Test UUID4 (should be random, proper format)
+print("Testing UUID4...")
+for i = 1, 3 do
+  local uuid4_result = random.uuid(4)
+  print("UUID4 #" .. i .. ":", uuid4_result)
+  
+  -- Validate format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+  local pattern = "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-4%x%x%x%-[89ab]%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$"
+  if uuid4_result:match(pattern) then
+    print("  ✓ Valid UUID4 format")
+  else
+    print("  ✗ Invalid UUID4 format")
+  end
+end
+
+-- Test UUID1 (time-based with MAC)
+print("\nTesting UUID1...")
+for i = 1, 3 do
+  local uuid1_result = random.uuid(1)
+  print("UUID1 #" .. i .. ":", uuid1_result)
+  
+  -- Validate format and version field
+  if uuid1_result:match("^%x%x%x%x%x%x%x%x%-%x%x%x%x%-1%x%x%x%-[89ab]%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$") then
+    print("  ✓ Valid UUID1 format")
+  else
+    print("  ✗ Invalid UUID1 format")
+  end
+end
+
+-- Test UUID6 (time-based, reordered)
+print("\nTesting UUID6...")
+for i = 1, 3 do
+  local uuid6_result = random.uuid(6)
+  print("UUID6 #" .. i .. ":", uuid6_result)
+  
+  -- Validate format and version field
+  if uuid6_result:match("^%x%x%x%x%x%x%x%x%-%x%x%x%x%-6%x%x%x%-[89ab]%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$") then
+    print("  ✓ Valid UUID6 format")
+  else
+    print("  ✗ Invalid UUID6 format")
+  end
+end
+
 -- Test fixed functions
-print("\n--- Testing Fixed Functions ---")
+print("\n--- Testing Other Fixed Functions ---")
 
 -- Test random.choice
 print("Testing random.choice...")

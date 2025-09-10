@@ -96,7 +96,7 @@ local function uuid6()
   -- Format: time_high-time_mid-time_low_and_version-clock_seq-node
   local time_high = math.floor((high % 0x1000) * 0x10000) + middle
   local time_mid = math.floor(low / 0x10000)
-  local time_low_and_version = (low % 0x10000) + 0x6000  -- Version 6
+  local time_low_and_version = (low % 0x1000) + 0x6000  -- Version 6, preserve 12 bits
   
   return string.format(
     "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
