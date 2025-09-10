@@ -495,18 +495,21 @@ ult.build = ("ult-%s-%s-%s"):format(ult.version, ult.release_date, ult.min_lua_v
 
 ---***SRG Custom Function***
 ---
----Registers a function under the given `name`. When `remote.call()` is called with this `name`, the registered `func` will be executed.
+---Registers `func` under the given `name`.
 ---@param name string
 ---@param func function
 function remote.register(name, func)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if type(func) ~= "function" then errorMsg("Function", "func", func) end
-  if remotes[name] then
-    error(string.format(
-      "'%s' is already registered. Either unregister it or put it under a different name.", name))
-  end
 
-  remotes[name] = func
+  remotes[name] = remotes[name] or {}
+  
+  -- Check if function is already registered
+  for _, registeredFunc in ipairs(remotes[name]) do
+    if registeredFunc == func then return end
+  end
+  
+  table.insert(remotes[name], func)
 end
 
 ---***SRG Custom Function***
@@ -522,16 +525,55 @@ end
 
 ---***SRG Custom Function***
 ---
----Calls the function registered under the given `name` and returns its result (if any).
+---Calls the function(s) registered under the given `name`.
 ---@param name string
----@return any? return_value
 function remote.call(name)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if not remotes[name] then error(string.format("'%s' is not registered.", name)) end
 
-  local toReturn = remotes[name]()
+  for _, func in ipairs(remotes[name]) do 
+    func() 
+  end
+end
 
-  if toReturn then return toReturn end
+---***SRG Custom Function***
+---
+---Checks if a remote function with the given `name` is registered.
+---@param name string
+---@return boolean
+---@nodiscard
+function remote.exists(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  return remotes[name] ~= nil and #remotes[name] > 0
+end
+
+---***SRG Custom Function***
+---
+---Removes a specific function from the remote registry under the given `name`.
+---@param name string
+---@param func function
+function remote.remove(name, func)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if type(func) ~= "function" then errorMsg("Function", "func", func) end
+
+  if not remotes[name] then return end
+  
+  local index = table.index(remotes[name], func)
+  if index then
+    table.remove(remotes[name], index)
+  end
+end
+
+---***SRG Custom Function***
+---
+---Returns the count of functions registered under the given `name`.
+---@param name string
+---@return number|nil
+---@nodiscard
+function remote.count(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+
+  return remotes[name] and #remotes[name] or nil
 end
 
 ------------Random Library------------
@@ -2613,6 +2655,28 @@ function table.copy(t)
   local copy = {}
   for i, v in ipairs(t) do copy[i] = v end
   return copy
+end
+
+---***SRG Custom Function***
+---
+---Returns the index (position) of `value` in table `t`, or nil if not found.
+---@param t table
+---@param value any
+---@return number|nil
+---@nodiscard
+function table.index(t, value)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  local pos = nil
+
+  for i = 1, #t do
+    if t[i] == value then
+      pos = i
+      break
+    end
+  end
+
+  return pos
 end
 
 ------------Global Library------------

@@ -570,6 +570,14 @@
 - **Returns**: `table`
 - **Description**: Returns a copy of the table `t`.
 
+### 5.15 `table.index(t, value)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+  - `value`: `any` (R)
+- **Returns**: `number|nil`
+- **Description**: Returns the index (position) of `value` in table `t`, or nil if not found.
+
 ## 6. Input Library Functions
 
 ### 6.1 `input.string(message)`
@@ -884,8 +892,30 @@
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
-- **Returns**: `any?`
-- **Description**: Calls the function registered under the given `name` and returns its result (if any).
+- **Returns**: `void`
+- **Description**: Calls all functions registered under the given `name`. Multiple functions can be registered under the same name.
+
+### 9.4 `remote.exists(name)`
+- **Type**: `function`
+- **Arguments**: 
+  - `name`: `string` (R)
+- **Returns**: `boolean`
+- **Description**: Checks if a remote function with the given `name` is registered.
+
+### 9.5 `remote.remove(name, func)`
+- **Type**: `function`
+- **Arguments**: 
+  - `name`: `string` (R)
+  - `func`: `function` (R)
+- **Returns**: `void`
+- **Description**: Removes a specific function from the remote registry under the given `name`.
+
+### 9.6 `remote.count(name)`
+- **Type**: `function`
+- **Arguments**: 
+  - `name`: `string` (R)
+- **Returns**: `number|nil`
+- **Description**: Returns the count of functions registered under the given `name`.
 
 ## 10. Random Library
 

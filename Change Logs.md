@@ -47,3 +47,10 @@
     - Added `random.boolean()` function for generating random true/false values
     - Added `random.string(len, charset)` function for generating random strings with custom character sets
     - Random library now has 7 functions total (uuid, sign, number, choice, hex, boolean, string)
+    - Added 3 new remote library functions: `remote.exists()`, `remote.remove()`, and `remote.count()` with proper LuaDoc annotations
+    - Added `table.index()` function with LuaDoc annotations
+    - **BREAKING CHANGE**: Migrated from bit32 library to native Lua bitwise operators (&, |, <<, >>)
+    - Updated minimum Lua version requirement from 5.2 to 5.3+ (native bitwise operators required)
+    - All cryptography bitwise functions now use native operators for better performance
+    - Remote library now has 6 functions total (register, unregister, call, exists, remove, count)
+    - Table library now includes index function for finding element positions
