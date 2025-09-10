@@ -91,9 +91,16 @@ end
 --Function for random.uuid(6)
 local function uuid6()
   local low, middle, high, cHigh, cLow, macAddr = uuid1and6(6)
+  
+  -- UUID6 reorders timestamp fields for chronological sorting
+  -- Format: time_high-time_mid-time_low_and_version-clock_seq-node
+  local time_high = math.floor((high % 0x1000) * 0x10000) + middle
+  local time_mid = math.floor(low / 0x10000)
+  local time_low_and_version = (low % 0x10000) + 0x6000  -- Version 6
+  
   return string.format(
-    "%04x-%04x-%08x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-    high, middle, low, cHigh, cLow,
+    "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+    time_high, time_mid, time_low_and_version, cHigh, cLow,
     macAddr[1], macAddr[2], macAddr[3], macAddr[4], macAddr[5], macAddr[6]
   )
 end
