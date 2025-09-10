@@ -479,7 +479,7 @@ ult.contributors = {
 ---
 ---The minimum version of Lua required to run Useful Lua Tools
 ---@nodiscard
-ult.min_lua_ver = "5.3"
+ult.min_lua_ver = "5.2"
 
 ---***SRG Custom Variable***
 ---
@@ -1181,11 +1181,11 @@ end
 ---@nodiscard
 function cryptography.bswap(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  local byte1 = ((x & 0xFF) << 24)
-  local byte2 = (((x >> 8) & 0xFF) << 16)
-  local byte3 = (((x >> 16) & 0xFF) << 8)
-  local byte4 = ((x >> 24) & 0xFF)
-  return byte1 | byte2 | byte3 | byte4
+  local byte1 = bit32.lshift(bit32.band(x, 0xFF), 24)
+  local byte2 = bit32.lshift(bit32.band(bit32.rshift(x, 8), 0xFF), 16)
+  local byte3 = bit32.lshift(bit32.band(bit32.rshift(x, 16), 0xFF), 8)
+  local byte4 = bit32.band(bit32.rshift(x, 24), 0xFF)
+  return bit32.bor(bit32.bor(byte1, byte2), bit32.bor(byte3, byte4))
 end
 
 ---***SRG Custom Function***
@@ -1198,9 +1198,7 @@ function cryptography.rol(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  -- Left rotate: (x << disp) | (x >> (32 - disp))
-  disp = disp % 32
-  return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
+  return bit32.lrotate(x, disp)
 end
 
 ---***SRG Custom Function***
@@ -1213,9 +1211,7 @@ function cryptography.ror(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  -- Right rotate: (x >> disp) | (x << (32 - disp))
-  disp = disp % 32
-  return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
+  return bit32.rrotate(x, disp)
 end
 
 ---***SRG Custom Function***
@@ -1228,7 +1224,7 @@ function cryptography.number_to_bit(x)
 
   local binary = ""
   for i = 31, 0, -1 do
-    local bit = (x >> i) & 1
+    local bit = bit32.extract(x, i, 1)
     binary = binary .. bit
   end
   return binary
@@ -1254,7 +1250,7 @@ function cryptography.btest(a, b)
   if type(a) ~= "number" then errorMsg("Number", "a", a) end
   if type(b) ~= "number" then errorMsg("Number", "b", b) end
 
-  return (a & b) ~= 0
+  return bit32.band(a, b) ~= 0
 end
 
 ---***SRG Custom Function***
@@ -1270,9 +1266,7 @@ function cryptography.extract(n, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
   width = width or 1
-  -- Extract width bits starting at position field
-  local mask = (1 << width) - 1
-  return (n >> field) & mask
+  return bit32.extract(n, field, width)
 end
 
 ---***SRG Custom Function***
@@ -1290,9 +1284,7 @@ function cryptography.replace(n, v, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
   width = width or 1
-  -- Replace width bits at position field with value v
-  local mask = ((1 << width) - 1) << field
-  return (n & ~mask) | ((v & ((1 << width) - 1)) << field)
+  return bit32.replace(n, v, field, width)
 end
 
 ---***SRG Custom Function***
