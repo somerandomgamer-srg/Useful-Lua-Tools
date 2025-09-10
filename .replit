@@ -11,7 +11,7 @@ pattern = "**/*.lua"
 start = ["lua-language-server"]
 
 [workflows]
-runButton = "Useful Lua Tools"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Useful Lua Tools"
@@ -21,6 +21,26 @@ author = 38146567
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "lua main.lua"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Lua Library"
+
+[[workflows.workflow]]
+name = "Lua Library"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "lua main.lua"
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [agent]
 expertMode = true

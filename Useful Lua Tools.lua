@@ -475,7 +475,7 @@ ult.contributors = {
 ---
 ---The minimum version of Lua required to run Useful Lua Tools
 ---@nodiscard
-ult.min_lua_ver = "5.2"
+ult.min_lua_ver = "5.3"
 
 ---***SRG Custom Variable***
 ---
@@ -1194,7 +1194,9 @@ function cryptography.rol(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  return bit32.lrotate(x, disp)
+  -- Left rotate: (x << disp) | (x >> (32 - disp))
+  disp = disp % 32
+  return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
 end
 
 ---***SRG Custom Function***
@@ -1207,7 +1209,9 @@ function cryptography.ror(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  return bit32.rrotate(x, disp)
+  -- Right rotate: (x >> disp) | (x << (32 - disp))
+  disp = disp % 32
+  return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
 end
 
 ---***SRG Custom Function***
@@ -1220,7 +1224,7 @@ function cryptography.number_to_bit(x)
 
   local binary = ""
   for i = 31, 0, -1 do
-    local bit = bit32.extract(x, i, 1)
+    local bit = (x >> i) & 1
     binary = binary .. bit
   end
   return binary
@@ -1246,7 +1250,7 @@ function cryptography.btest(a, b)
   if type(a) ~= "number" then errorMsg("Number", "a", a) end
   if type(b) ~= "number" then errorMsg("Number", "b", b) end
 
-  return bit32.band(a, b) ~= 0
+  return (a & b) ~= 0
 end
 
 ---***SRG Custom Function***
@@ -1262,7 +1266,9 @@ function cryptography.extract(n, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
   width = width or 1
-  return bit32.extract(n, field, width)
+  -- Extract width bits starting at position field
+  local mask = (1 << width) - 1
+  return (n >> field) & mask
 end
 
 ---***SRG Custom Function***
@@ -1280,7 +1286,9 @@ function cryptography.replace(n, v, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
   width = width or 1
-  return bit32.replace(n, v, field, width)
+  -- Replace width bits at position field with value v
+  local mask = ((1 << width) - 1) << field
+  return (n & ~mask) | ((v & ((1 << width) - 1)) << field)
 end
 
 ---***SRG Custom Function***
