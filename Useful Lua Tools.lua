@@ -610,7 +610,8 @@ function random.hex(len)
   local toReturn = ""
 
   for _ = 1, len do
-    toReturn = toReturn .. s:sub(math.random(16), math.random(16))
+    local idx = math.random(16)
+    toReturn = toReturn .. s:sub(idx, idx)
   end
 
   return toReturn
@@ -1288,7 +1289,8 @@ function cryptography.caesar_cipher(s, shift)
     local character = s:sub(i, i)
     if character:match("%a") then
       local base = character:match("%u") and 65 or 97
-      encrypted = encrypted .. tostring(((character:byte() - base + shift) % 26) + base):char()
+      local shifted = ((character:byte() - base + shift) % 26 + 26) % 26 + base
+      encrypted = encrypted .. string.char(shifted)
     else
       encrypted = encrypted .. character
     end
@@ -2176,7 +2178,8 @@ end
 ---@nodiscard
 function string.starts_with(s, letter)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  return s[1] == letter
+  if type(letter) ~= "string" then errorMsg("String", "letter", letter) end
+  return s:sub(1, 1) == letter
 end
 
 ---***SRG Custom Function***
@@ -2188,7 +2191,8 @@ end
 ---@nodiscard
 function string.ends_with(s, letter)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  return s[#s] == letter
+  if type(letter) ~= "string" then errorMsg("String", "letter", letter) end
+  return s:sub(-1) == letter
 end
 
 ---***SRG Custom Function***
