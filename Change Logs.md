@@ -37,20 +37,12 @@
 - ## Date: Sep 8, 2025 - Sep 10, 2025
   - ## Sep 8, 2025
     - 1 new library with 1 function (random)
-    - Removed `cryptography.uuid4()`
+    - Removed `cryptography.uuid4()` in favor of `random.
   - ## Sep 9, 2025
     - Moved `math.random_sign(x)` to `random.sign(x)`
     - Added `random.number(min, max, decimals)` function for generating random numbers with optional decimal places
     - Added `random.choice(t, amount)` function for randomly selecting elements from tables
   - ## Sep 10, 2025
-    - Added `random.hex(len)` function for generating random hexadecimal strings
-    - Added `random.boolean()` function for generating random true/false values
-    - Added `random.string(len, charset)` function for generating random strings with custom character sets
-    - Random library now has 7 functions total (uuid, sign, number, choice, hex, boolean, string)
-    - Added 3 new remote library functions: `remote.exists()`, `remote.remove()`, and `remote.count()` with proper LuaDoc annotations
-    - Added `table.index()` function with LuaDoc annotations
-    - **BREAKING CHANGE**: Migrated from bit32 library to native Lua bitwise operators (&, |, <<, >>)
-    - Updated minimum Lua version requirement from 5.2 to 5.3+ (native bitwise operators required)
-    - All cryptography bitwise functions now use native operators for better performance
-    - Remote library now has 6 functions total (register, unregister, call, exists, remove, count)
-    - Table library now includes index function for finding element positions
+    - Added 3 new `random` library functions: `random.hex(len)`, `random.boolean()`, and `random.string(len, charset)`
+    - Added 3 new `remote` library functions: `remote.exists()`, `remote.remove()`, and `remote.count()`
+    - Added 1 new `table` library function: `table.index(t, value)`

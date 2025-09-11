@@ -1,5 +1,6 @@
 entrypoint = "main.lua"
 run = "lua main.lua"
+modules = ["postgresql-16"]
 
 [nix]
 channel = "stable-24_05"
@@ -10,17 +11,11 @@ pattern = "**/*.lua"
 [languages.lua.languageServer]
 start = ["lua-language-server"]
 
+[agent]
+expertMode = true
+
 [workflows]
 runButton = "Project"
-
-[[workflows.workflow]]
-name = "Useful Lua Tools"
-mode = "parallel"
-author = 38146567
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "lua main.lua"
 
 [[workflows.workflow]]
 name = "Project"
@@ -41,6 +36,3 @@ args = "lua main.lua"
 
 [workflows.workflow.metadata]
 outputType = "console"
-
-[agent]
-expertMode = true

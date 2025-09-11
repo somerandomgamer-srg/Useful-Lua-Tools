@@ -491,90 +491,7 @@ ult.release_date = "09/05/2025"
 ---@nodiscard
 ult.build = ("ult-%s-%s-%s"):format(ult.version, ult.release_date, ult.min_lua_ver)
 
-------------Remote Library------------
-
----***SRG Custom Function***
----
----Registers `func` under the given `name`.
----@param name string
----@param func function
-function remote.register(name, func)
-  if type(name) ~= "string" then errorMsg("String", "name", name) end
-  if type(func) ~= "function" then errorMsg("Function", "func", func) end
-
-  remotes[name] = remotes[name] or {}
-  
-  -- Check if function is already registered
-  for _, registeredFunc in ipairs(remotes[name]) do
-    if registeredFunc == func then return end
-  end
-  
-  table.insert(remotes[name], func)
-end
-
----***SRG Custom Function***
----
----Removes the function registered under the given `name`, making it unavailable for `remote.call()`.
----@param name string
-function remote.unregister(name)
-  if type(name) ~= "string" then errorMsg("String", "name", name) end
-  if not remotes[name] then error(string.format("'%s' is not registered.", name)) end
-
-  remotes[name] = nil
-end
-
----***SRG Custom Function***
----
----Calls the function(s) registered under the given `name`.
----@param name string
-function remote.call(name)
-  if type(name) ~= "string" then errorMsg("String", "name", name) end
-  if not remotes[name] then error(string.format("'%s' is not registered.", name)) end
-
-  for _, func in ipairs(remotes[name]) do 
-    func() 
-  end
-end
-
----***SRG Custom Function***
----
----Checks if a remote function with the given `name` is registered.
----@param name string
----@return boolean
----@nodiscard
-function remote.exists(name)
-  if type(name) ~= "string" then errorMsg("String", "name", name) end
-  return remotes[name] ~= nil and #remotes[name] > 0
-end
-
----***SRG Custom Function***
----
----Removes a specific function from the remote registry under the given `name`.
----@param name string
----@param func function
-function remote.remove(name, func)
-  if type(name) ~= "string" then errorMsg("String", "name", name) end
-  if type(func) ~= "function" then errorMsg("Function", "func", func) end
-
-  if not remotes[name] then return end
-  
-  local index = table.index(remotes[name], func)
-  if index then
-    table.remove(remotes[name], index)
-  end
-end
-
----***SRG Custom Function***
----
----Returns the count of functions registered under the given `name`.
----@param name string
----@return number|nil
----@nodiscard
-function remote.count(name)
-  if type(name) ~= "string" then errorMsg("String", "name", name) end
-
-  return remotes[name] and #remotes[name] or nil
-end
+ 
 
 ------------Random Library------------
 
@@ -1236,7 +1153,6 @@ function cryptography.rol(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  -- Left rotate: (x << disp) | (x >> (32 - disp))
   disp = disp % 32
   return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
 end
@@ -1251,7 +1167,6 @@ function cryptography.ror(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
-  -- Right rotate: (x >> disp) | (x << (32 - disp))
   disp = disp % 32
   return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
 end
@@ -1308,7 +1223,6 @@ function cryptography.extract(n, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
   width = width or 1
-  -- Extract width bits starting at position field
   local mask = (1 << width) - 1
   return (n >> field) & mask
 end
@@ -1328,7 +1242,6 @@ function cryptography.replace(n, v, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
 
   width = width or 1
-  -- Replace width bits at position field with value v
   local mask = ((1 << width) - 1) << field
   return (n & ~mask) | ((v & ((1 << width) - 1)) << field)
 end
@@ -2249,7 +2162,6 @@ function string.split(s, pattern)
     end
   end
 
-  -- Add the final segment after the last delimiter
   table.insert(toReturn, s:sub(start))
 
   return toReturn
