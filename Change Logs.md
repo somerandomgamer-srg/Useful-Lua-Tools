@@ -36,13 +36,29 @@
 # V1.3.0
 - ## Date: Sep 8, 2025 - Sep 10, 2025
   - ## Sep 8, 2025
-    - 1 new library with 1 function (random)
-    - Removed `cryptography.uuid4()` in favor of `random.
+    - Added 1 new library `random` with 1 function: `random.uuid(v)`
+    - Removed `cryptography.uuid4()` in favor of `random`.
   - ## Sep 9, 2025
     - Moved `math.random_sign(x)` to `random.sign(x)`
-    - Added `random.number(min, max, decimals)` function for generating random numbers with optional decimal places
-    - Added `random.choice(t, amount)` function for randomly selecting elements from tables
+    - Added 2 new `random` library functions: `random.number(min, max, decimals)` and `random.choice(t, amount)`
   - ## Sep 10, 2025
     - Added 3 new `random` library functions: `random.hex(len)`, `random.boolean()`, and `random.string(len, charset)`
-    - Added 3 new `remote` library functions: `remote.exists()`, `remote.remove()`, and `remote.count()`
+    - Added new library `remote` library with 3 functions: `remote.exists()`, `remote.remove()`, and `remote.count()`
     - Added 1 new `table` library function: `table.index(t, value)`
+
+# V1.4.0
+- ## Date: Sep 18, 2025 - Sep 19, 2025
+  - ## Sep 18, 2025
+    - Added 3 new libraries
+      - Stack: `stack.new(name)`, `stack.add(name, value)`, `stack.take(name)`, `stack.exists(name)`, `stack.size(name)`, `stack.empty(name)`, `stack.is_empty(name)`
+      - Queue: `queue.new(name)`, `queue.add(name, value)`, `queue.take(name)`, `queue.exists(name)`, `queue.size(name)`, `queue.empty(name)`, `queue.is_empty(name)`
+      - Datetime: `datetime.time(return_table)`
+  - ## Sep 19, 2025
+    - Added 4 new `datetime` library functions: `datetime.diff(t1, t2, return_table)`, `datetime.sum(t1, t2, return_table)`, `datetime.to_table(num)`, `datetime.to_number(t)`
+    - Removed `is_type()` due to it being redundant and providing no benefit over lua's built-in `type()` function.
+    - Moved the legend and summary in `Current Functions and Variables.md` to the top
+
+# V1.4.1
+- ## Date: Sep 22, 2025
+  - Made the toolkit Lua 5.2 compatible by adding fallbacks for versions that do not support native bitwise operators.
+  - Added an error message for Lua versions that don't meet the minimum Lua version to run the toolkit

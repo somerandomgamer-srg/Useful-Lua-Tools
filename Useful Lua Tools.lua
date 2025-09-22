@@ -1,3 +1,5 @@
+---@diagnostic disable: unused-local
+
 ---------Initiation and Module Variables---------
 
 ---Error message formatter
@@ -257,6 +259,8 @@ local function getMac()
   end
 end
 
+local is53 = tonumber(_VERSION:sub(5)) >= 5.3
+
 local morseCodeTable = {
   ["a"] = ".-",
   ["b"] = "-...",
@@ -415,8 +419,9 @@ local base32Chars = {
 }
 
 local remotes = {}
+local stacks = {}
+local queues = {}
 
--- Define table.keypair_reverse function early since it's needed here
 local function createKeypairReverse(t)
   local reversed = {}
   for k, v in pairs(t) do
@@ -453,6 +458,15 @@ remote = {}
 ---@class randomlib
 random = {}
 
+---@class stacklib
+stack = {}
+
+---@class queuelib
+queue = {}
+
+---@class datetimelib
+datetime = {}
+
 -----------ULT Main Library-----------
 
 ---***SRG Custom Variable***
@@ -461,7 +475,7 @@ random = {}
 ---
 ---"Major Update"."Minor Update"."Patch/Very Minor Update"
 ---@nodiscard
-ult.version = "1.3.0"
+ult.version = "1.4.1"
 
 ---***SRG Custom Variable***
 ---
@@ -475,13 +489,15 @@ ult.contributors = {
 ---
 ---The minimum version of Lua required to run Useful Lua Tools
 ---@nodiscard
-ult.min_lua_ver = "5.3"
+ult.min_lua_ver = "5.2"
+
+if _VERSION:sub(5) < ult.min_lua_ver then error("Useful Lua Tools requires Lua " .. ult.min_lua_ver .. " or higher. You are running Lua " .. _VERSION:sub(5)) end
 
 ---***SRG Custom Variable***
 ---
 ---The release date of the current ULT version
 ---@nodiscard
-ult.release_date = "09/05/2025"
+ult.release_date = "09/22/2025"
 
 ---***SRG Custom Variable***
 ---
@@ -490,8 +506,6 @@ ult.release_date = "09/05/2025"
 ---"Project"-"version"-"date of release"-"minimum lua version"
 ---@nodiscard
 ult.build = ("ult-%s-%s-%s"):format(ult.version, ult.release_date, ult.min_lua_ver)
-
- 
 
 ------------Random Library------------
 
@@ -1136,11 +1150,16 @@ end
 ---@nodiscard
 function cryptography.bswap(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  local byte1 = (x & 0xFF) << 24
-  local byte2 = ((x >> 8) & 0xFF) << 16
-  local byte3 = ((x >> 16) & 0xFF) << 8
-  local byte4 = (x >> 24) & 0xFF
-  return (byte1 | byte2) | (byte3 | byte4)
+
+  if is53 then
+    local byte1 = (x & 0xFF) << 24
+    local byte2 = ((x >> 8) & 0xFF) << 16
+    local byte3 = ((x >> 16) & 0xFF) << 8
+    local byte4 = (x >> 24) & 0xFF
+    return (byte1 | byte2) | (byte3 | byte4)
+  else
+    return bit.bswap(x)
+  end
 end
 
 ---***SRG Custom Function***
@@ -1154,7 +1173,11 @@ function cryptography.rol(x, disp)
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
   disp = disp % 32
-  return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
+  if is53 then
+   return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
+  else
+    return bit32.lrotate(x, disp)
+  end
 end
 
 ---***SRG Custom Function***
@@ -1168,7 +1191,11 @@ function cryptography.ror(x, disp)
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
   disp = disp % 32
-  return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
+  if is53 then
+    return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
+  else
+    return bit32.rrotate(x, disp)
+  end
 end
 
 ---***SRG Custom Function***
@@ -1179,12 +1206,16 @@ end
 function cryptography.number_to_bit(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
-  local binary = ""
-  for i = 31, 0, -1 do
-    local bit = (x >> i) & 1
-    binary = binary .. bit
+  if is53 then
+    local binary = ""
+    for i = 31, 0, -1 do
+      local bit = (x >> i) & 1
+      binary = binary .. bit
+    end
+    return binary
+  else
+    return bit.tobit(x)
   end
-  return binary
 end
 
 ---***SRG Custom Function***
@@ -1199,7 +1230,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Returns a boolean signaling whether the bitwise *and* of its operands /is different from zero.
+---Returns a boolean signaling whether the bitwise *and* of its operands is different from zero.
 ---@param a number
 ---@param b number
 ---@return boolean
@@ -1207,7 +1238,11 @@ function cryptography.btest(a, b)
   if type(a) ~= "number" then errorMsg("Number", "a", a) end
   if type(b) ~= "number" then errorMsg("Number", "b", b) end
 
-  return (a & b) ~= 0
+  if is53 then
+    return (a & b) ~= 0
+  else
+    return bit32.btest(a, b)
+  end
 end
 
 ---***SRG Custom Function***
@@ -1221,10 +1256,14 @@ function cryptography.extract(n, field, width)
   if type(n) ~= "number" then errorMsg("Number", "n", n) end
   if type(field) ~= "number" then errorMsg("Number", "field", field) end
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
-
   width = width or 1
-  local mask = (1 << width) - 1
-  return (n >> field) & mask
+
+  if is53 then
+    local mask = (1 << width) - 1
+    return (n >> field) & mask
+  else
+    return bit32.extract(n, field, width)
+  end
 end
 
 ---***SRG Custom Function***
@@ -1240,10 +1279,14 @@ function cryptography.replace(n, v, field, width)
   if type(v) ~= "number" then errorMsg("Number", "v", v) end
   if type(field) ~= "number" then errorMsg("Number", "field", field) end
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
-
   width = width or 1
-  local mask = ((1 << width) - 1) << field
-  return (n & ~mask) | ((v & ((1 << width) - 1)) << field)
+
+  if is53 then
+    local mask = (1 << width) - (1 << field)
+    return (n & ~mask) | ((v & (1 << width) - 1) << field)
+  else
+    return bit32.replace(n, v, field, width)
+  end
 end
 
 ---***SRG Custom Function***
@@ -1491,6 +1534,312 @@ function input.number_loop(message)
   end
 
   return inputs or {}
+end
+
+--------------Stack Library-------------
+
+---***SRG Custom Function***
+---
+---Creates a new stack with the specified `name`.
+---@param name string
+function stack.new(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if stacks[name] then error(string.format("Stack '%s' already exists.", name)) end
+
+  stacks[name] = {}
+end
+
+---***SRG Custom Function***
+---
+---Adds `value` to the stack with the specified `name`.
+---@param name string
+---@param value any
+function stack.add(name, value)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
+
+  table.insert(stacks[name], value)
+end
+
+---***SRG Custom Function***
+---
+---Takes the top value from the stack with the specified `name` and removes it if `remove` is true.
+---@param name string
+---@param remove? boolean
+---@return value any
+function stack.take(name, remove)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
+
+  local toReturn = stacks[name][#stacks[name]]
+  if remove then table.remove(stacks[name], #stacks[name]) end
+  return toReturn
+end
+
+---***SRG Custom Function***
+---
+---Checks if the stack with the specified `name` exists.
+---@param name string
+---@return boolean
+function stack.exists(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+
+  if stacks[name] then return true end
+  return false
+end
+
+---***SRG Custom Function***
+---
+---Returns the amount of values in the stack with the specified `name`.
+---@param name string
+---@return number
+function stack.size(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
+
+  return #stacks[name]
+end
+
+---***SRG Custom Function***
+---
+---Empties the stack with the specified `name`.
+---@param name string
+function stack.empty(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
+
+  stacks[name] = {}
+end
+
+---***SRG Custom Function***
+---
+---Checks if the stack with the specified `name` is empty.
+---@param name string
+---@return boolean
+function stack.is_empty(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
+
+  return #stacks[name] == 0
+end
+
+--------------Queue Library-------------
+
+---***SRG Custom Function***
+---
+---Creates a new queue with the specified `name`.
+---@param name string
+function queue.new(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not queues[name] then error(string.format("Queue '%s' already exists.", name)) end
+
+  queues[name] = {}
+end
+
+---***SRG Custom Function***
+---
+---Adds `value` to the queue with the specified `name`.
+---@param name string
+---@param value any
+function queue.add(name, value)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
+
+  table.insert(queues[name], value)
+end
+
+---***SRG Custom Function***
+---
+---Takes the first value from the queue with the specified `name` and removes it if `remove` is true.
+---@param name string
+---@param remove? boolean
+---@return value any
+function queue.take(name, remove)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
+
+  local toReturn = queues[name][1]
+  if remove then table.remove(queues[name], 1) end
+  return toReturn
+end
+
+---***SRG Custom Function***
+---
+---Checks if the queue with the specified `name` exists.
+---@param name string
+---@return boolean
+function queue.exists(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+
+  if queues[name] then return true end
+  return false
+end
+
+---***SRG Custom Function***
+---
+---Returns the amount of values in the queue with the specified `name`.
+---@param name string
+---@return number
+function queue.size(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
+
+  return #queues[name]
+end
+
+---***SRG Custom Function***
+---
+---Empties the queue with the specified `name`.
+---@param name string
+function queue.empty(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
+
+  queues[name] = {}
+end
+
+---***SRG Custom Function***
+---
+---Checks if the queue with the specified `name` is empty.
+---@param name string
+---@return boolean
+function queue.is_empty(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
+
+  return #queues[name] == 0
+end
+
+------------Datetime Library------------
+
+---***SRG Custom Function***
+---
+--- Returns the current time.
+---
+---If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
+---@param return_table? boolean
+---@return table|number
+---@nodiscard
+function datetime.time(return_table)
+  local t = os.date("*t")
+
+  if return_table then
+    return {
+      year = t.year,
+      month = t.month,
+      day = t.day,
+      hour = t.hour,
+      minute = t.min,
+      second = t.sec
+    }
+  end
+  return tonumber(string.format("%04d%02d%02d%02d%02d%02d", t.year, t.month, t.day, t.hour, t.min, t.sec))
+end
+
+---***SRG Custom Function***
+---
+---Returns the difference between `n1` and `n2`.
+---
+---If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
+---@param n1 number
+---@param n2 number
+---@param return_table? boolean
+---@return number|table
+---@nodiscard
+function datetime.diff(n1, n2, return_table)
+  if type(n1) ~= "number" then errorMsg("Number", "n1", n1) end
+  if #tostring(n1) ~= 14 then error("n1 must be a 14 digit number") end
+
+  if type(n2) ~= "number" then errorMsg("Number", "n2", n2) end
+  if #tostring(n2) ~= 14 then error("n2 must be a 14 digit number") end
+
+  local diff = tostring(n1 - n2):find("-") and tonumber(string.format("%014d", n2 - n1)) or
+      tonumber(string.format("%014d", n1 - n2))
+
+  if return_table then
+    return {
+      year = tonumber(string.sub(diff, 1, 4)),
+      month = tonumber(string.sub(diff, 5, 6)),
+      day = tonumber(string.sub(diff, 7, 8)),
+      hour = tonumber(string.sub(diff, 9, 10)),
+      minute = tonumber(string.sub(diff, 11, 12)),
+      second = tonumber(string.sub(diff, 13, 14))
+    }
+  end
+  return tonumber(string.format("%014d", diff))
+end
+
+---***SRG Custom Function***
+---
+---Returns the sum of `n1` and `n2`.
+---
+---If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
+---@param n1 number
+---@param n2 number
+---@param return_table? boolean
+---@return number|table
+---@nodiscard
+function datetime.add(n1, n2, return_table)
+  if type(n1) ~= "number" then errorMsg("Number", "n1", n1) end
+  if #tostring(n1) ~= 14 then error("n1 must be a 14 digit number") end
+
+  if type(n2) ~= "number" then errorMsg("Number", "n2", n2) end
+  if #tostring(n2) ~= 14 then error("n2 must be a 14 digit number") end
+
+  local sum = tonumber(string.format("%014d", n2 + n1))
+
+  if return_table then
+    return {
+      year = tonumber(string.sub(sum, 1, 4)),
+      month = tonumber(string.sub(sum, 5, 6)),
+      day = tonumber(string.sub(sum, 7, 8)),
+      hour = tonumber(string.sub(sum, 9, 10)),
+      minute = tonumber(string.sub(sum, 11, 12)),
+      second = tonumber(string.sub(sum, 13, 14))
+    }
+  end
+  return tonumber(string.format("%014d", sum))
+end
+
+---***SRG Custom Function***
+---
+---Returns the time number `num` as a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`
+---@param num number
+---@return table
+---@nodiscard
+function datetime.to_table(num)
+  if type(num) ~= "number" then errorMsg("Number", "num", num) end
+  if #tostring(num) ~= 14 then error("num must be a 14 digit number") end
+
+  return {
+    year = tonumber(string.sub(num, 1, 4)),
+    month = tonumber(string.sub(num, 5, 6)),
+    day = tonumber(string.sub(num, 7, 8)),
+    hour = tonumber(string.sub(num, 9, 10)),
+    minute = tonumber(string.sub(num, 11, 12)),
+    second = tonumber(string.sub(num, 13, 14))
+  }
+end
+
+---***SRG Custom Function***
+---
+---Returns the time table `t` as a number in the format `Year Month Day Hour Minute Second`
+---@param t table
+---@return number
+---@nodiscard
+function datetime.to_number(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  local values = { "year", "month", "day", "hour", "minute", "second" }
+  for _, value in pairs(values) do
+    if not t[value] then
+      error(string.format("Missing value '%s'", value))
+    elseif type(t[value]) ~= "number" then
+      error(string.format("'%s' is not a number", value))
+    end
+  end
+
+  return tonumber(string.format("%04d%02d%02d%02d%02d%02d", t.year, t.month, t.day, t.hour, t.minute, t.second))
 end
 
 ---------Math Library Extension---------
@@ -2610,14 +2959,6 @@ function wait(x)
     os.execute("sleep " .. x)
   end
 end
-
----***SRG Custom Function***
----
----Checks if `value` is a `type_of_object`
----@param value any
----@param type_of_object "nil"|"number"|"string"|"boolean"|"table"|"function"|"thread"|"userdata"
----@return boolean
-function is_type(value, type_of_object) return type(value) == type_of_object end
 
 ---***SRG Custom Function***
 ---

@@ -1,4 +1,44 @@
-# 1. ULT Library Variables
+# **Legend:**
+- ## **R**: Required parameter
+- ## **O**: Optional parameter
+
+# Summary
+
+- ## **Total Functions**: 138
+  - **Total `ult` Functions**: 0
+  - **Total `system` Functions**: 0
+  - **Total `math` Functions**: 39
+  - **Total `string` Functions**: 10
+  - **Total `table` Functions**: 15
+  - **Total `input` Functions**: 6
+  - **Total `cryptography` Functions**: 25
+  - **Total `color` Functions**: 6
+  - **Total `remote` Functions**: 6
+  - **Total `random` Functions**: 7
+  - **Total `stack` Functions**: 7
+  - **Total `queue` Functions**: 7
+  - **Total `datetime` Functions**: 5
+  - **Total Global Functions**: 5
+
+- ## **Total Variables**: 14
+  - **Total `ult` Variables**: 5
+  - **Total `system` Variables**: 9
+  - **Total `math` Variables**: 0
+  - **Total `string` Variables**: 0
+  - **Total `table` Variables**: 0
+  - **Total `input` Variables**: 0
+  - **Total `cryptography` Variables**: 0
+  - **Total `color` Variables**: 0
+  - **Total `remote` Variables**: 0
+  - **Total `random` Variables**: 0
+  - **Total `stack` Variables**: 0
+  - **Total `queue` Variables**: 0
+  - **Total `datetime` Variables**: 0
+  - **Total Global Variables**: 0
+
+- ## **Total Functions and Variables**: 152
+
+## 1. ULT Library Variables
 
 ### 1.1 `ult.version`
 - **Type**: `variable`
@@ -74,51 +114,49 @@
 
 # 3. Math Library Functions
 
-### 3.1 Statistical Functions
-
-#### 3.1.1 `math.average(t)`
+### 3.1 `math.average(t)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `table` (R)
 - **Returns**: `number`
 - **Description**: Calculates the average from a list of numbers.
 
-#### 3.1.2 `math.median(t)`
+### 3.2 `math.median(t)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `table` (R)
 - **Returns**: `number`
 - **Description**: Finds middle value in list. For even-length lists, averages two middle values.
 
-#### 3.1.3 `math.range(t)`
+### 3.3 `math.range(t)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `table` (R)
 - **Returns**: `number`
 - **Description**: Calculates the range from a list of numbers.
 
-#### 3.1.4 `math.mode(t)`
+### 3.4 `math.mode(t)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `table` (R)
 - **Returns**: `number`
 - **Description**: Calculates the mode from a list of numbers.
 
-#### 3.1.5 `math.standard_deviation(t)`
+### 3.5 `math.standard_deviation(t)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `table` (R)
 - **Returns**: `number`
 - **Description**: Calculates the standard deviation from a list of numbers.
 
-#### 3.1.6 `math.sum(t)`
+### 3.6 `math.sum(t)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `table` (R)
 - **Returns**: `number`
 - **Description**: Calculates the sum from a list of numbers.
 
-#### 3.1.7 `math.z_score(x, t)`
+### 3.7 `math.z_score(x, t)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -126,9 +164,7 @@
 - **Returns**: `number`
 - **Description**: Calculates the z-score of `x` in a dataset (`t`).
 
-### 3.2 Number Theory Functions
-
-#### 3.2.1 `math.gcd(x, y)`
+### 3.8 `math.gcd(x, y)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -136,7 +172,7 @@
 - **Returns**: `number`
 - **Description**: Finds the greatest common factor between `x` and `y`.
 
-#### 3.2.2 `math.lcm(x, y)`
+### 3.9 `math.lcm(x, y)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -144,37 +180,35 @@
 - **Returns**: `number`
 - **Description**: Finds the least common multiple between `x` and `y`.
 
-#### 3.2.3 `math.is_prime(x)`
+### 3.10 `math.is_prime(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if `x` is a prime number.
 
-#### 3.2.4 `math.factorial(x)`
+### 3.11 `math.factorial(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the factorial of `x`.
 
-#### 3.2.5 `math.factors(x)`
+### 3.12 `math.factors(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `table`
 - **Description**: Returns all factors of `x`.
 
-#### 3.2.6 `math.fib(n)`
+### 3.13 `math.fib(n)`
 - **Type**: `function`
 - **Arguments**: 
   - `n`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the `n`th term of the Fibonacci Sequence.
 
-### 3.3 Algebraic Functions
-
-#### 3.3.1 `math.quadratic(a, b, c)`
+### 3.14 `math.quadratic(a, b, c)`
 - **Type**: `function`
 - **Arguments**: 
   - `a`: `number` (R)
@@ -183,7 +217,7 @@
 - **Returns**: `number`
 - **Description**: Solves a quadratic equation in the form `a`x² + `b`x + `c` using the quadratic formula.
 
-#### 3.3.2 `math.aos(a, b)`
+### 3.15 `math.aos(a, b)`
 - **Type**: `function`
 - **Arguments**: 
   - `a`: `number` (R)
@@ -191,7 +225,7 @@
 - **Returns**: `number`
 - **Description**: Calculates the axis of symmetry for a quadratic function using `a` and `b` coefficients.
 
-#### 3.3.3 `math.vertex(a, b, c)`
+### 3.16 `math.vertex(a, b, c)`
 - **Type**: `function`
 - **Arguments**: 
   - `a`: `number` (R)
@@ -200,97 +234,91 @@
 - **Returns**: `number`
 - **Description**: Calculates the vertex point of a quadratic function using `a`, `b`, and `c` coefficients.
 
-### 3.4 Hyperbolic Functions
-
-#### 3.4.1 `math.sinh(x)`
+### 3.17 `math.sinh(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the hyperbolic sine of `x`.
 
-#### 3.4.2 `math.cosh(x)`
+### 3.18 `math.cosh(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the hyperbolic cosine of `x`.
 
-#### 3.4.3 `math.tanh(x)`
+### 3.19 `math.tanh(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the hyperbolic tangent of `x`.
 
-#### 3.4.4 `math.asinh(x)`
+### 3.4.4 `math.asinh(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the inverse hyperbolic sine of `x`.
 
-#### 3.4.5 `math.acosh(x)`
+### 3.20 `math.acosh(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the inverse hyperbolic cosine of `x`.
 
-#### 3.4.6 `math.atanh(x)`
+### 3.21 `math.atanh(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the inverse hyperbolic tangent of `x`.
 
-### 3.5 Trigonometric Functions
-
-#### 3.5.1 `math.secant(x)`
+### 3.22 `math.secant(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the secant of `x`.
 
-#### 3.5.2 `math.cosecant(x)`
+### 3.23 `math.cosecant(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the cosecant of `x`.
 
-#### 3.5.3 `math.cotangent(x)`
+### 3.24 `math.cotangent(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the cotangent of `x`.
 
-#### 3.5.4 `math.asecant(x)`
+### 3.25 `math.asecant(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the inverse secant of `x`.
 
-#### 3.5.5 `math.acosecant(x)`
+### 3.26 `math.acosecant(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the inverse cosecant of `x`.
 
-#### 3.5.6 `math.acotangent(x)`
+### 3.27 `math.acotangent(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the inverse cotangent of `x`.
 
-### 3.6 Utility Functions
-
-#### 3.6.1 `math.round(x, precision)`
+### 3.28 `math.round(x, precision)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -298,7 +326,7 @@
 - **Returns**: `number`
 - **Description**: Rounds `x` to `precision` decimal places (whole number if no precision given).
 
-#### 3.6.2 `math.midpoint(x, y)`
+### 3.29 `math.midpoint(x, y)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -306,67 +334,63 @@
 - **Returns**: `number`
 - **Description**: Calculates the midpoint between `x` and `y`.
 
-### 3.7 Number Classification Functions
-
-#### 3.7.1 `math.is_odd(x)`
+### 3.30 `math.is_odd(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if `x` is an odd number.
 
-#### 3.7.2 `math.is_even(x)`
+### 3.31 `math.is_even(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if `x` is an even number.
 
-#### 3.7.3 `math.is_perfect_square(x)`
+### 3.32 `math.is_perfect_square(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if `x` has a whole number square root.
 
-#### 3.7.4 `math.is_perfect(x)`
+### 3.33 `math.is_perfect(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if `x` is perfect (sum of factors equals the number).
 
-#### 3.7.5 `math.is_deficient(x)`
+### 3.34 `math.is_deficient(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if `x` is deficient (sum of factors less than number).
 
-#### 3.7.6 `math.is_abundant(x)`
+### 3.35 `math.is_abundant(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if `x` is abundant (sum of factors greater than number).
 
-#### 3.7.7 `math.classify_number(x)`
+### 3.36 `math.classify_number(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `string`
 - **Description**: Classifies `x` as Perfect, Deficient, or Abundant.
 
-#### 3.7.8 `math.is_whole(x)`
+### 3.37 `math.is_whole(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if `x` is a whole number.
 
-### 3.8 Combinatorics Functions
-
-#### 3.8.1 `math.permutation(x, r)`
+### 3.38 `math.permutation(x, r)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -374,7 +398,7 @@
 - **Returns**: `number`
 - **Description**: Calculates the number of ways to arrange `r` items from `x` items.
 
-#### 3.8.2 `math.combination(x, r)`
+### 3.39 `math.combination(x, r)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -626,37 +650,35 @@
 
 ## 7. Cryptography Library Functions
 
-### 7.1 Text Conversion Functions
-
-#### 7.1.1 `cryptography.text_to_ascii(s)`
+### 7 `cryptography.text_to_ascii(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Converts plaintext to ASCII code numbers.
 
-#### 7.1.2 `cryptography.ascii_to_text(s)`
+### 7.2 `cryptography.ascii_to_text(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Converts ASCII code numbers to plaintext.
 
-#### 7.1.3 `cryptography.text_to_hex(s)`
+### 7.3 `cryptography.text_to_hex(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Converts plaintext to hexadecimal.
 
-#### 7.1.4 `cryptography.hex_to_text(s)`
+### 7.4 `cryptography.hex_to_text(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Converts hexadecimal to text.
 
-#### 7.1.5 `cryptography.text_to_binary(s, x)`
+### 7.5 `cryptography.text_to_binary(s, x)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
@@ -664,7 +686,7 @@
 - **Returns**: `string`
 - **Description**: Converts plaintext to binary (`x` bits). `x` defaults to `8` if not given.
 
-#### 7.1.6 `cryptography.binary_to_text(s, x)`
+### 7.6 `cryptography.binary_to_text(s, x)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
@@ -672,65 +694,63 @@
 - **Returns**: `string`
 - **Description**: Converts binary (`x` bits) to plaintext. `x` defaults to `8` if not given.
 
-#### 7.1.7 `cryptography.text_to_octal(s)`
+### 7.7 `cryptography.text_to_octal(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Converts plaintext to space-seperated octal.
 
-#### 7.1.8 `cryptography.octal_to_text(s)`
+### 7.8 `cryptography.octal_to_text(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Converts space-seperated octal to plaintext.
 
-#### 7.1.9 `cryptography.text_to_morse(s)`
+### 7.9 `cryptography.text_to_morse(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Converts plaintext to morse code.
 
-#### 7.1.10 `cryptography.morse_to_text(s)`
+### 7.10 `cryptography.morse_to_text(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Converts morse code to plaintext.
 
-#### 7.1.11 `cryptography.text_to_base64(s)`
+### 7.11 `cryptography.text_to_base64(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Converts plaintext to base64.
 
-#### 7.1.12 `cryptography.base64_to_text(s)`
+### 7.12 `cryptography.base64_to_text(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Converts base64 to plaintext.
 
-#### 7.1.13 `cryptography.text_to_base32(s)`
+### 7.13 `cryptography.text_to_base32(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Converts plaintext to base32.
 
-#### 7.1.14 `cryptography.base32_to_text(s)`
+### 7.14 `cryptography.base32_to_text(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Converts base32 to plaintext.
 
-### 7.2 Encryption Functions
-
-#### 7.2.1 `cryptography.xor(s, key)`
+### 7.15 `cryptography.xor(s, key)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
@@ -738,7 +758,7 @@
 - **Returns**: `string`
 - **Description**: Performs XOR encryption/decryption on `s` using `key`. Note: XOR is symmetric - use the same key to decrypt.
 
-#### 7.2.2 `cryptography.caesar_cipher(s, shift)`
+### 7.16 `cryptography.caesar_cipher(s, shift)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
@@ -746,23 +766,21 @@
 - **Returns**: `string`
 - **Description**: Applies Caesar cipher encryption to `s` with specified `shift`.
 
-#### 7.2.3 `cryptography.rot13(s)`
+### 7.17 `cryptography.rot13(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Applies ROT13 encryption on `s` (Caesar cipher with shift of 13).
 
-### 7.3 Bitwise Operations
-
-#### 7.3.1 `cryptography.bswap(x)`
+### 7.18 `cryptography.bswap(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Performs bitwise SWAP operation on `x`.
 
-#### 7.3.2 `cryptography.rol(x, disp)`
+### 7.19 `cryptography.rol(x, disp)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -770,7 +788,7 @@
 - **Returns**: `number`
 - **Description**: Performs a bitwise left rotation on `x` by specified positions (`disp`).
 
-#### 7.3.3 `cryptography.ror(x, disp)`
+### 7.20 `cryptography.ror(x, disp)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -778,21 +796,21 @@
 - **Returns**: `number`
 - **Description**: Performs a bitwise right rotation on `x` by specified positions (`disp`).
 
-#### 7.3.4 `cryptography.number_to_bit(x)`
+### 7.21 `cryptography.number_to_bit(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `string`
 - **Description**: Converts `x` to its binary representation.
 
-#### 7.3.5 `cryptography.number_to_hex(x)`
+### 7.22 `cryptography.number_to_hex(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `string`
 - **Description**: Converts `x` to its hexadecimal representation.
 
-#### 7.3.6 `cryptography.btest(a, b)`
+### 7.23 `cryptography.btest(a, b)`
 - **Type**: `function`
 - **Arguments**: 
   - `a`: `number` (R)
@@ -800,7 +818,7 @@
 - **Returns**: `boolean`
 - **Description**: Returns a boolean signaling whether the bitwise AND of its operands is different from zero.
 
-#### 7.3.7 `cryptography.extract(n, field, width)`
+### 7.24 `cryptography.extract(n, field, width)`
 - **Type**: `function`
 - **Arguments**: 
   - `n`: `number` (R)
@@ -809,7 +827,7 @@
 - **Returns**: `number`
 - **Description**: Returns the unsigned number formed by the bits `field` to `field + width - 1` from `n`.
 
-#### 7.3.8 `cryptography.replace(n, v, field, width)`
+### 7.25 `cryptography.replace(n, v, field, width)`
 - **Type**: `function`
 - **Arguments**: 
   - `n`: `number` (R)
@@ -878,21 +896,21 @@
 - **Arguments**: 
   - `name`: `string` (R)
   - `func`: `function` (R)
-- **Returns**: `void`
+- **Returns**: `nothing`
 - **Description**: Registers a function under the given `name`. When `remote.call()` is called with this `name`, the registered `func` will be executed.
 
 ### 9.2 `remote.unregister(name)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
-- **Returns**: `void`
+- **Returns**: `nothing`
 - **Description**: Removes the function registered under the given `name`, making it unavailable for `remote.call()`.
 
 ### 9.3 `remote.call(name)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
-- **Returns**: `void`
+- **Returns**: `nothing`
 - **Description**: Calls all functions registered under the given `name`. Multiple functions can be registered under the same name.
 
 ### 9.4 `remote.exists(name)`
@@ -907,7 +925,7 @@
 - **Arguments**: 
   - `name`: `string` (R)
   - `func`: `function` (R)
-- **Returns**: `void`
+- **Returns**: `nothing`
 - **Description**: Removes a specific function from the remote registry under the given `name`.
 
 ### 9.6 `remote.count(name)`
@@ -986,24 +1004,166 @@
 - **Returns**: `string`
 - **Description**: Generates a random string of specified length using provided character set. If no character set is provided, uses alphanumeric characters (a-z, A-Z, 0-9).
 
-## 11. Global Functions
+## 11. Stack Library
 
-### 11.1 `wait(x)`
+### 11.1 `stack.new(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Creates a new stack with the specified name.
+
+### 11.2 `stack.add(name, value)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+  - `value`: `any` (R)
+- **Returns**: `nothing`
+- **Description**: Adds a value to the stack with the specified name.
+
+### 11.3 `stack.take(name, remove)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+  - `remove`: `boolean` (O)
+- **Returns**: `any`
+- **Description**: Takes the top value from the stack with the specified name and removes it if remove is true.
+
+### 11.4 `stack.exists(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `boolean`
+- **Description**: Checks if the stack with the specified name exists.
+
+### 11.5 `stack.size(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `number`
+- **Description**: Returns the amount of values in the stack with the specified name.
+
+### 11.6 `stack.empty(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Empties the stack with the specified name.
+
+### 11.7 `stack.is_empty(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `boolean`
+- **Description**: Checks if the stack with the specified name is empty.
+
+# 12. Queue Library
+
+### 12.1 `queue.new(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Creates a new queue with the specified name.
+
+### 12.2 `queue.add(name, value)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+  - `value`: `any`(R)
+- **Returns**: `nothing`
+- **Description**: Adds a value to the queue with the specified name.
+
+### 12.3 `queue.take(name, remove)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+  - `remove`: `boolean` (O)
+- **Returns**: `any`
+- **Description**: Takes the top value from the queue with the specified name and removes it if remove is true.
+
+### 12.4 `queue.exists(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `boolean`
+- **Description**: Checks if the queue with the specified name exists.
+
+### 12.5 `queue.size(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `number`
+- **Description**: Returns the amount of values in the queue with the specified name.
+
+### 12.6 `queue.empty(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Empties the queue with the specified name.
+
+### 12.7 `queue.is_empty(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `boolean`
+- **Description**: Checks if the queue with the specified name is empty.
+
+## 13. Datetime Library
+
+### 13.1 `datetime.time(return_table)`
+- **Type**: `function`
+- **Arguments**:
+  - `return_table`: `boolean` (O)
+- **Returns**: `Number` or `Table`
+- **Description**: Returns the current time.
+  - If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
+
+### 13.2 `datetime.diff(n1, n2, return_table)`
+- **Type**: `function`
+- **Arguments**:
+  - `n1`: `number` (R)
+  - `n2`: `number` (R)
+  - `return_table`: `boolean` (O)
+- **Returns**: `Number` or `Table`
+- **Description**: Returns the difference between the times `n1` and `n2`.
+  - If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
+
+### 13.3 `datetime.sum(n1, n2, return_table)`
+- **Type**: `function`
+- **Arguments**:
+  - `n1`: `number` (R)
+  - `n2`: `number` (R)
+  - `return_table`: `boolean` (O)
+- **Returns**: `Number` or `Table`
+- **Description**: Returns the sum of the times `n1` and `n2`.
+  - If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
+
+### 13.4 `datetime.to_table(num)`
+- **Type**: `function`
+- **Arguments**:
+  - `num`: `number` (R)
+- **Returns**: `Table`
+- **Description**: Returns the time number `num` as a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
+
+### 13.5 `datetime.to_number(t)`
+- **Type**: `function`
+- **Arguments**:
+  - `t`: `table` (R)
+- **Returns**: `Number`
+- **Description**: Returns the time table `t` as a number in the format `Year Month Day Hour Minute Second`.
+
+## 14. Global Functions
+
+### 14.1 `wait(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
-- **Returns**: `void`
+- **Returns**: `nothing`
 - **Description**: Yields the code for `x` seconds. (Similar to python's wait function).
 
-### 11.2 `is_type(value, type_of_object)`
-- **Type**: `function`
-- **Arguments**: 
-  - `value`: `any` (R)
-  - `type_of_object`: `"nil"|"number"|"string"|"boolean"|"table"|"function"|"thread"|"userdata"` (R)
-- **Returns**: `boolean`
-- **Description**: Checks if `value` is a `type_of_object`.
-
-### 11.3 `benchmark(func, iterations)`
+### 14.2 `benchmark(func, iterations)`
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
@@ -1012,35 +1172,25 @@
 - **Description**: Runs `func` `iterations` times. Returns Total Execution Time, Average Execution Time Per Run, The Last Result (if return is added in the code).
 - **NOTE: If `iterations` is not given, the code will run 10 times**
 
-### 11.4 `execution_time(func)`
+### 14.3 `execution_time(func)`
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
 - **Returns**: `number`, `any`
 - **Description**: Runs `func` and returns the time it takes to run `func`.
 
-### 11.5 `delay(t, func)`
+### 14.4 `delay(t, func)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `number` (R)
   - `func`: `function` (R)
-- **Returns**: `void`
+- **Returns**: `nothing`
 - **Description**: Yields `t` seconds before running `func` without stopping other code.
 
-### 11.6 `delay_stop(t, func)`
+### 14.5 `delay_stop(t, func)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `number` (R)
   - `func`: `function` (R)
-- **Returns**: `void`
+- **Returns**: `nothing`
 - **Description**: Yields `t` seconds before running `func` while stopping other code.
-
-# **Legend:**
-- ## **R**: Required parameter
-- ## **O**: Optional parameter
-
-# Summary
-
-## **Total Functions**: 138
-## **Total Variables**: 9
-## **Total Functions and Variables**: 147
