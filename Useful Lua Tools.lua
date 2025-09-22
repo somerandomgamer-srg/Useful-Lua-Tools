@@ -1307,8 +1307,9 @@ function cryptography.xor(s, key)
   for i = 1, #s do
     local charByte = s:sub(i, i):byte()
     local keyByte = key:sub((i - 1) % #key + 1, (i - 1) % #key + 1):byte()
-    local encryptedByte = tostring(charByte + keyByte - 2 * math.floor((charByte + keyByte) / 2))
-    encrypted = encrypted .. encryptedByte:char()
+    -- Use proper bitwise XOR operator (Lua 5.3+)
+    local encryptedByte = charByte ~ keyByte
+    encrypted = encrypted .. string.char(encryptedByte)
   end
 
   return encrypted
@@ -2172,7 +2173,12 @@ function math.fib(n)
   elseif n == 2 then
     return 1
   else
-    return math.fib(n - 1) + math.fib(n - 2)
+    -- Efficient O(n) iterative approach instead of O(2^n) recursive
+    local a, b = 0, 1
+    for i = 3, n do
+      a, b = b, a + b
+    end
+    return b
   end
 end
 
