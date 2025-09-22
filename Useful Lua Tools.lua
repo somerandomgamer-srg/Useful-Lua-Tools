@@ -1307,8 +1307,11 @@ function cryptography.xor(s, key)
   for i = 1, #s do
     local charByte = s:sub(i, i):byte()
     local keyByte = key:sub((i - 1) % #key + 1, (i - 1) % #key + 1):byte()
-    -- Use proper bitwise XOR operator (Lua 5.3+)
-    local encryptedByte = charByte ~ keyByte
+    local encryptedByte
+    if is53 then
+      encryptedByte = charByte ~ keyByte
+    else
+      encryptedByte = bit32.bxor(charByte, keyByte)
     encrypted = encrypted .. string.char(encryptedByte)
   end
 
