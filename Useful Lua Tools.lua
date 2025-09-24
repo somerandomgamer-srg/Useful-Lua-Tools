@@ -3,8 +3,12 @@
 ---------Initiation and Module Variables---------
 
 ---Error message formatter
-local function errorMsg(expected, name, value)
-  error(("%s expected for '%s', given: %s (%s)."):format(expected, name, tostring(value), type(value)))
+local function errorMsg(expected, name, value, index)
+  if index then
+    error(("%s expected for '%s' at argument %d, given: %s (%s)"):format(expected, name, index, tostring(value), type(value)))
+  else
+    error(("%s expected for '%s', given: %s (%s)"):format(expected, name, tostring(value), type(value)))
+  end
 end
 
 --Function for both uuid1 and uuid6
@@ -223,8 +227,7 @@ end
 ---Function for system.cores
 local function getNumCores()
   if system.is_windows then
-    return tonumber(io.popen('powershell -Command "(Get-CimInstance Win32_Processor).NumberOfLogicalProcessors"'):read()) or
-        nil
+    return tonumber(io.popen('powershell -Command "$env:NUMBER_OF_PROCESSORS"'):read()) or nil
   elseif system.is_mac then
     return tonumber(io.popen("sysctl -n hw.logicalcpu"):read()) or nil
   elseif system.is_linux or system.is_chrome then
@@ -235,8 +238,7 @@ end
 ---Function for system.architecture
 local function getArchitecture()
   if system.is_windows then
-    return io.popen('powershell -Command "Get-CimInstance Win32_Processor | Select-Object -ExpandProperty Architecture"')
-        :read() or nil
+    return io.popen('powershell -Command "$Env:PROCESSOR_ARCHITECTURE"'):read() or nil
   elseif system.is_mac or system.is_chrome or system.is_linux then
     return io.popen("uname -m"):read() or nil
   end
@@ -246,15 +248,16 @@ end
 local function getMac()
   if system.is_windows then
     return io.popen(
-          "powershell -Command \"Get-NetAdapter | Where-Object {$_.Status -eq \'Up\'} | Select-Object -First 1 -ExpandProperty MacAddress\"")
-        :read() or nil
+    "powershell -Command \"Get-NetAdapter | Where-Object {$_.Status -eq \'Up\'} | Select-Object -First 1 -ExpandProperty MacAddress\"")
+    :read() or nil
   elseif system.is_mac then
-    return io.popen("ipconfig en0"):read() or io.popen("ipconfig en1"):read() or nil
+    return io.popen(
+    "route -n get default | awk '/interface:/{print $2}' | xargs ifconfig | awk '/ether/{print $2; exit}'"):read() or nil
   elseif system.is_linux then
     return io.popen("ip link | awk '/ether/ {print $2}' | head -n 1"):read() or nil
   elseif system.is_chrome then
     print(
-      "Cannot get Mac Address on ChromeOS. ChromeOS doesn't have a command to get Mac Address due to security reasons")
+    "Cannot get Mac Address on ChromeOS. ChromeOS doesn't have a command to get Mac Address due to security reasons")
     return nil
   end
 end
@@ -475,7 +478,7 @@ datetime = {}
 ---
 ---"Major Update"."Minor Update"."Patch/Very Minor Update"
 ---@nodiscard
-ult.version = "1.4.1"
+ult.version = "1.5.0"
 
 ---***SRG Custom Variable***
 ---
@@ -491,13 +494,15 @@ ult.contributors = {
 ---@nodiscard
 ult.min_lua_ver = "5.2"
 
-if _VERSION:sub(5) < ult.min_lua_ver then error("Useful Lua Tools requires Lua " .. ult.min_lua_ver .. " or higher. You are running Lua " .. _VERSION:sub(5)) end
+if _VERSION:sub(5) < ult.min_lua_ver then
+  error("Useful Lua Tools requires Lua " .. ult.min_lua_ver .. " or higher. You are running Lua " .. _VERSION:sub(5))
+end
 
 ---***SRG Custom Variable***
 ---
 ---The release date of the current ULT version
 ---@nodiscard
-ult.release_date = "09/22/2025"
+ult.release_date = "09/24/2025"
 
 ---***SRG Custom Variable***
 ---
@@ -1174,7 +1179,7 @@ function cryptography.rol(x, disp)
 
   disp = disp % 32
   if is53 then
-   return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
+    return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
   else
     return bit32.lrotate(x, disp)
   end
@@ -1312,6 +1317,7 @@ function cryptography.xor(s, key)
       encryptedByte = charByte ~ keyByte
     else
       encryptedByte = bit32.bxor(charByte, keyByte)
+    end
     encrypted = encrypted .. string.char(encryptedByte)
   end
 
@@ -1460,14 +1466,8 @@ function input.number_table(message, number_of_inputs)
     message = ""
   end
 
-  if type(number_of_inputs) ~= "number" then
-    error("Number of inputs must be a number")
-    return {}
-  end
-  if number_of_inputs < 1 then
-    error("Number of inputs must be greater than 0")
-    return {}
-  end
+  if type(number_of_inputs) ~= "number" then error("Number of inputs must be a number") end
+  if number_of_inputs < 1 then error("Number of inputs must be greater than 0") end
 
   io.write(message)
 
@@ -1553,16 +1553,16 @@ function stack.new(name)
   stacks[name] = {}
 end
 
----***SRG Custom Function***
+---***SRG Custom Function
 ---
----Adds `value` to the stack with the specified `name`.
+---Adds one or more values to the stack with the specified `name`.
 ---@param name string
----@param value any
-function stack.add(name, value)
+---@param ... any
+function stack.add(name, ...)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
 
-  table.insert(stacks[name], value)
+  for _, value in ipairs({ ... }) do table.insert(stacks[name], value) end
 end
 
 ---***SRG Custom Function***
@@ -1642,14 +1642,14 @@ end
 
 ---***SRG Custom Function***
 ---
----Adds `value` to the queue with the specified `name`.
+---Adds one or more values to the queue with the specified `name`.
 ---@param name string
----@param value any
-function queue.add(name, value)
+---@param ... any
+function queue.add(name, ...)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
 
-  table.insert(queues[name], value)
+  for _, value in ipairs({ ... }) do table.insert(queues[name], value) end
 end
 
 ---***SRG Custom Function***
@@ -1757,8 +1757,7 @@ function datetime.diff(n1, n2, return_table)
   if type(n2) ~= "number" then errorMsg("Number", "n2", n2) end
   if #tostring(n2) ~= 14 then error("n2 must be a 14 digit number") end
 
-  local diff = tostring(n1 - n2):find("-") and tonumber(string.format("%014d", n2 - n1)) or
-      tonumber(string.format("%014d", n1 - n2))
+  local diff = tostring(n1 - n2):find("-") and tonumber(string.format("%014d", n2 - n1)) or tonumber(string.format("%014d", n1 - n2))
 
   if return_table then
     return {
@@ -1775,22 +1774,23 @@ end
 
 ---***SRG Custom Function***
 ---
----Returns the sum of `n1` and `n2`.
+---Returns the sum of each time given.
 ---
 ---If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
----@param n1 number
----@param n2 number
 ---@param return_table? boolean
+---@param ... number
 ---@return number|table
 ---@nodiscard
-function datetime.add(n1, n2, return_table)
-  if type(n1) ~= "number" then errorMsg("Number", "n1", n1) end
-  if #tostring(n1) ~= 14 then error("n1 must be a 14 digit number") end
+function datetime.add(return_table, ...)
+  local args = { ... }
+  if #args < 2 then error("At least two numbers are required") end
+  for i, n in ipairs(args) do
+    if type(n) ~= "number" then errorMsg("Number", "n", n, i) end
+    if #tostring(n) ~= 14 then error("n must be a 14 digit number") end
+  end
 
-  if type(n2) ~= "number" then errorMsg("Number", "n2", n2) end
-  if #tostring(n2) ~= 14 then error("n2 must be a 14 digit number") end
-
-  local sum = tonumber(string.format("%014d", n2 + n1))
+  local sum = 0
+  for _, n in pairs(args) do sum = sum + tonumber(string.format("%014d", n)) end
 
   if return_table then
     return {
@@ -1846,32 +1846,131 @@ function datetime.to_number(t)
   return tonumber(string.format("%04d%02d%02d%02d%02d%02d", t.year, t.month, t.day, t.hour, t.minute, t.second))
 end
 
+-------------Remote Library-------------
+
+---***SRG Custom Function***
+---
+---Registers a function under the given `name`. When `remote.call()` is called with this `name`, the registered function(s) will be executed.
+---@param name string
+---@param ... function
+function remote.register(name, ...)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if remotes[name] then error(string.format("Remote '%s' already exists.", name)) end
+
+  remotes[name] = {}
+
+  for i, func in ipairs({ ... }) do
+    if type(func) ~= "function" then errorMsg("Function", "func", func, i + 1) end
+    table.insert(remotes[name], func)
+  end
+end
+
+---***SRG Custom Function***
+---
+---Removes the function registered under the given `name`, making it unavailable for `remote.call()`.
+---@param name string
+function remote.unregister(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not remotes[name] then error(string.format("Remote '%s' does not exist.", name)) end
+
+  remotes[name] = nil
+end
+
+---***SRG Custom Function***
+---
+---Calls all functions registered under the given `name`. Multiple functions can be registered under the same name.
+---@param name string
+function remotes.call(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not remotes[name] then error(string.format("Remote '%s' does not exist.", name)) end
+
+  for _, func in ipairs(remotes[name]) do func() end
+end
+
+---***SRG Custom Function***
+---
+---Checks if a remote function with the given `name` is registered.
+---@param name string
+---@return boolean
+function remote.exists(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  return remotes[name] ~= nil
+end
+
+---***SRG Custom Function***
+---
+---Removes a specific remote from the remote registry under the given `name`.
+---@param name string
+function remote.remove(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not remotes[name] then error(string.format("Remote '%s' does not exist.", name)) end
+
+  remotes[name] = nil
+end
+
+---***SRG Custom Function***
+---
+---Returns the count of functions registered under the given `name`.
+---@param name string
+---@return number
+---@nodiscard
+function remote.count(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not remotes[name] then error(string.format("Remote '%s' does not exist.", name)) end
+
+  return #remotes[name]
+end
+
+---***SRG Custom Function***
+---
+---Returns the list of all registered remote names.
+---@return table
+---@nodiscard
+function remote.list()
+  local names = {}
+  for name, _ in pairs(remotes) do table.insert(names, name) end
+  return names
+end
+
+---***SRG Custom Function***
+---
+---Removes every registered remote.
+function remote.clear() remotes = {} end
+
 ---------Math Library Extension---------
 
 ---***SRG Custom Function***
 ---
 ---Calculates the average from a list of numbers
----@param t table
+---@param ... table|number
 ---@return number
 ---@nodiscard
-function math.average(t)
-  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+function math.average(...)
+  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
+  local t = type(...) == "table" and ... or { ... }
+  if #t < 2 then error("At least two numbers are required") end
+  for i, num in ipairs(t) do
+    if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
+  end
 
-  local average
   local total = 0
   for i = 1, #t do total = total + t[i] end
-  average = total / #t
-  return average
+  return total / #t
 end
 
 ---***SRG Custom Function***
 ---
 ---Calculates the median from a list of numbers
----@param t table
+---@param ... table|number
 ---@return number
 ---@nodiscard
-function math.median(t)
-  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+function math.median(...)
+  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
+  local t = type(...) == "table" and ... or { ... }
+  if #t < 2 then error("At least two numbers are required") end
+  for i, num in ipairs(t) do
+    if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
+  end
 
   table.sort(t)
   local middle = math.floor(#t / 2) + 1
@@ -1884,12 +1983,17 @@ end
 
 ---***SRG Custom Function***
 ---
----Calculates the range from a list of numbers
----@param t table
+---Calculates the range from two or more numbers
+---@param ... table|number
 ---@return number
 ---@nodiscard
-function math.range(t)
-  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+function math.range(...)
+  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
+  local t = type(...) == "table" and ... or { ... }
+  if #t < 2 then error("At least two numbers are required") end
+  for i, num in ipairs(t) do
+    if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
+  end
 
   local minimum = math.min(table.unpack(t))
   local maximum = math.max(table.unpack(t))
@@ -1899,12 +2003,17 @@ end
 
 ---***SRG Custom Function***
 ---
----Calculates the mode from a list of numbers
----@param t table
+---Calculates the mode from two or more numbers
+---@param ... table|number
 ---@return number
 ---@nodiscard
-function math.mode(t)
-  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+function math.mode(...)
+  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
+  local t = type(...) == "table" and ... or { ... }
+  if #t < 2 then error("At least two numbers are required") end
+  for i, num in ipairs(t) do
+    if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
+  end
 
   local freq = {}
   for i = 1, #t do
@@ -1926,12 +2035,17 @@ end
 
 ---***SRG Custom Function***
 ---
----Calculates the standard deviation from a list of numbers
----@param t table
+---Calculates the standard deviation from two or more numbers
+---@param ... table|number
 ---@return number
 ---@nodiscard
-function math.standard_deviation(t)
-  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+function math.standard_deviation(...)
+  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
+  local t = type(...) == "table" and ... or { ... }
+  if #t < 2 then error("At least two numbers are required") end
+  for i, num in ipairs(t) do
+    if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
+  end
 
   local deviation = 0
   local avg = math.average(t)
@@ -1941,45 +2055,46 @@ end
 
 ---***SRG Custom Function***
 ---
----Calculates the sum from a list of numbers
----@param t table
+---Calculates the sum of two or more numbers
+---@param ... table|number
 ---@return number
 ---@nodiscard
-function math.sum(t)
-  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+function math.sum(...)
+  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
+  local t = type(...) == "table" and ... or { ... }
+  if #t < 2 then error("At least two numbers are required") end
+  for i, num in ipairs(t) do
+    if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
+  end
 
   local sum = 0
-  for i in #t do sum = sum + t[i] end
+  for _, t in pairs(t) do
+    for i in #t do sum = sum + t[i] end
+  end
   return sum
 end
 
 ---***SRG Custom Function***
 ---
----Finds the greatest common factor between `x` and `y`
----@param x number
----@param y number
+---Finds the greatest common divisor between two or more numbers
+---@param ... table|number
 ---@return number
 ---@nodiscard
-function math.gcd(x, y)
-  if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(y) ~= "number" then errorMsg("Number", "y", y) end
-
-  local result
-  local biggest = math.max(x, y)
-
-  if x == y then
-    result = x
-  elseif x == 0 or y == 0 then
-    result = 0
-  elseif x == 1 or y == 1 then
-    result = 1
-  else
-    for i = 1, biggest do
-      if x % i == 0 and y % i == 0 then result = i end
-    end
+function math.gcd(...)
+  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
+  local t = type(...) == "table" and ... or { ... }
+  if #t < 2 then error("At least two numbers are required") end
+  for i, num in ipairs(t) do
+    if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
   end
 
-  return result
+  local gcd = t[1]
+  for i = 2, #t do
+    local a, b = gcd, t[i]
+    while b ~= 0 do a, b = b, a % b end
+    gcd = a
+  end
+  return gcd
 end
 
 ---***SRG Custom Function***
@@ -2007,16 +2122,25 @@ end
 
 ---***SRG Custom Function***
 ---
----Finds the least common multiple between `x` and `y`
----@param x number
----@param y number
+---Finds the least common multiple between two or more numbers
+---@param ... table|number
 ---@return number
 ---@nodiscard
-function math.lcm(x, y)
-  if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(y) ~= "number" then errorMsg("Number", "y", y) end
+function math.lcm(...)
+  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
+  local t = type(...) == "table" and ... or { ... }
+  if #t < 2 then error("At least two numbers are required") end
+  for i, num in ipairs(t) do
+    if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
+  end
 
-  return (x * y) / math.gcd(x, y)
+  -- calculate using math.gcd
+  local lcm = t[1]
+  for i = 2, #t do
+    lcm = lcm / math.gcd(lcm, t[i]) * t[i]
+    if lcm == 0 then return 0 end
+  end
+  return lcm
 end
 
 ---***SRG Custom Function***
@@ -2040,12 +2164,7 @@ function math.quadratic(a, b, c)
     return nil, nil
   end
 
-  local temp = -b + math.sqrt(disc)
-  local temp2 = -b - math.sqrt(disc)
-  local temp3 = 2 * a
-  local ans1 = temp / temp3
-  local ans2 = temp2 / temp3
-  return ans1, ans2
+  return (-b + math.sqrt(disc)) / (2 * a), (-b - math.sqrt(disc)) / (2 * a)
 end
 
 ---***SRG Custom Function***
@@ -2176,11 +2295,8 @@ function math.fib(n)
   elseif n == 2 then
     return 1
   else
-    -- Efficient O(n) iterative approach instead of O(2^n) recursive
     local a, b = 0, 1
-    for i = 3, n do
-      a, b = b, a + b
-    end
+    for i = 3, n do a, b = b, a + b end
     return b
   end
 end
@@ -2353,12 +2469,12 @@ end
 
 ---***SRG Custom Function***
 ---
----Calculates the z-score of a value in a dataset
+---Calculates the z-score of `x` from a list of numbers
 ---- Z = 0 → Exactly average (equal to the mean)
 ---- Z > 0 → Above the mean
 ---- Z < 0 → Below the mean
 ---- Z > 2 or Z < -2 → Unusual (more than 2 standard deviations away)
----- Z > 3 or Z < -3 → Extremely rare
+---- Z > 3 or Z < -3 → Extremely rare (more than 3 standard deviations away)
 ---@param x number
 ---@param t table
 ---@return number
@@ -2642,24 +2758,31 @@ end
 
 ---***SRG Custom Function***
 ---
----Recursively checks if `t` contains `value`
+---Recursively checks if any given table contains `value`
 ---
 ---Returns (`true`, `number of instances`) or (`false`, `0`)
----@param t table
 ---@param value any
+---@param ... table
 ---@return boolean
 ---@return number instances
 ---@nodiscard
-function table.contains(t, value)
-  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+function table.contains(value, ...)
+  local args = { ... }
+  if #args < 1 then error("At least one table is required") end
+
+  for i, t in ipairs(args) do
+    if type(t) ~= "table" then errorMsg("Table", "t", t, i + 1) end
+  end
 
   local amount = 0
-  for _, v in pairs(t) do
-    if v == value then
-      amount = amount + 1
-    elseif type(v) == "table" then
-      local contains, instances = table.contains(v, value)
-      if contains then amount = amount + instances end
+  for _, t in pairs(args) do
+    for _, v in pairs(t) do
+      if v == value then
+        amount = amount + 1
+      elseif type(v) == "table" then
+        local contains, instances = table.contains(value, v)
+        if contains then amount = amount + instances end
+      end
     end
   end
   return amount > 0, amount
@@ -2820,38 +2943,44 @@ end
 
 ---***SRG Custom Function***
 ---
----Returns a table containing the similarities between `t1` and `t2`
+---Returns a table containing the similarities between all tables given.
 ---
 ---NOTE: This function ONLY works on lists/arrays
----@param t1 table
----@param t2 table
+---@param ... table
 ---@return table
-function table.intersection(t1, t2)
-  if type(t1) ~= "table" then errorMsg("Table", "t1", t1) end
-  if type(t2) ~= "table" then errorMsg("Table", "t2", t2) end
+function table.intersection(...)
+  local args = { ... }
+  if #args < 2 then error("At least two tables are required") end
+
+  for i, t in ipairs(args) do
+    if type(t) ~= "table" then errorMsg("Table", "t", t, i) end
+  end
 
   local intersectionTable = {}
-  for _, v in pairs(t1) do
-    if table.contains(t2, v) then table.insert(intersectionTable, v) end
+  for _, v in pairs(args) do
+    if table.contains(args, v) then table.insert(intersectionTable, v) end
   end
   return intersectionTable
 end
 
 ---***SRG Custom Function***
 ---
----Returns a table containing the differences between `t1` and `t2`
+---Returns a table containing the differences between all tables given.
 ---
 ---NOTE: This function ONLY works on lists/arrays
----@param t1 table
----@param t2 table
+---@param ... table
 ---@return table
-function table.difference(t1, t2)
-  if type(t1) ~= "table" then errorMsg("Table", "t1", t1) end
-  if type(t2) ~= "table" then errorMsg("Table", "t2", t2) end
+function table.difference(...)
+  local args = { ... }
+  if #args < 2 then error("At least two tables are required") end
+
+  for i, t in ipairs(args) do
+    if type(t) ~= "table" then errorMsg("Table", "t", t, i) end
+  end
 
   local differenceTable = {}
-  for _, v in pairs(t1) do
-    if not table.contains(t2, v) then table.insert(differenceTable, v) end
+  for _, v in pairs(args) do
+    if not table.contains(args, v) then table.insert(differenceTable, v) end
   end
   return differenceTable
 end
@@ -2947,6 +3076,40 @@ function table.index(t, value)
   end
 
   return pos
+end
+
+---***SRG Custom Function***
+---
+---Locks the table `t` so it cannot be modified.
+---@param t table
+function table.lock(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  local mt = getmetatable(t) or {}
+  mt.__newindex = function() error("Attempted to modify a locked table.") end
+
+  setmetatable(t, mt)
+end
+
+---***SRG Custom Function***
+---
+---Unlocks the table `t` so it can be modified.
+---@param t table
+function table.unlock(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  setmetatable(t, nil)
+end
+
+---***SRG Custom Function***
+---
+---Checks if the table `t` is locked.
+---@param t table
+---@return boolean
+function table.is_locked(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  return getmetatable(t) and getmetatable(t).__newindex ~= nil
 end
 
 ------------Global Library------------

@@ -62,3 +62,21 @@
 - ## Date: Sep 22, 2025
   - Made the toolkit Lua 5.2 compatible by adding fallbacks for versions that do not support native bitwise operators.
   - Added an error message for Lua versions that don't meet the minimum Lua version to run the toolkit
+  - Fixed math.fib(n) and enchanced performance.
+
+# V1.5.0
+- ## Date: Sep 23, 2025 - Sep 24, 2025
+  - ## Sep 23, 2025
+    - Added 3 new `table` library functions: `table.lock()`, `table.unlock()`, and `table.is_locked`
+  - ## Sep 24, 2025
+    - Updated some functions to accept multiple arguments. Effected functions include:
+      - `table.contains(t, value)` --> `table.contains(value, ...)`
+      - `table.intersection(t1, t2)` --> `table.intersection(...)`
+      - `table.difference(t1, t2)` --> `table.difference(...)`
+      - `math.sum(x, y)` --> `math.sum(...)`
+      - `datetime.add(return_table, n1, n2)` --> `datetime.add(return_table, ...)`
+      - `remote.register(name, func)` --> `remote.register(name, ...)`
+      - `stack.add(name, value)` --> `stack.add(name, ...)`
+      - `queue.add(name, value)` --> `queue.add(name, ...)`
+    - Added 2 new `remote` library functions: `remote.list()` and `remote.clear()`
+## NOTE TO SRG: update md file adding every argument change above. add the 3 new table functions

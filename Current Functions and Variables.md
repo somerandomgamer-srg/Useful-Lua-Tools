@@ -1,15 +1,16 @@
 # **Legend:**
 - ## **R**: Required parameter
 - ## **O**: Optional parameter
+- ## **...**: Multiple arguments
 
 # Summary
 
-- ## **Total Functions**: 138
+- ## **Total Functions**: 141
   - **Total `ult` Functions**: 0
   - **Total `system` Functions**: 0
   - **Total `math` Functions**: 39
   - **Total `string` Functions**: 10
-  - **Total `table` Functions**: 15
+  - **Total `table` Functions**: 18
   - **Total `input` Functions**: 6
   - **Total `cryptography` Functions**: 25
   - **Total `color` Functions**: 6
@@ -36,7 +37,7 @@
   - **Total `datetime` Variables**: 0
   - **Total Global Variables**: 0
 
-- ## **Total Functions and Variables**: 152
+- ## **Total Functions and Variables**: 155
 
 ## 1. ULT Library Variables
 
@@ -149,12 +150,12 @@
 - **Returns**: `number`
 - **Description**: Calculates the standard deviation from a list of numbers.
 
-### 3.6 `math.sum(t)`
+### 3.6 `math.sum(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `t`: `table` (R)
+  - `...`: `table` (R)
 - **Returns**: `number`
-- **Description**: Calculates the sum from a list of numbers.
+- **Description**: Calculates the sum from one or more lists of numbers.
 
 ### 3.7 `math.z_score(x, t)`
 - **Type**: `function`
@@ -489,13 +490,13 @@
 
 ## 5. Table Library Functions
 
-### 5.1 `table.contains(t, value)`
+### 5.1 `table.contains(value, ...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `t`: `table` (R)
   - `value`: `any` (R)
+  - `...`: `table` (R)
 - **Returns**: `boolean`, `number`
-- **Description**: Recursively checks if `t` contains `value`. Returns (`true`, `number of instances`) or (`false`, `0`).
+- **Description**: Recursively checks if any given table contains `value`. Returns (`true`, `number of instances`) or (`false`, `0`).
 
 ### 5.2 `table.csv_to_table(s)`
 - **Type**: `function`
@@ -541,21 +542,19 @@
 - **Returns**: `number`, `table`
 - **Description**: Recursively counts the amount of keys in `t` and returns a table containing each key and the amount of occurrences. The keys in nested tables are joined using `separator` (defaults to ".") (key = amount_of_occurrences).
 
-### 5.8 `table.intersection(t1, t2)`
+### 5.8 `table.intersection(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `t1`: `table` (R)
-  - `t2`: `table` (R)
+  - `...`: `table` (R)
 - **Returns**: `table`
-- **Description**: Returns a table containing the similarities between `t1` and `t2`. NOTE: This function ONLY works on lists/arrays.
+- **Description**: Returns a table containing the similarities between all tables given. NOTE: This function ONLY works on lists/arrays.
 
-### 5.9 `table.difference(t1, t2)`
+### 5.9 `table.difference(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `t1`: `table` (R)
-  - `t2`: `table` (R)
+  - `...`: `table` (R)
 - **Returns**: `table`
-- **Description**: Returns a table containing the differences between `t1` and `t2`. NOTE: This function ONLY works on lists/arrays.
+- **Description**: Returns a table containing the differences between all tables given. NOTE: This function ONLY works on lists/arrays.
 
 ### 5.10 `table.shuffle_randomseed(t, seed, n)`
 - **Type**: `function`
@@ -897,14 +896,14 @@
   - `name`: `string` (R)
   - `func`: `function` (R)
 - **Returns**: `nothing`
-- **Description**: Registers a function under the given `name`. When `remote.call()` is called with this `name`, the registered `func` will be executed.
+- **Description**: Registers one or more functions under the given `name`. When `remote.call()` is called with this `name`, the registered function(s) will be executed.
 
 ### 9.2 `remote.unregister(name)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
 - **Returns**: `nothing`
-- **Description**: Removes the function registered under the given `name`, making it unavailable for `remote.call()`.
+- **Description**: Removes the function(s) registered under the given `name`, making it unavailable for `remote.call()`.
 
 ### 9.3 `remote.call(name)`
 - **Type**: `function`
@@ -918,7 +917,7 @@
 - **Arguments**: 
   - `name`: `string` (R)
 - **Returns**: `boolean`
-- **Description**: Checks if a remote function with the given `name` is registered.
+- **Description**: Checks if a remote with the given `name` is registered.
 
 ### 9.5 `remote.remove(name, func)`
 - **Type**: `function`
@@ -932,8 +931,20 @@
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
-- **Returns**: `number|nil`
+- **Returns**: `number`
 - **Description**: Returns the count of functions registered under the given `name`.
+
+### 9.7 `remote.list()`
+- **Type**: `function`
+- **Arguments**: None
+- **Returns**: `table`
+- **Description**: Returns the list of all registered remote names.
+
+### 9.8 `remote.clear()`
+- **Type**: `function`
+- **Arguments**: None
+- **Returns**: `table`
+- **Description**: Returns the list of all registered remote names.
 
 ## 10. Random Library
 
@@ -1013,13 +1024,13 @@
 - **Returns**: `nothing`
 - **Description**: Creates a new stack with the specified name.
 
-### 11.2 `stack.add(name, value)`
+### 11.2 `stack.add(name, ...)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
-  - `value`: `any` (R)
+  - `...`: `any` (R)
 - **Returns**: `nothing`
-- **Description**: Adds a value to the stack with the specified name.
+- **Description**: Adds a one or more values to the stack with the specified name.
 
 ### 11.3 `stack.take(name, remove)`
 - **Type**: `function`
@@ -1066,13 +1077,13 @@
 - **Returns**: `nothing`
 - **Description**: Creates a new queue with the specified name.
 
-### 12.2 `queue.add(name, value)`
+### 12.2 `queue.add(name, ...)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
-  - `value`: `any`(R)
+  - `...`: `any`(R)
 - **Returns**: `nothing`
-- **Description**: Adds a value to the queue with the specified name.
+- **Description**: Adds one or more values to the queue with the specified name.
 
 ### 12.3 `queue.take(name, remove)`
 - **Type**: `function`
