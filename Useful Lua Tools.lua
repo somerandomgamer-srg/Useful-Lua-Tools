@@ -502,7 +502,7 @@ end
 ---
 ---The release date of the current ULT version
 ---@nodiscard
-ult.release_date = "09/24/2025"
+ult.release_date = "09/25/2025"
 
 ---***SRG Custom Variable***
 ---
@@ -1236,17 +1236,22 @@ end
 ---***SRG Custom Function***
 ---
 ---Returns a boolean signaling whether the bitwise *and* of its operands is different from zero.
----@param a number
----@param b number
+---@param ... number
 ---@return boolean
-function cryptography.btest(a, b)
-  if type(a) ~= "number" then errorMsg("Number", "a", a) end
-  if type(b) ~= "number" then errorMsg("Number", "b", b) end
+function cryptography.btest(...)
+  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
+  local args = { ... }
+  if #args < 2 then error("At least two numbers are required") end
+  for i, num in ipairs(args) do
+    if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
+  end
 
   if is53 then
-    return (a & b) ~= 0
+    local result = args[1]
+    for i = 2, #args do result = result & args[i] end
+    return result ~= 0
   else
-    return bit32.btest(a, b)
+    return bit32.btest(table.unpack(args))
   end
 end
 
@@ -1779,18 +1784,21 @@ end
 ---If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
 ---@param return_table? boolean
 ---@param ... number
----@return number|table
+---@return number
 ---@nodiscard
 function datetime.add(return_table, ...)
+  if return_table and type(return_table) ~= "boolean" then errorMsg("Boolean", "return_table", return_table) end
+
+  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
   local args = { ... }
   if #args < 2 then error("At least two numbers are required") end
-  for i, n in ipairs(args) do
-    if type(n) ~= "number" then errorMsg("Number", "n", n, i) end
-    if #tostring(n) ~= 14 then error("n must be a 14 digit number") end
+  for i, num in ipairs(args) do
+    if type(num) ~= "number" then errorMsg("Number", "num", num, i + 1) end
+    if #tostring(num) ~= 14 then error("num must be a 14 digit number") end
   end
 
   local sum = 0
-  for _, n in pairs(args) do sum = sum + tonumber(string.format("%014d", n)) end
+  for _, n in pairs(...) do sum = sum + tonumber(string.format("%014d", n)) end
 
   if return_table then
     return {
@@ -1878,13 +1886,15 @@ end
 
 ---***SRG Custom Function***
 ---
----Calls all functions registered under the given `name`. Multiple functions can be registered under the same name.
----@param name string
-function remotes.call(name)
-  if type(name) ~= "string" then errorMsg("String", "name", name) end
-  if not remotes[name] then error(string.format("Remote '%s' does not exist.", name)) end
-
-  for _, func in ipairs(remotes[name]) do func() end
+---Calls all functions registered under the given remotes. Multiple functions can be registered under the same name.
+---@param ... string
+function remote.call(...)
+  if type(...) ~= "string" then errorMsg("String", "...", ...) end
+  local args = { ... }
+  for i, name in ipairs(args) do
+    if not remotes[name] then error(string.format("Remote '%s' does not exist.", name)) end
+    for _, func in ipairs(remotes[name]) do func() end
+  end
 end
 
 ---***SRG Custom Function***
@@ -1899,13 +1909,15 @@ end
 
 ---***SRG Custom Function***
 ---
----Removes a specific remote from the remote registry under the given `name`.
----@param name string
-function remote.remove(name)
-  if type(name) ~= "string" then errorMsg("String", "name", name) end
-  if not remotes[name] then error(string.format("Remote '%s' does not exist.", name)) end
-
-  remotes[name] = nil
+---Removes one or more remotes from the remote registry.
+---@param ... string
+function remote.remove(...)
+  if type(...) ~= "string" then errorMsg("String", "...", ...) end
+  local args = { ... }
+  for i, name in ipairs(args) do
+    if not remotes[name] then error(string.format("Remote '%s' does not exist.", name)) end
+    remotes[name] = nil
+  end
 end
 
 ---***SRG Custom Function***
@@ -1942,12 +1954,12 @@ function remote.clear() remotes = {} end
 ---***SRG Custom Function***
 ---
 ---Calculates the average from a list of numbers
----@param ... table|number
+---@param ... number
 ---@return number
 ---@nodiscard
 function math.average(...)
-  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
-  local t = type(...) == "table" and ... or { ... }
+  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
+  local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
     if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
@@ -1961,12 +1973,12 @@ end
 ---***SRG Custom Function***
 ---
 ---Calculates the median from a list of numbers
----@param ... table|number
+---@param ... number
 ---@return number
 ---@nodiscard
 function math.median(...)
-  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
-  local t = type(...) == "table" and ... or { ... }
+  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
+  local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
     if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
@@ -1984,12 +1996,12 @@ end
 ---***SRG Custom Function***
 ---
 ---Calculates the range from two or more numbers
----@param ... table|number
+---@param ... number
 ---@return number
 ---@nodiscard
 function math.range(...)
-  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
-  local t = type(...) == "table" and ... or { ... }
+  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
+  local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
     if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
@@ -2004,12 +2016,12 @@ end
 ---***SRG Custom Function***
 ---
 ---Calculates the mode from two or more numbers
----@param ... table|number
+---@param ... number
 ---@return number
 ---@nodiscard
 function math.mode(...)
-  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
-  local t = type(...) == "table" and ... or { ... }
+  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
+  local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
     if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
@@ -2036,12 +2048,12 @@ end
 ---***SRG Custom Function***
 ---
 ---Calculates the standard deviation from two or more numbers
----@param ... table|number
+---@param ... number
 ---@return number
 ---@nodiscard
 function math.standard_deviation(...)
-  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
-  local t = type(...) == "table" and ... or { ... }
+  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
+  local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
     if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
@@ -2056,20 +2068,20 @@ end
 ---***SRG Custom Function***
 ---
 ---Calculates the sum of two or more numbers
----@param ... table|number
+---@param ... number
 ---@return number
 ---@nodiscard
 function math.sum(...)
-  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
-  local t = type(...) == "table" and ... or { ... }
+  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
+  local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
     if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
   end
 
   local sum = 0
-  for _, t in pairs(t) do
-    for i in #t do sum = sum + t[i] end
+  for _, v in pairs(t) do
+    sum = sum + v
   end
   return sum
 end
@@ -2077,12 +2089,12 @@ end
 ---***SRG Custom Function***
 ---
 ---Finds the greatest common divisor between two or more numbers
----@param ... table|number
+---@param ... number
 ---@return number
 ---@nodiscard
 function math.gcd(...)
-  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
-  local t = type(...) == "table" and ... or { ... }
+  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
+  local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
     if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
@@ -2123,22 +2135,20 @@ end
 ---***SRG Custom Function***
 ---
 ---Finds the least common multiple between two or more numbers
----@param ... table|number
+---@param ... number
 ---@return number
 ---@nodiscard
 function math.lcm(...)
-  if type(...) ~= "table" and type(...) ~= "number" then errorMsg("Table or Number", "...", ...) end
-  local t = type(...) == "table" and ... or { ... }
+  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
+  local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
     if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
   end
 
-  -- calculate using math.gcd
   local lcm = t[1]
   for i = 2, #t do
-    lcm = lcm / math.gcd(lcm, t[i]) * t[i]
-    if lcm == 0 then return 0 end
+    lcm = math.floor(lcm / math.gcd(lcm, t[i])) * t[i]
   end
   return lcm
 end
@@ -2469,19 +2479,24 @@ end
 
 ---***SRG Custom Function***
 ---
----Calculates the z-score of `x` from a list of numbers
+---Calculates the z-score of `x` from two or more numbers
 ---- Z = 0 → Exactly average (equal to the mean)
 ---- Z > 0 → Above the mean
 ---- Z < 0 → Below the mean
 ---- Z > 2 or Z < -2 → Unusual (more than 2 standard deviations away)
 ---- Z > 3 or Z < -3 → Extremely rare (more than 3 standard deviations away)
 ---@param x number
----@param t table
+---@param ... number
 ---@return number
 ---@nodiscard
-function math.z_score(x, t)
+function math.z_score(x, ...)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
+  local t = { ... }
+  if #t < 2 then error("At least two numbers are required") end
+  for i, num in ipairs(t) do
+    if type(num) ~= "number" then errorMsg("Number", "num", num, i + 1) end
+  end
 
   local avg = math.average(t)
   local dev = math.standard_deviation(t)
@@ -2564,20 +2579,6 @@ function math.acotangent(x)
   return math.atan(1 / x)
 end
 
----***SRG Custom Function***
----
----Calculates the midpoint between `x` and `y`
----@param x number
----@param y number
----@return number
----@nodiscard
-function math.midpoint(x, y)
-  if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(y) ~= "number" then errorMsg("Number", "y", y) end
-
-  return (x + y) / 2
-end
-
 ---------String Library Extension---------
 
 ---***SRG Custom Function***
@@ -2618,20 +2619,24 @@ end
 ---
 ---Splits `s` into a table based on `pattern`
 ---@param s string
----@param pattern string
+---@param ... string
 ---@return table
 ---@nodiscard
-function string.split(s, pattern)
+function string.split(s, ...)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if type(pattern) ~= "string" then errorMsg("String", "pattern", pattern) end
+  if type(...) ~= "string" then errorMsg("String", "...", ...) end
 
   local toReturn = {}
   local start = 1
 
   for i = 1, #s do
-    if s:sub(i, i) == pattern then
-      local string = s:sub(start, i - 1)
-      table.insert(toReturn, string)
+    local isPattern = false
+    for _, pattern in ipairs({ ... }) do
+      if s:sub(i, i) == pattern then isPattern = true end
+      break
+    end
+    if isPattern then
+      table.insert(toReturn, s:sub(start, i - 1))
       start = i + 1
     end
   end
@@ -2643,28 +2648,40 @@ end
 
 ---***SRG Custom Function***
 ---
----Checks if `s` starts with `letter`
+---Checks if `s` starts with any pattern given
 ---@param s string
----@param letter string
+---@param ... string
 ---@return boolean
 ---@nodiscard
-function string.starts_with(s, letter)
+function string.starts_with(s, ...)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if type(letter) ~= "string" then errorMsg("String", "letter", letter) end
-  return s:sub(1, 1) == letter
+  if type(...) ~= "string" then errorMsg("String", "...", ...) end
+  local args = { ... }
+
+  local startsWith = false
+  for i, name in ipairs(args) do
+    if s:sub(1, #name) == name then startsWith = true end
+  end
+  return startsWith
 end
 
 ---***SRG Custom Function***
 ---
----Checks if `s` ends with `letter`
+---Checks if `s` ends with any pattern given
 ---@param s string
----@param letter string
+---@param ... string
 ---@return boolean
 ---@nodiscard
-function string.ends_with(s, letter)
+function string.ends_with(s, ...)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if type(letter) ~= "string" then errorMsg("String", "letter", letter) end
-  return s:sub(-1) == letter
+  if type(...) ~= "string" then errorMsg("String", "...", ...) end
+  local args = { ... }
+
+  local startsWith = false
+  for i, name in ipairs(args) do
+    if s:sub(-#name) == name then startsWith = true
+  end
+  return startsWith
 end
 
 ---***SRG Custom Function***
@@ -2730,16 +2747,19 @@ end
 
 ---***SRG Custom Function***
 ---
----Returns the amount of occurrences `pattern` occurs in `s`
+---Returns the amount of occurrences each pattern given occurs in `s`
 ---@param s string
----@param pattern string
+---@param ... string
 ---@return number
 ---@nodiscard
-function string.count(s, pattern)
+function string.count(s, ...)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if type(pattern) ~= "string" then errorMsg("String", "pattern", pattern) end
+  if type(...) ~= "string" then errorMsg("String", "...", ...) end
+
   local amount = 0
-  for _ in s:gmatch(pattern) do amount = amount + 1 end
+  for _, pattern in ipairs({ ... }) do
+    for _ in s:gmatch(pattern) do amount = amount + 1 end
+  end
   return amount
 end
 
@@ -2767,12 +2787,8 @@ end
 ---@return number instances
 ---@nodiscard
 function table.contains(value, ...)
+  if type(...) ~= "table" then errorMsg("Table", "...", ...) end
   local args = { ... }
-  if #args < 1 then error("At least one table is required") end
-
-  for i, t in ipairs(args) do
-    if type(t) ~= "table" then errorMsg("Table", "t", t, i + 1) end
-  end
 
   local amount = 0
   for _, t in pairs(args) do
@@ -2949,16 +2965,13 @@ end
 ---@param ... table
 ---@return table
 function table.intersection(...)
+  if type(...) ~= "table" then errorMsg("Table", "...", ...) end
   local args = { ... }
   if #args < 2 then error("At least two tables are required") end
 
-  for i, t in ipairs(args) do
-    if type(t) ~= "table" then errorMsg("Table", "t", t, i) end
-  end
-
   local intersectionTable = {}
   for _, v in pairs(args) do
-    if table.contains(args, v) then table.insert(intersectionTable, v) end
+    if table.contains(v, args) then table.insert(intersectionTable, v) end
   end
   return intersectionTable
 end
@@ -2971,12 +2984,9 @@ end
 ---@param ... table
 ---@return table
 function table.difference(...)
+  if type(...) ~= "table" then errorMsg("Table", "...", ...) end
   local args = { ... }
   if #args < 2 then error("At least two tables are required") end
-
-  for i, t in ipairs(args) do
-    if type(t) ~= "table" then errorMsg("Table", "t", t, i) end
-  end
 
   local differenceTable = {}
   for _, v in pairs(args) do
@@ -3076,6 +3086,29 @@ function table.index(t, value)
   end
 
   return pos
+end
+
+---***SRG Custom Function***
+---
+---Concatenates multiple tables into 1
+---@param ... table
+---@return table
+---@nodiscard
+function table.combine(...)
+  if type(...) ~= "table" then errorMsg("Table", "...", ...) end
+  local args = { ... }
+  if #args < 2 then error("At least two tables are required") end
+
+  for i, t in ipairs(args) do
+    if type(t) ~= "table" then errorMsg("Table", "t", t, i) end
+  end
+
+  local combined = {}
+
+  for _, t in ipairs(args) do
+    for _, v in ipairs(t) do table.insert(combined, v) end
+  end
+  return combined
 end
 
 ---***SRG Custom Function***

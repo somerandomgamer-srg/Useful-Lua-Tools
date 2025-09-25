@@ -5,12 +5,12 @@
 
 # Summary
 
-- ## **Total Functions**: 141
+- ## **Total Functions**: 142
   - **Total `ult` Functions**: 0
   - **Total `system` Functions**: 0
   - **Total `math` Functions**: 39
   - **Total `string` Functions**: 10
-  - **Total `table` Functions**: 18
+  - **Total `table` Functions**: 19
   - **Total `input` Functions**: 6
   - **Total `cryptography` Functions**: 25
   - **Total `color` Functions**: 6
@@ -37,7 +37,7 @@
   - **Total `datetime` Variables**: 0
   - **Total Global Variables**: 0
 
-- ## **Total Functions and Variables**: 155
+- ## **Total Functions and Variables**: 156
 
 ## 1. ULT Library Variables
 
@@ -115,40 +115,40 @@
 
 # 3. Math Library Functions
 
-### 3.1 `math.average(t)`
+### 3.1 `math.average(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `t`: `table` (R)
+  - `...`: `number` (R)
 - **Returns**: `number`
-- **Description**: Calculates the average from a list of numbers.
+- **Description**: Calculates the average from two or more numbers.
 
-### 3.2 `math.median(t)`
+### 3.2 `math.median(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `t`: `table` (R)
+  - `...`: `number` (R)
 - **Returns**: `number`
-- **Description**: Finds middle value in list. For even-length lists, averages two middle values.
+- **Description**: Finds middle value in two or more numbers. For even-length lists, averages two middle values.
 
-### 3.3 `math.range(t)`
+### 3.3 `math.range(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `t`: `table` (R)
+  - `...`: `number` (R)
 - **Returns**: `number`
-- **Description**: Calculates the range from a list of numbers.
+- **Description**: Calculates the range from two or more numbers.
 
-### 3.4 `math.mode(t)`
+### 3.4 `math.mode(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `t`: `table` (R)
+  - `...`: `number` (R)
 - **Returns**: `number`
-- **Description**: Calculates the mode from a list of numbers.
+- **Description**: Calculates the mode from two or more numbers.
 
-### 3.5 `math.standard_deviation(t)`
+### 3.5 `math.standard_deviation(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `t`: `table` (R)
+  - `...`: `number` (R)
 - **Returns**: `number`
-- **Description**: Calculates the standard deviation from a list of numbers.
+- **Description**: Calculates the standard deviation from two or more numbers.
 
 ### 3.6 `math.sum(...)`
 - **Type**: `function`
@@ -157,29 +157,27 @@
 - **Returns**: `number`
 - **Description**: Calculates the sum from one or more lists of numbers.
 
-### 3.7 `math.z_score(x, t)`
+### 3.7 `math.z_score(x, ...)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
-  - `t`: `table` (R)
+  - `...`: `number` (R)
 - **Returns**: `number`
-- **Description**: Calculates the z-score of `x` in a dataset (`t`).
+- **Description**: Calculates the z-score of `x` in a dataset (represented by `...`).
 
-### 3.8 `math.gcd(x, y)`
+### 3.8 `math.gcd(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `x`: `number` (R)
-  - `y`: `number` (R)
+  - `...`: `number` (R)
 - **Returns**: `number`
-- **Description**: Finds the greatest common factor between `x` and `y`.
+- **Description**: Finds the greatest common factor between two or more numbers.
 
-### 3.9 `math.lcm(x, y)`
+### 3.9 `math.lcm(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `x`: `number` (R)
-  - `y`: `number` (R)
+  - `...`: `number` (R)
 - **Returns**: `number`
-- **Description**: Finds the least common multiple between `x` and `y`.
+- **Description**: Finds the least common multiple between two or more numbers.
 
 ### 3.10 `math.is_prime(x)`
 - **Type**: `function`
@@ -601,6 +599,13 @@
 - **Returns**: `number|nil`
 - **Description**: Returns the index (position) of `value` in table `t`, or nil if not found.
 
+### 5.16 `table.combine(...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `...`: `table` (R)
+- **Returns**: `table`
+- **Description**: Concatenates multiple tables into one table, combining all elements from the provided tables.
+
 ## 6. Input Library Functions
 
 ### 6.1 `input.string(message)`
@@ -890,11 +895,11 @@
 
 ## 9. Remote Library Functions
 
-### 9.1 `remote.register(name, func)`
+### 9.1 `remote.register(name, ...)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
-  - `func`: `function` (R)
+  - `...`: `function` (R)
 - **Returns**: `nothing`
 - **Description**: Registers one or more functions under the given `name`. When `remote.call()` is called with this `name`, the registered function(s) will be executed.
 

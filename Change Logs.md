@@ -65,7 +65,7 @@
   - Fixed math.fib(n) and enchanced performance.
 
 # V1.5.0
-- ## Date: Sep 23, 2025 - Sep 24, 2025
+- ## Date: Sep 23, 2025 - Sep 25, 2025
   - ## Sep 23, 2025
     - Added 3 new `table` library functions: `table.lock()`, `table.unlock()`, and `table.is_locked`
   - ## Sep 24, 2025
@@ -74,9 +74,27 @@
       - `table.intersection(t1, t2)` --> `table.intersection(...)`
       - `table.difference(t1, t2)` --> `table.difference(...)`
       - `math.sum(x, y)` --> `math.sum(...)`
+    - Added 2 new `remote` library functions: `remote.list()` and `remote.clear()`
+  - ## Sep 25, 2024
+    - Updated some functions to accept multiple arguments. Effected functions include:
+      - `math.average(t)` --> `math.average(...)`
+      - `math.median(t)` --> `math.median(...)`
+      - `math.range(t)` --> `math.range(...)`
+      - `math.mode(t)` --> `math.mode(...)`
+      - `math.standard_deviation(t)` --> `math.standard_deviation(...)`
+      - `math.gcd(x, y)` --> `math.gcd(...)`
+      - `math.lcm(x, y)` --> `math.lcm(...)`
+      - `math.z_score(x, t)` --> `math.z_score(x, ...)`
       - `datetime.add(return_table, n1, n2)` --> `datetime.add(return_table, ...)`
       - `remote.register(name, func)` --> `remote.register(name, ...)`
       - `stack.add(name, value)` --> `stack.add(name, ...)`
       - `queue.add(name, value)` --> `queue.add(name, ...)`
-    - Added 2 new `remote` library functions: `remote.list()` and `remote.clear()`
-## NOTE TO SRG: update md file adding every argument change above. add the 3 new table functions
+      - `cryptography.btest(a, b)` --> `cryptography.btest(...)`
+      - `string.split(s, pattern)` --> `string.split(s, ...)`
+      - `string.count(s, pattern)` --> `string.count(s, ...)`
+      - `string.starts_with(s, letter)` --> `string.starts_with(s, ...)`
+      - `string.ends_with(s, letter)` --> `string.ends_with(s, ...)`
+      - `remote.call(name)` --> `remote.call(...)`
+      - `remote.remove(name)` --> `remote.remove(...)`
+    - Added 1 new `table` library function: `table.combine(...)`
+    - Removed the redundant `math.midpoint(x, y)` as it is essentially a rename of `math.median(...)`
