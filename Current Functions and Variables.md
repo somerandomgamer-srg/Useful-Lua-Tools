@@ -5,16 +5,16 @@
 
 # Summary
 
-- ## **Total Functions**: 142
+- ## **Total Functions**: 141
   - **Total `ult` Functions**: 0
   - **Total `system` Functions**: 0
   - **Total `math` Functions**: 39
   - **Total `string` Functions**: 10
-  - **Total `table` Functions**: 19
+  - **Total `table` Functions**: 16
   - **Total `input` Functions**: 6
   - **Total `cryptography` Functions**: 25
   - **Total `color` Functions**: 6
-  - **Total `remote` Functions**: 6
+  - **Total `remote` Functions**: 8
   - **Total `random` Functions**: 7
   - **Total `stack` Functions**: 7
   - **Total `queue` Functions**: 7
@@ -37,7 +37,7 @@
   - **Total `datetime` Variables**: 0
   - **Total Global Variables**: 0
 
-- ## **Total Functions and Variables**: 156
+- ## **Total Functions and Variables**: 155
 
 ## 1. ULT Library Variables
 
@@ -254,84 +254,76 @@
 - **Returns**: `number`
 - **Description**: Calculates the hyperbolic tangent of `x`.
 
-### 3.4.4 `math.asinh(x)`
+### 3.20 `math.asinh(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the inverse hyperbolic sine of `x`.
 
-### 3.20 `math.acosh(x)`
+### 3.21 `math.acosh(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the inverse hyperbolic cosine of `x`.
 
-### 3.21 `math.atanh(x)`
+### 3.22 `math.atanh(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the inverse hyperbolic tangent of `x`.
 
-### 3.22 `math.secant(x)`
+### 3.23 `math.secant(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the secant of `x`.
 
-### 3.23 `math.cosecant(x)`
+### 3.24 `math.cosecant(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the cosecant of `x`.
 
-### 3.24 `math.cotangent(x)`
+### 3.25 `math.cotangent(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the cotangent of `x`.
 
-### 3.25 `math.asecant(x)`
+### 3.26 `math.asecant(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the inverse secant of `x`.
 
-### 3.26 `math.acosecant(x)`
+### 3.27 `math.acosecant(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the inverse cosecant of `x`.
 
-### 3.27 `math.acotangent(x)`
+### 3.28 `math.acotangent(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Calculates the inverse cotangent of `x`.
 
-### 3.28 `math.round(x, precision)`
+### 3.29 `math.round(x, precision)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
   - `precision`: `number` (O)
 - **Returns**: `number`
 - **Description**: Rounds `x` to `precision` decimal places (whole number if no precision given).
-
-### 3.29 `math.midpoint(x, y)`
-- **Type**: `function`
-- **Arguments**: 
-  - `x`: `number` (R)
-  - `y`: `number` (R)
-- **Returns**: `number`
-- **Description**: Calculates the midpoint between `x` and `y`.
 
 ### 3.30 `math.is_odd(x)`
 - **Type**: `function`
@@ -421,29 +413,29 @@
 - **Returns**: `string`
 - **Description**: Removes whitespace from both ends of a string.
 
-### 4.3 `string.split(s, pattern)`
+### 4.3 `string.split(s, ...)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
-  - `pattern`: `string` (R)
+  - `...`: `string` (R)
 - **Returns**: `table`
-- **Description**: Splits `s` into a table based on `pattern`.
+- **Description**: Splits `s` into a table based on the patterns given.
 
-### 4.4 `string.starts_with(s, letter)`
+### 4.4 `string.starts_with(s, ...)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
-  - `letter`: `string` (R)
+  - `...`: `string` (R)
 - **Returns**: `boolean`
-- **Description**: Checks if `s` starts with `letter`.
+- **Description**: Checks if `s` starts with any pattern given.
 
-### 4.5 `string.ends_with(s, letter)`
+### 4.5 `string.ends_with(s, ...)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
-  - `letter`: `string` (R)
+  - `...`: `string` (R)
 - **Returns**: `boolean`
-- **Description**: Checks if `s` ends with `letter`.
+- **Description**: Checks if `s` starts with any pattern given.
 
 ### 4.6 `string.pad(s, string_char, length, include_start, include_end)`
 - **Type**: `function`
@@ -471,13 +463,13 @@
 - **Returns**: `string`
 - **Description**: Capitalizes the first letter of each word in `s` using the specified separator `sep` (default is space).
 
-### 4.9 `string.count(s, pattern)`
+### 4.9 `string.count(s, ...)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
-  - `pattern`: `string` (R)
+  - `...`: `string` (R)
 - **Returns**: `string`
-- **Description**: Returns the amount of occurrences `pattern` occurs in `s`.
+- **Description**: Returns the amount of occurrences each pattern given occurs in `s`.
 
 ### 4.10 `string.is_palindrome(s)`
 - **Type**: `function`
@@ -814,11 +806,10 @@
 - **Returns**: `string`
 - **Description**: Converts `x` to its hexadecimal representation.
 
-### 7.23 `cryptography.btest(a, b)`
+### 7.23 `cryptography.btest(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `a`: `number` (R)
-  - `b`: `number` (R)
+  - `...`: `number` (R)
 - **Returns**: `boolean`
 - **Description**: Returns a boolean signaling whether the bitwise AND of its operands is different from zero.
 
@@ -910,12 +901,12 @@
 - **Returns**: `nothing`
 - **Description**: Removes the function(s) registered under the given `name`, making it unavailable for `remote.call()`.
 
-### 9.3 `remote.call(name)`
+### 9.3 `remote.call(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `name`: `string` (R)
+  - `...`: `string` (R)
 - **Returns**: `nothing`
-- **Description**: Calls all functions registered under the given `name`. Multiple functions can be registered under the same name.
+- **Description**: Calls all functions registered under the given remotes. Multiple functions can be registered under the same name.
 
 ### 9.4 `remote.exists(name)`
 - **Type**: `function`
@@ -924,13 +915,12 @@
 - **Returns**: `boolean`
 - **Description**: Checks if a remote with the given `name` is registered.
 
-### 9.5 `remote.remove(name, func)`
+### 9.5 `remote.remove(...)`
 - **Type**: `function`
 - **Arguments**: 
-  - `name`: `string` (R)
-  - `func`: `function` (R)
+  - `...`: `string` (R)
 - **Returns**: `nothing`
-- **Description**: Removes a specific function from the remote registry under the given `name`.
+- **Description**: Removes one or more remotes from the remote registry.
 
 ### 9.6 `remote.count(name)`
 - **Type**: `function`
@@ -1146,14 +1136,13 @@
 - **Description**: Returns the difference between the times `n1` and `n2`.
   - If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
 
-### 13.3 `datetime.sum(n1, n2, return_table)`
+### 13.3 `datetime.add(return_table, ...)`
 - **Type**: `function`
 - **Arguments**:
-  - `n1`: `number` (R)
-  - `n2`: `number` (R)
   - `return_table`: `boolean` (O)
+  - `...`: `number` (R)
 - **Returns**: `Number` or `Table`
-- **Description**: Returns the sum of the times `n1` and `n2`.
+- **Description**: Returns the sum of each time given.
   - If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
 
 ### 13.4 `datetime.to_table(num)`

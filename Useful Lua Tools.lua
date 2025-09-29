@@ -2617,7 +2617,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Splits `s` into a table based on `pattern`
+---Splits `s` into a table based on the patterns given
 ---@param s string
 ---@param ... string
 ---@return table
@@ -2679,7 +2679,7 @@ function string.ends_with(s, ...)
 
   local startsWith = false
   for i, name in ipairs(args) do
-    if s:sub(-#name) == name then startsWith = true
+    if s:sub(-#name) == name then startsWith = true end
   end
   return startsWith
 end
@@ -2990,7 +2990,7 @@ function table.difference(...)
 
   local differenceTable = {}
   for _, v in pairs(args) do
-    if not table.contains(args, v) then table.insert(differenceTable, v) end
+    if not table.contains(v, args) then table.insert(differenceTable, v) end
   end
   return differenceTable
 end

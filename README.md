@@ -1,4 +1,4 @@
-# Useful Lua Tools (Version 1.3.0)
+# Useful Lua Tools (Version 1.5.0)
 ## (A message from the creator)
 ### About Me
 Hello, I am SRG (short for `Some Random Gamer`).
