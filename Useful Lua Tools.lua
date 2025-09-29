@@ -321,27 +321,25 @@ local morseCodeTable = {
   ["?"] = "..--.."
 }
 
--- Base64 alphabet (RFC 4648)
 local base64Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-
--- Base32 alphabet (RFC 4648)
+local base58Alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 local base32Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
 
--- Generate Base64 character mapping from binary patterns
 local base64Chars = {}
 for i = 0, 63 do
   local binaryPattern = string.format("%06d", tonumber(string.format("%b", i):gsub("1", "1"):gsub("0", "0")))
   base64Chars[binaryPattern] = base64Alphabet:sub(i + 1, i + 1)
 end
 
+local base58Chars = {}
+for i = 0, 57 do
+  base58Chars[string.format("%07d", tonumber(string.format("%b", i):gsub("1", "1"):gsub("0", "0")))] = base58Alphabet:sub(i + 1, i + 1)
 -- Generate Base32 character mapping from binary patterns
 local base32Chars = {}
 for i = 0, 31 do
   local binaryPattern = string.format("%05d", tonumber(string.format("%b", i):gsub("1", "1"):gsub("0", "0")))
   base32Chars[binaryPattern] = base32Alphabet:sub(i + 1, i + 1)
 end
-
-local base58Chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
 local remotes = {}
 local stacks = {}
