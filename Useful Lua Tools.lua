@@ -5,7 +5,8 @@
 ---Error message formatter
 local function errorMsg(expected, name, value, index)
   if index then
-    error(("%s expected for '%s' at argument %d, given: %s (%s)"):format(expected, name, index, tostring(value), type(value)))
+    error(("%s expected for '%s' at argument %d, given: %s (%s)"):format(expected, name, index, tostring(value),
+      type(value)))
   else
     error(("%s expected for '%s', given: %s (%s)"):format(expected, name, tostring(value), type(value)))
   end
@@ -248,16 +249,17 @@ end
 local function getMac()
   if system.is_windows then
     return io.popen(
-    "powershell -Command \"Get-NetAdapter | Where-Object {$_.Status -eq \'Up\'} | Select-Object -First 1 -ExpandProperty MacAddress\"")
-    :read() or nil
+          "powershell -Command \"Get-NetAdapter | Where-Object {$_.Status -eq \'Up\'} | Select-Object -First 1 -ExpandProperty MacAddress\"")
+        :read() or nil
   elseif system.is_mac then
     return io.popen(
-    "route -n get default | awk '/interface:/{print $2}' | xargs ifconfig | awk '/ether/{print $2; exit}'"):read() or nil
+      "route -n get default | awk '/interface:/{print $2}' | xargs ifconfig | awk '/ether/{print $2; exit}'"):read() or
+    nil
   elseif system.is_linux then
     return io.popen("ip link | awk '/ether/ {print $2}' | head -n 1"):read() or nil
   elseif system.is_chrome then
     print(
-    "Cannot get Mac Address on ChromeOS. ChromeOS doesn't have a command to get Mac Address due to security reasons")
+      "Cannot get Mac Address on ChromeOS. ChromeOS doesn't have a command to get Mac Address due to security reasons")
     return nil
   end
 end
@@ -419,6 +421,15 @@ local base32Chars = {
   ["11101"] = "5",
   ["11110"] = "6",
   ["11111"] = "7"
+}
+
+local base58Chars = {
+  [0] = "1", [1] = "2", [2] = "3", [3] = "4", [4] = "5", [5] = "6", [6] = "7", [7] = "8", [8] = "9", [9] = "A", [10] =
+"B", [11] = "C", [12] = "D", [13] = "E", [14] = "F", [15] = "G", [16] = "H", [17] = "J", [18] = "K", [19] = "L", [20] =
+"M", [21] = "N", [22] = "P", [23] = "Q", [24] = "R", [25] = "S", [26] = "T", [27] = "U", [28] = "V", [29] = "W", [30] =
+"X", [31] = "Y", [32] = "Z", [33] = "a", [34] = "b", [35] = "c", [36] = "d", [37] = "e", [38] = "f", [39] = "g", [40] =
+"h", [41] = "i", [42] = "j", [43] = "k", [44] = "m", [45] = "n", [46] = "o", [47] = "p", [48] = "q", [49] = "r", [50] =
+"s", [51] = "t", [52] = "u", [53] = "v", [54] = "w", [55] = "x", [56] = "y", [57] = "z"
 }
 
 local remotes = {}
@@ -1149,6 +1160,26 @@ end
 
 ---***SRG Custom Function***
 ---
+---Converts plaintext to base58.
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.text_to_base58(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  s = s:gsub("=", "")
+
+  local binary = ""
+
+  for i = 1, #s do binary = binary .. base32Reverse[s[i]] end
+
+  if #binary % 8 ~= 0 then binary = binary:sub(1, #binary - (#binary % 8)) end
+
+  return cryptography.binary_to_text(binary)
+end
+
+---***SRG Custom Function***
+---
 ---Performs bitwise SWAP operation on `x`.
 ---@param x number
 ---@return number
@@ -1762,7 +1793,8 @@ function datetime.diff(n1, n2, return_table)
   if type(n2) ~= "number" then errorMsg("Number", "n2", n2) end
   if #tostring(n2) ~= 14 then error("n2 must be a 14 digit number") end
 
-  local diff = tostring(n1 - n2):find("-") and tonumber(string.format("%014d", n2 - n1)) or tonumber(string.format("%014d", n1 - n2))
+  local diff = tostring(n1 - n2):find("-") and tonumber(string.format("%014d", n2 - n1)) or
+  tonumber(string.format("%014d", n1 - n2))
 
   if return_table then
     return {
@@ -2679,7 +2711,7 @@ function string.ends_with(s, ...)
 
   local startsWith = false
   for i, name in ipairs(args) do
-    if s:sub(-#name) == name then startsWith = true end
+    if s:sub(- #name) == name then startsWith = true end
   end
   return startsWith
 end
