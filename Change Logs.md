@@ -98,3 +98,20 @@
       - `remote.remove(name)` --> `remote.remove(...)`
     - Added 1 new `table` library function: `table.combine(...)`
     - Removed the redundant `math.midpoint(x, y)` as it is essentially a rename of `math.median(...)`
+
+# V1.5.1
+- ## Date: Sep 29, 2025
+- ## Description: Crytography Library Changes
+  - Added 2 new `cryptography` functions: `cryptography.text_to_base58(s, alphabet)` and `cryptography.base58_to_text(s, alphabet)`
+  - The Base64 and Base32 functions now accept a custom alphabet.
+    - `cryptography.text_to_base64(s)` --> `cryptography.text_to_base64(s, alphabet)`
+    - `cryptography.base64_to_text(s)` --> `cryptography.base64_to_text(s, alphabet)`
+    - `cryptography.text_to_base32(s)` --> `cryptography.text_to_base32(s, alphabet)`
+    - `cryptography.base32_to_text(s)` --> `cryptography.base32_to_text(s, alphabet)`
+
+# V1.5.2
+- ## Date: Sep 30, 2025
+- ## Description: Table Serialization Functions
+  - Added 2 new `table` library functions: `table.to_string(t, sep)` and `table.from_string(str, sep)`
+    - `table.to_string()`: Serializes a table to a string representation with customizable separator
+    - `table.from_string()`: Deserializes a stringified table back to a table structure

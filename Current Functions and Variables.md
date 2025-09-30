@@ -5,14 +5,14 @@
 
 # Summary
 
-- ## **Total Functions**: 141
+- ## **Total Functions**: 143
   - **Total `ult` Functions**: 0
   - **Total `system` Functions**: 0
   - **Total `math` Functions**: 39
   - **Total `string` Functions**: 10
   - **Total `table` Functions**: 16
   - **Total `input` Functions**: 6
-  - **Total `cryptography` Functions**: 25
+  - **Total `cryptography` Functions**: 27
   - **Total `color` Functions**: 6
   - **Total `remote` Functions**: 8
   - **Total `random` Functions**: 7
@@ -37,7 +37,7 @@
   - **Total `datetime` Variables**: 0
   - **Total Global Variables**: 0
 
-- ## **Total Functions and Variables**: 155
+- ## **Total Functions and Variables**: 157
 
 ## 1. ULT Library Variables
 
@@ -718,35 +718,55 @@
 - **Returns**: `string`
 - **Description**: Converts morse code to plaintext.
 
-### 7.11 `cryptography.text_to_base64(s)`
+### 7.11 `cryptography.text_to_base64(s, alphabet)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
+  - `alphabet`: `string` (O)
 - **Returns**: `string`
 - **Description**: Converts plaintext to base64.
 
-### 7.12 `cryptography.base64_to_text(s)`
+### 7.12 `cryptography.base64_to_text(s, alphabet)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
+  - `alphabet`: `string` (O)
 - **Returns**: `string`
 - **Description**: Converts base64 to plaintext.
 
-### 7.13 `cryptography.text_to_base32(s)`
+### 7.13 `cryptography.text_to_base58(s, alphabet)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
+  - `alphabet`: `string` (O)
+- **Returns**: `string`
+- **Description**: Converts plaintext to base58.
+
+### 7.14 `cryptography.base58_to_text(s, alphabet)`
+- **Type**: `function`
+- **Arguments**: 
+  - `s`: `string` (R)
+  - `alphabet`: `string` (O)
+- **Returns**: `string`
+- **Description**: Converts base58 to plaintext.
+
+### 7.15 `cryptography.text_to_base32(s, alphabet)`
+- **Type**: `function`
+- **Arguments**: 
+  - `s`: `string` (R)
+  - `alphabet`: `string` (O)
 - **Returns**: `string`
 - **Description**: Converts plaintext to base32.
 
-### 7.14 `cryptography.base32_to_text(s)`
+### 7.16 `cryptography.base32_to_text(s, alphabet)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
+  - `alphabet`: `string` (O)
 - **Returns**: `string`
 - **Description**: Converts base32 to plaintext.
 
-### 7.15 `cryptography.xor(s, key)`
+### 7.17 `cryptography.xor(s, key)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
@@ -754,7 +774,7 @@
 - **Returns**: `string`
 - **Description**: Performs XOR encryption/decryption on `s` using `key`. Note: XOR is symmetric - use the same key to decrypt.
 
-### 7.16 `cryptography.caesar_cipher(s, shift)`
+### 7.18 `cryptography.caesar_cipher(s, shift)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
@@ -762,21 +782,21 @@
 - **Returns**: `string`
 - **Description**: Applies Caesar cipher encryption to `s` with specified `shift`.
 
-### 7.17 `cryptography.rot13(s)`
+### 7.19 `cryptography.rot13(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
 - **Description**: Applies ROT13 encryption on `s` (Caesar cipher with shift of 13).
 
-### 7.18 `cryptography.bswap(x)`
+### 7.20 `cryptography.bswap(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Performs bitwise SWAP operation on `x`.
 
-### 7.19 `cryptography.rol(x, disp)`
+### 7.21 `cryptography.rol(x, disp)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -784,7 +804,7 @@
 - **Returns**: `number`
 - **Description**: Performs a bitwise left rotation on `x` by specified positions (`disp`).
 
-### 7.20 `cryptography.ror(x, disp)`
+### 7.22 `cryptography.ror(x, disp)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
@@ -792,28 +812,28 @@
 - **Returns**: `number`
 - **Description**: Performs a bitwise right rotation on `x` by specified positions (`disp`).
 
-### 7.21 `cryptography.number_to_bit(x)`
+### 7.23 `cryptography.number_to_bit(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `string`
 - **Description**: Converts `x` to its binary representation.
 
-### 7.22 `cryptography.number_to_hex(x)`
+### 7.24 `cryptography.number_to_hex(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `string`
 - **Description**: Converts `x` to its hexadecimal representation.
 
-### 7.23 `cryptography.btest(...)`
+### 7.25 `cryptography.btest(...)`
 - **Type**: `function`
 - **Arguments**: 
   - `...`: `number` (R)
 - **Returns**: `boolean`
 - **Description**: Returns a boolean signaling whether the bitwise AND of its operands is different from zero.
 
-### 7.24 `cryptography.extract(n, field, width)`
+### 7.26 `cryptography.extract(n, field, width)`
 - **Type**: `function`
 - **Arguments**: 
   - `n`: `number` (R)
@@ -822,7 +842,7 @@
 - **Returns**: `number`
 - **Description**: Returns the unsigned number formed by the bits `field` to `field + width - 1` from `n`.
 
-### 7.25 `cryptography.replace(n, v, field, width)`
+### 7.27 `cryptography.replace(n, v, field, width)`
 - **Type**: `function`
 - **Arguments**: 
   - `n`: `number` (R)

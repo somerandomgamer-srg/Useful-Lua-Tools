@@ -253,8 +253,8 @@ local function getMac()
         :read() or nil
   elseif system.is_mac then
     return io.popen(
-      "route -n get default | awk '/interface:/{print $2}' | xargs ifconfig | awk '/ether/{print $2; exit}'"):read() or
-    nil
+          "route -n get default | awk '/interface:/{print $2}' | xargs ifconfig | awk '/ether/{print $2; exit}'"):read() or
+        nil
   elseif system.is_linux then
     return io.popen("ip link | awk '/ether/ {print $2}' | head -n 1"):read() or nil
   elseif system.is_chrome then
@@ -321,41 +321,33 @@ local morseCodeTable = {
   ["?"] = "..--.."
 }
 
-local base64Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-local base58Alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-local base32Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
-
-local base64Chars = {}
-for i = 0, 63 do
-  local binaryPattern = string.format("%06d", tonumber(string.format("%b", i):gsub("1", "1"):gsub("0", "0")))
-  base64Chars[binaryPattern] = base64Alphabet:sub(i + 1, i + 1)
+local function toBase64Table(alphabet)
+  local base64Chars = {}
+  for i = 1, #alphabet do
+    base64Chars[string.format("%06b", i - 1)] = alphabet:sub(i, i)
+  end
+  return base64Chars
 end
 
-local base58Chars = {}
-for i = 0, 57 do
-  base58Chars[string.format("%07d", tonumber(string.format("%b", i):gsub("1", "1"):gsub("0", "0")))] = base58Alphabet:sub(i + 1, i + 1)
--- Generate Base32 character mapping from binary patterns
-local base32Chars = {}
-for i = 0, 31 do
-  local binaryPattern = string.format("%05d", tonumber(string.format("%b", i):gsub("1", "1"):gsub("0", "0")))
-  base32Chars[binaryPattern] = base32Alphabet:sub(i + 1, i + 1)
+local function toBase58Table(alphabet)
+  local base58Chars = {}
+  for i = 1, #alphabet do
+    base58Chars[i - 1] = alphabet:sub(i, i)
+  end
+  return base58Chars
+end
+
+local function toBase32Table(alphabet)
+  local base32Chars = {}
+  for i = 1, #alphabet do
+    base32Chars[string.format("%05b", i - 1)] = alphabet:sub(i, i)
+  end
+  return base32Chars
 end
 
 local remotes = {}
 local stacks = {}
 local queues = {}
-
-local function createKeypairReverse(t)
-  local reversed = {}
-  for k, v in pairs(t) do
-    reversed[v] = k
-  end
-  return reversed
-end
-
-local morseReverse = createKeypairReverse(morseCodeTable)
-local base64Reverse = createKeypairReverse(base64Chars)
-local base32Reverse = createKeypairReverse(base32Chars)
 
 ---------Initiate Libraries---------
 
@@ -398,7 +390,7 @@ datetime = {}
 ---
 ---"Major Update"."Minor Update"."Patch/Very Minor Update"
 ---@nodiscard
-ult.version = "1.5.0"
+ult.version = "1.5.1"
 
 ---***SRG Custom Variable***
 ---
@@ -422,7 +414,7 @@ end
 ---
 ---The release date of the current ULT version
 ---@nodiscard
-ult.release_date = "09/25/2025"
+ult.release_date = "09/29/2025"
 
 ---***SRG Custom Variable***
 ---
@@ -969,6 +961,8 @@ function cryptography.morse_to_text(s)
 
   s = s:gsub(" / ", "  ")
 
+  local morseReverse = table.keypair_reverse(morseCodeTable)
+
   local text = ""
   for symbol in s:gmatch("%S+") do
     local char = morseReverse[symbol]
@@ -981,10 +975,25 @@ end
 ---
 ---Converts plaintext to base64.
 ---@param s string
+---@param alphabet? string
 ---@return string
 ---@nodiscard
-function cryptography.text_to_base64(s)
+function cryptography.text_to_base64(s, alphabet)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if alphabet then
+    if type(alphabet) ~= "string" then errorMsg("String", "alphabet", alphabet) end
+    if #alphabet ~= 64 then error("Alphabet must be exactly 64 characters long.") end
+    local seen = {}
+    for i = 1, #alphabet do
+      local char = alphabet:sub(i, i)
+      if seen[char] then error("Alphabet contains duplicate character: " .. char) end
+      seen[char] = true
+    end
+  else
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+  end
+
+  local base64Chars = toBase64Table(alphabet)
 
   local bits = {}
   local encoded = ""
@@ -1006,10 +1015,25 @@ end
 ---
 ---Converts base64 to plaintext.
 ---@param s string
+---@param alphabet? string
 ---@return string
 ---@nodiscard
-function cryptography.base64_to_text(s)
+function cryptography.base64_to_text(s, alphabet)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if alphabet then
+    if type(alphabet) ~= "string" then errorMsg("String", "alphabet", alphabet) end
+    if #alphabet ~= 64 then error("Alphabet must be exactly 64 characters long.") end
+    local seen = {}
+    for i = 1, #alphabet do
+      local char = alphabet:sub(i, i)
+      if seen[char] then error("Alphabet contains duplicate character: " .. char) end
+      seen[char] = true
+    end
+  else
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+  end
+
+  local base64Reverse = table.keypair_reverse(toBase64Table(alphabet))
 
   s = s:gsub("=", "")
 
@@ -1026,10 +1050,25 @@ end
 ---
 ---Converts plaintext to base32.
 ---@param s string
+---@param alphabet? string
 ---@return string
 ---@nodiscard
-function cryptography.text_to_base32(s)
+function cryptography.text_to_base32(s, alphabet)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if alphabet then
+    if type(alphabet) ~= "string" then errorMsg("String", "alphabet", alphabet) end
+    if #alphabet ~= 32 then error("Alphabet must be exactly 32 characters long.") end
+    local seen = {}
+    for i = 1, #alphabet do
+      local char = alphabet:sub(i, i)
+      if seen[char] then error("Alphabet contains duplicate character: " .. char) end
+      seen[char] = true
+    end
+  else
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
+  end
+
+  local base32Chars = toBase32Table(alphabet)
 
   local bits = {}
   local encoded = ""
@@ -1051,10 +1090,25 @@ end
 ---
 ---Converts base32 to plaintext.
 ---@param s string
+---@param alphabet? string
 ---@return string
 ---@nodiscard
-function cryptography.base32_to_text(s)
+function cryptography.base32_to_text(s, alphabet)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if alphabet then
+    if type(alphabet) ~= "string" then errorMsg("String", "alphabet", alphabet) end
+    if #alphabet ~= 32 then error("Alphabet must be exactly 32 characters long.") end
+    local seen = {}
+    for i = 1, #alphabet do
+      local char = alphabet:sub(i, i)
+      if seen[char] then error("Alphabet contains duplicate character: " .. char) end
+      seen[char] = true
+    end
+  else
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
+  end
+
+  local base32Reverse = table.keypair_reverse(toBase32Table(alphabet))
 
   s = s:gsub("=", "")
 
@@ -1071,20 +1125,83 @@ end
 ---
 ---Converts plaintext to base58.
 ---@param s string
+---@param alphabet? string
 ---@return string
 ---@nodiscard
-function cryptography.text_to_base58(s)
+function cryptography.text_to_base58(s, alphabet)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if alphabet then
+    if type(alphabet) ~= "string" then errorMsg("String", "alphabet", alphabet) end
+    if #alphabet ~= 58 then error("Alphabet must be exactly 58 characters long.") end
+    local seen = {}
+    for i = 1, #alphabet do
+      local char = alphabet:sub(i, i)
+      if seen[char] then error("Alphabet contains duplicate character: " .. char) end
+      seen[char] = true
+    end
+  else
+    alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+  end
 
-  s = s:gsub("=", "")
+  local base58Chars = toBase58Table(alphabet)
 
-  local binary = ""
+  local encoded = ""
 
-  for i = 1, #s do binary = binary .. base32Reverse[s[i]] end
+  local num = 0
+  for i = 1, #s do num = num * 256 + s:byte(i) end
 
-  if #binary % 8 ~= 0 then binary = binary:sub(1, #binary - (#binary % 8)) end
+  while num >= 58 do
+    local rem = num % 58
+    num = math.floor(num / 58)
+    encoded = base58Chars[rem] .. encoded
+  end
 
-  return cryptography.binary_to_text(binary)
+  encoded = base58Chars[num] .. encoded
+
+  return encoded
+end
+
+---***SRG Custom Function***
+---
+---Converts base58 to plaintext.
+---@param s string
+---@param alphabet? string
+---@return string
+---@nodiscard
+function cryptography.base58_to_text(s, alphabet)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if alphabet then
+    if type(alphabet) ~= "string" then errorMsg("String", "alphabet", alphabet) end
+    if #alphabet ~= 58 then error("Alphabet must be exactly 58 characters long.") end
+    local seen = {}
+    for i = 1, #alphabet do
+      local char = alphabet:sub(i, i)
+      if seen[char] then error("Alphabet contains duplicate character: " .. char) end
+      seen[char] = true
+    end
+  else
+    alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+  end
+
+  local base58Reverse = table.keypair_reverse(toBase58Table(alphabet))
+
+  local num = 0
+  for i = 1, #s do
+    local char = s:sub(i, i)
+    if not base58Reverse[char] then error("Invalid base58 character: " .. char) end
+    num = num * 58 + base58Reverse[char]
+  end
+  local decoded = ""
+
+  while num >= 256 do
+    local rem = num % 256
+    num = math.floor(num / 256)
+    decoded = string.char(rem) .. decoded
+  end
+
+  decoded = string.char(num) .. decoded
+
+  return decoded
 end
 
 ---***SRG Custom Function***
@@ -1703,7 +1820,7 @@ function datetime.diff(n1, n2, return_table)
   if #tostring(n2) ~= 14 then error("n2 must be a 14 digit number") end
 
   local diff = tostring(n1 - n2):find("-") and tonumber(string.format("%014d", n2 - n1)) or
-  tonumber(string.format("%014d", n1 - n2))
+      tonumber(string.format("%014d", n1 - n2))
 
   if return_table then
     return {
@@ -3084,6 +3201,122 @@ function table.is_locked(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   return getmetatable(t) and getmetatable(t).__newindex ~= nil
+end
+
+---***SRG Custom Function***
+---
+---Converts a table to a stringified table
+---@param t table
+---@param sep? string
+function table.to_string(t, sep)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  if sep then
+    if type(sep) ~= "string" then errorMsg("String", "sep", sep) end
+  else
+    sep = "."
+  end
+
+  local str = "{"
+
+  for key, value in pairs(t) do
+    if type(key) == "number" then
+      if type(value) == "table" then
+        str = str .. table.to_string(value, sep) .. sep
+      else
+        str = str .. tostring(value) .. ", "
+      end
+    else
+      if type(value) == "table" then
+        str = str .. key .. sep .. table.to_string(value, sep) .. sep
+      else
+        str = str .. key .. sep .. tostring(value) .. ", "
+      end
+    end
+  end
+  if str:sub(-2) == ", " then str = str:sub(1, -3) end
+  if str:sub(-1) == sep then str = str:sub(1, -2) end
+
+  return str .. "}"
+end
+
+---***SRG Custom Function***
+---
+---Converts a stringified table back to a table
+function table.from_string(str, sep)
+  if type(str) ~= "string" then errorMsg("String", "str", str) end
+
+  if sep then
+    if type(sep) ~= "string" then errorMsg("String", "sep", sep) end
+  else
+    sep = "."
+  end
+
+  -- Remove outer braces
+  str = str:gsub("^%s*{%s*", ""):gsub("%s*}%s*$", "")
+  
+  local t = {}
+  local i = 1
+  
+  while i <= #str do
+    local char = str:sub(i, i)
+    
+    -- Skip whitespace
+    if char:match("%s") then
+      i = i + 1
+    
+    -- Handle nested table
+    elseif char == "{" then
+      local depth = 1
+      local start = i
+      i = i + 1
+      
+      while i <= #str and depth > 0 do
+        local c = str:sub(i, i)
+        if c == "{" then depth = depth + 1
+        elseif c == "}" then depth = depth - 1 end
+        i = i + 1
+      end
+      
+      local nested_str = str:sub(start, i - 1)
+      local nested_table = table.from_string(nested_str, sep)
+      table.insert(t, nested_table)
+      
+    -- Handle comma separator
+    elseif char == "," then
+      i = i + 1
+      
+    -- Handle key-value or plain value
+    else
+      local start = i
+      local found_sep = false
+      
+      -- Find end of this element (comma or end of string)
+      while i <= #str do
+        local c = str:sub(i, i)
+        if c == "," then break end
+        if c == "{" then break end
+        i = i + 1
+      end
+      
+      local element = str:sub(start, i - 1):match("^%s*(.-)%s*$")
+      
+      -- Check if it contains separator (key-value pair)
+      local key, value = element:match("^(.-)%" .. sep .. "(.+)$")
+      
+      if key and value then
+        -- Try to convert value to number if possible
+        local num_value = tonumber(value)
+        t[key] = num_value or value
+      else
+        -- Plain value (array element)
+        local num_value = tonumber(element)
+        table.insert(t, num_value or element)
+      end
+    end
+  end
+  
+  return t
 end
 
 ------------Global Library------------
