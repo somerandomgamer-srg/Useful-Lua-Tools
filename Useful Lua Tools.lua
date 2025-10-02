@@ -1448,7 +1448,7 @@ function cryptography.luhn(x)
 
   for i = #s, 1, -1 do
     local digit = tonumber(s:sub(i, i))
-    if i % 2 ~= 0 then
+    if (#s - i) % 2 ~= 0 then
       sum = sum + digit
     else
       digit = digit * 2
