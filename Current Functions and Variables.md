@@ -5,12 +5,12 @@
 
 # Summary
 
-- ## **Total Functions**: 143
+- ## **Total Functions**: 145
   - **Total `ult` Functions**: 0
   - **Total `system` Functions**: 0
   - **Total `math` Functions**: 39
   - **Total `string` Functions**: 10
-  - **Total `table` Functions**: 16
+  - **Total `table` Functions**: 18
   - **Total `input` Functions**: 6
   - **Total `cryptography` Functions**: 27
   - **Total `color` Functions**: 6
@@ -37,7 +37,7 @@
   - **Total `datetime` Variables**: 0
   - **Total Global Variables**: 0
 
-- ## **Total Functions and Variables**: 157
+- ## **Total Functions and Variables**: 159
 
 ## 1. ULT Library Variables
 
@@ -597,6 +597,22 @@
   - `...`: `table` (R)
 - **Returns**: `table`
 - **Description**: Concatenates multiple tables into one table, combining all elements from the provided tables.
+
+### 5.17 `table.to_string(t, sep)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+  - `sep`: `string` (O)
+- **Returns**: `table`
+- **Description**: Serializes `t` to a string representation with customizable `sep`.
+
+### 5.18 `table.from_string(str, sep)`
+- **Type**: `function`
+- **Arguments**: 
+  - `str`: `table` (R)
+  - `sep`: `string` (O)
+- **Returns**: `table`
+- **Description**: Deserializes the stringified table `str` back to a table structure based on customizable `sep`.
 
 ## 6. Input Library Functions
 

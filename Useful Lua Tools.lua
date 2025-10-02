@@ -196,6 +196,20 @@ local function countRecursive(t, prefix, separator)
   return amount, keyTable
 end
 
+local function levenshteinMain(s1, s2, len1, len2)
+  if len1 == 0 then return len2 end
+  if len2 == 0 then return len1 end
+  if s1:sub(len1 - 1, len1 - 1) == s2:sub(len2 - 1, len2 - 1) then return levenshteinMain(s1, s2, len1 - 1, len2 - 1) end
+
+  return 1 + math.min(
+    levenshteinMain(s1, s2, len1, len2 - 1),
+    math.min(
+      levenshteinMain(s1, s2, len1 - 1, len2),
+      levenshteinMain(s1, s2, len1 - 1, len2 - 1)
+    )
+  )
+end
+
 ---Function for system.os
 local function getOS()
   if package.config:sub(1, 1) == "\\" then
@@ -390,7 +404,7 @@ datetime = {}
 ---
 ---"Major Update"."Minor Update"."Patch/Very Minor Update"
 ---@nodiscard
-ult.version = "1.5.1"
+ult.version = "1.5.2"
 
 ---***SRG Custom Variable***
 ---
@@ -414,7 +428,7 @@ end
 ---
 ---The release date of the current ULT version
 ---@nodiscard
-ult.release_date = "09/29/2025"
+ult.release_date = "09/30/2025"
 
 ---***SRG Custom Variable***
 ---
@@ -1423,6 +1437,28 @@ function cryptography.rot13(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   return cryptography.caesar_cipher(s, 13)
+end
+
+function cryptography.luhn(x)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+
+  local s = tostring(x)
+
+  local sum = 0
+
+  for i = #s, 1, -1 do
+    local digit = tonumber(s:sub(i, i))
+    if i % 2 ~= 0 then
+      sum = sum + digit
+    else
+      digit = digit * 2
+
+      if #tostring(digit) > 1 then digit = tonumber(string.sub(digit, 1, 1)) + tonumber(string.sub(digit, 2, 2)) end
+      sum = sum + digit
+    end
+  end
+
+  return sum % 10 == 0
 end
 
 ---------Input Library---------
@@ -2832,6 +2868,19 @@ function string.is_palindrome(s)
   return s:reverse() == s
 end
 
+---***SRG Custom Function***
+---
+---Calculates the Levenshtein distance between two strings `s1` and `s2`
+---@param s1 string
+---@param s2 string
+---@return number
+---@nodiscard
+function string.levenshtein(s1, s2)
+  if type(s1) ~= "string" then errorMsg("String", "s1", s1) end
+  if type(s2) ~= "string" then errorMsg("String", "s2", s2) end
+  return levenshteinMain(s1, s2, #s1, #s2)
+end
+
 ---------Table Library Extension---------
 
 ---***SRG Custom Function***
@@ -3205,7 +3254,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Converts a table to a stringified table
+---Serializes `t` to a string representation with customizable `sep`.
 ---@param t table
 ---@param sep? string
 function table.to_string(t, sep)
@@ -3242,7 +3291,9 @@ end
 
 ---***SRG Custom Function***
 ---
----Converts a stringified table back to a table
+---Deserializes the stringified table `str` back to a table structure based on customizable `sep`.
+---@param str string
+---@param sep? string
 function table.from_string(str, sep)
   if type(str) ~= "string" then errorMsg("String", "str", str) end
 
@@ -3252,70 +3303,58 @@ function table.from_string(str, sep)
     sep = "."
   end
 
-  -- Remove outer braces
   str = str:gsub("^%s*{%s*", ""):gsub("%s*}%s*$", "")
-  
+
   local t = {}
   local i = 1
-  
+
   while i <= #str do
     local char = str:sub(i, i)
-    
-    -- Skip whitespace
+
     if char:match("%s") then
       i = i + 1
-    
-    -- Handle nested table
     elseif char == "{" then
       local depth = 1
       local start = i
       i = i + 1
-      
+
       while i <= #str and depth > 0 do
         local c = str:sub(i, i)
         if c == "{" then depth = depth + 1
         elseif c == "}" then depth = depth - 1 end
         i = i + 1
       end
-      
-      local nested_str = str:sub(start, i - 1)
-      local nested_table = table.from_string(nested_str, sep)
-      table.insert(t, nested_table)
-      
-    -- Handle comma separator
+
+      local nestString = str:sub(start, i - 1)
+      local nestTable = table.from_string(nestString, sep)
+      table.insert(t, nestTable)
     elseif char == "," then
       i = i + 1
-      
-    -- Handle key-value or plain value
     else
       local start = i
-      local found_sep = false
-      
-      -- Find end of this element (comma or end of string)
+      local foundSep = false
+
       while i <= #str do
         local c = str:sub(i, i)
         if c == "," then break end
         if c == "{" then break end
         i = i + 1
       end
-      
+
       local element = str:sub(start, i - 1):match("^%s*(.-)%s*$")
-      
-      -- Check if it contains separator (key-value pair)
+
       local key, value = element:match("^(.-)%" .. sep .. "(.+)$")
-      
+
       if key and value then
-        -- Try to convert value to number if possible
-        local num_value = tonumber(value)
-        t[key] = num_value or value
+        local num = tonumber(value)
+        t[key] = num or value
       else
-        -- Plain value (array element)
-        local num_value = tonumber(element)
-        table.insert(t, num_value or element)
+        local num = tonumber(element)
+        table.insert(t, num or element)
       end
     end
   end
-  
+
   return t
 end
 

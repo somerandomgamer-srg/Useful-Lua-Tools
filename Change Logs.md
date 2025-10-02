@@ -115,3 +115,8 @@
   - Added 2 new `table` library functions: `table.to_string(t, sep)` and `table.from_string(str, sep)`
     - `table.to_string()`: Serializes a table to a string representation with customizable separator
     - `table.from_string()`: Deserializes a stringified table back to a table structure
+
+# V1.5.3
+- ## Date: Oct 2, 2025
+  - Added 1 new `string` library function: `string.levenshtein(s1, s2)`
+  - Added 1 new `cryptography` library function: `cryptography.checksum(s)`
