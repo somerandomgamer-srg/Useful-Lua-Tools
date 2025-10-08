@@ -119,4 +119,4 @@
 # V1.5.3
 - ## Date: Oct 2, 2025
   - Added 1 new `string` library function: `string.levenshtein(s1, s2)`
-  - Added 1 new `cryptography` library function: `cryptography.checksum(s)`
+  - Added 1 new `cryptography` library function: `cryptography.luhn(s)`

@@ -396,6 +396,9 @@ queue = {}
 ---@class datetimelib
 datetime = {}
 
+--@class filelib
+file = {}
+
 -----------ULT Main Library-----------
 
 ---***SRG Custom Variable***
@@ -1439,6 +1442,14 @@ function cryptography.rot13(s)
   return cryptography.caesar_cipher(s, 13)
 end
 
+---***SRG Custom Function***
+---
+---Performs the Luhn algorithm on `x`, an algorithm commonly used for validation of various identification numbers, such as credit card numbers, IMEI numbers, National Provider Identifier numbers in the US, etc.
+---
+---Returns true if `x` is valid, false otherwise
+---@param x number
+---@return boolean
+---@nodiscard
 function cryptography.luhn(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
@@ -3358,6 +3369,62 @@ function table.from_string(str, sep)
   return t
 end
 
+-------------File Library-------------
+
+---***SRG Custom Function***
+---
+---Creates a file with the specified `name` and `content`.
+---@param name string
+---@param content string
+function file.new(name, content)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if type(content) ~= "string" then errorMsg("String", "content", content) end
+
+  local f = io.open(name, "w")
+  if not f then error("Failed to create file: " .. name) end
+  f:write(content)
+  f:close()
+end
+
+---***SRG Custom Function***
+---
+---Reads the content of the file with the specified `name`.
+---@param name string
+---@return string
+---@nodiscard
+function file.read(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+
+  local f = io.open(name, "r")
+  if not f then error("Failed to read file: " .. name) end
+  return f:read("*a")
+end
+
+---***SRG Custom Function***
+---
+---Rewrites the content of the file with the specified `name` with `content`.
+---@param name string
+---@param content string
+function file.rewrite(name, content)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if type(content) ~= "string" then errorMsg("String", "content", content) end
+
+  local f = io.open(name, "w+")
+  if not f then error("Failed to rewrite file: " .. name) end
+end
+
+---***SRG Custom Function***
+---
+---Appends `content` to the file with the specified `name`.
+---@param name string
+---@param content string
+function file.append(name, content)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if type(content) ~= "string" then errorMsg("String", "content", content) end
+
+  local f = io.open(name, "w")
+  if not f then error("Failed to append to file: " .. name) end
+  
 ------------Global Library------------
 
 ---***SRG Custom Function***
