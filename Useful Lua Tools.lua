@@ -3672,20 +3672,18 @@ end
 ---@nodiscard
 function json.decode(str)
   if type(str) ~= "string" then errorMsg("String", "str", str) end
-  
+
   local pos = 1
-  
+
   local function skipWhitespace()
-    while pos <= #str and str:sub(pos, pos):match("%s") do
-      pos = pos + 1
-    end
+    while pos <= #str and str:sub(pos, pos):match("%s") do pos = pos + 1 end
   end
-  
+
   local function decodeValue()
     skipWhitespace()
-    
+
     local char = str:sub(pos, pos)
-    
+
     if char == '"' then
       pos = pos + 1
       local result = ""
@@ -3721,7 +3719,7 @@ function json.decode(str)
       pos = pos + 1
       local result = {}
       skipWhitespace()
-      
+
       if str:sub(pos, pos) == "}" then
         pos = pos + 1
         return result
