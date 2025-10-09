@@ -5,20 +5,22 @@
 
 # Summary
 
-- ## **Total Functions**: 145
+- ## **Total Functions**: 169
   - **Total `ult` Functions**: 0
   - **Total `system` Functions**: 0
-  - **Total `math` Functions**: 39
-  - **Total `string` Functions**: 10
-  - **Total `table` Functions**: 18
+  - **Total `math` Functions**: 41
+  - **Total `string` Functions**: 11
+  - **Total `table` Functions**: 24
   - **Total `input` Functions**: 6
-  - **Total `cryptography` Functions**: 27
+  - **Total `cryptography` Functions**: 30
   - **Total `color` Functions**: 6
   - **Total `remote` Functions**: 8
   - **Total `random` Functions**: 7
   - **Total `stack` Functions**: 7
   - **Total `queue` Functions**: 7
   - **Total `datetime` Functions**: 5
+  - **Total `file` Functions**: 8
+  - **Total `json` Functions**: 2
   - **Total Global Functions**: 5
 
 - ## **Total Variables**: 14
@@ -37,7 +39,7 @@
   - **Total `datetime` Variables**: 0
   - **Total Global Variables**: 0
 
-- ## **Total Functions and Variables**: 159
+- ## **Total Functions and Variables**: 183
 
 ## 1. ULT Library Variables
 
@@ -397,6 +399,23 @@
 - **Returns**: `number`
 - **Description**: Calculates the number of ways to choose `r` items from `x` items.
 
+### 3.40 `math.nroot(x, n)`
+- **Type**: `function`
+- **Arguments**: 
+  - `x`: `number` (R)
+  - `n`: `number` (R)
+- **Returns**: `number`
+- **Description**: Calculates the nth root of `x`.
+
+### 3.41 `math.clamp(x, min, max)`
+- **Type**: `function`
+- **Arguments**: 
+  - `x`: `number` (R)
+  - `min`: `number` (R)
+  - `max`: `number` (R)
+- **Returns**: `number`
+- **Description**: Clamps `x` between `min` and `max`, ensuring it stays within the proper range.
+
 ## 4. String Library Functions
 
 ### 4.1 `string.clean_number(s)`
@@ -477,6 +496,14 @@
   - `s`: `string` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if a string reads the same forwards and backwards.
+
+### 4.11 `string.levenshtein(s1, s2)`
+- **Type**: `function`
+- **Arguments**: 
+  - `s1`: `string` (R)
+  - `s2`: `string` (R)
+- **Returns**: `number`
+- **Description**: Calculates the Levenshtein distance between `s1` and `s2`. This distance represents the minimum number of single-character edits (insertions, deletions, or substitutions) required to change one word into the other.
 
 ## 5. Table Library Functions
 
@@ -613,6 +640,50 @@
   - `sep`: `string` (O)
 - **Returns**: `table`
 - **Description**: Deserializes the stringified table `str` back to a table structure based on customizable `sep`.
+
+### 5.19 `table.map(t, func)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+  - `func`: `function` (R)
+- **Returns**: `table`
+- **Description**: Applies `func` to each element in `t` and returns a new table with the results.
+
+### 5.20 `table.filter(t, func)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+  - `func`: `function` (R)
+- **Returns**: `table`
+- **Description**: Filters `t` using `func` and returns a new table containing only the elements for which `func` returned true.
+
+### 5.21 `table.unique(t)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+- **Returns**: `table`
+- **Description**: Returns a table with no duplicate elements from `t`.
+
+### 5.22 `table.zip(...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `...`: `table` (R)
+- **Returns**: `table`
+- **Description**: Returns a table containing each element from the provided tables.
+
+### 5.23 `table.keys(t)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+- **Returns**: `table`
+- **Description**: Returns a table containing each key in `t`.
+
+### 5.24 `table.values(t)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+- **Returns**: `table`
+- **Description**: Returns a table containing each value in `t`.
 
 ## 6. Input Library Functions
 
@@ -867,6 +938,28 @@
   - `width`: `number` (O)
 - **Returns**: `number`
 - **Description**: Returns a copy of `n` with the bits `field` to `field + width - 1` replaced by the value `v`.
+
+### 7.28 `cryptography.luhn(x)`
+- **Type**: `function`
+- **Arguments**: 
+  - `x`: `number` (R)
+- **Returns**: `boolean`
+- **Description**: Validates a number using the Luhn algorithm (checksum formula used to validate credit card numbers and other identification numbers).
+
+### 7.29 `cryptography.is_ip(ip, v6)`
+- **Type**: `function`
+- **Arguments**: 
+  - `ip`: `string` (R)
+  - `v6`: `boolean` (O)
+- **Returns**: `boolean`
+- **Description**: Validates whether `ip` is a valid IP address. If `v6` is true, validates for IPv6; otherwise validates for IPv4.
+
+### 7.30 `cryptography.is_email(email)`
+- **Type**: `function`
+- **Arguments**: 
+  - `email`: `string` (R)
+- **Returns**: `boolean`
+- **Description**: Validates whether `email` is a valid email address.
 
 ## 8. Color Library Functions
 
@@ -1195,16 +1288,93 @@
 - **Returns**: `Number`
 - **Description**: Returns the time table `t` as a number in the format `Year Month Day Hour Minute Second`.
 
-## 14. Global Functions
+## 14. File Library
 
-### 14.1 `wait(x)`
+### 14.1 `file.new(name, content)`
+- **Type**: `function`
+- **Arguments**: 
+  - `name`: `string` (R)
+  - `content`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Creates a file with the specified `name` and `content`.
+
+### 14.2 `file.read(name)`
+- **Type**: `function`
+- **Arguments**: 
+  - `name`: `string` (R)
+- **Returns**: `string`
+- **Description**: Reads the content of the file with the specified `name`.
+
+### 14.3 `file.rewrite(name, content)`
+- **Type**: `function`
+- **Arguments**: 
+  - `name`: `string` (R)
+  - `content`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Rewrites the content of the file with the specified `name` with `content`.
+
+### 14.4 `file.append(name, content)`
+- **Type**: `function`
+- **Arguments**: 
+  - `name`: `string` (R)
+  - `content`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Appends `content` to the file with the specified `name`.
+
+### 14.5 `file.exists(name)`
+- **Type**: `function`
+- **Arguments**: 
+  - `name`: `string` (R)
+- **Returns**: `boolean`
+- **Description**: Checks if the file with the specified `name` exists.
+
+### 14.6 `file.size(name)`
+- **Type**: `function`
+- **Arguments**: 
+  - `name`: `string` (R)
+- **Returns**: `number`
+- **Description**: Returns the size of the file with the specified `name` in bytes.
+
+### 14.7 `file.lines(name)`
+- **Type**: `function`
+- **Arguments**: 
+  - `name`: `string` (R)
+- **Returns**: `number`
+- **Description**: Returns the amount of lines in the file with the specified `name`.
+
+### 14.8 `file.delete(name)`
+- **Type**: `function`
+- **Arguments**: 
+  - `name`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Deletes the file with the specified `name`.
+
+## 15. JSON Library
+
+### 15.1 `json.encode(value)`
+- **Type**: `function`
+- **Arguments**: 
+  - `value`: `any` (R)
+- **Returns**: `string`
+- **Description**: Encodes a Lua table or value to a JSON string.
+
+### 15.2 `json.decode(str)`
+- **Type**: `function`
+- **Arguments**: 
+  - `str`: `string` (R)
+- **Returns**: `any`
+- **Description**: Decodes a JSON string to a Lua table or value.
+
+## 16. Global Functions
+
+### 16.1 `wait(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `nothing`
 - **Description**: Yields the code for `x` seconds. (Similar to python's wait function).
 
-### 14.2 `benchmark(func, iterations)`
+### 16.2 `benchmark(func, iterations)`
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
@@ -1213,14 +1383,14 @@
 - **Description**: Runs `func` `iterations` times. Returns Total Execution Time, Average Execution Time Per Run, The Last Result (if return is added in the code).
 - **NOTE: If `iterations` is not given, the code will run 10 times**
 
-### 14.3 `execution_time(func)`
+### 16.3 `execution_time(func)`
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
 - **Returns**: `number`, `any`
 - **Description**: Runs `func` and returns the time it takes to run `func`.
 
-### 14.4 `delay(t, func)`
+### 16.4 `delay(t, func)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `number` (R)
@@ -1228,7 +1398,7 @@
 - **Returns**: `nothing`
 - **Description**: Yields `t` seconds before running `func` without stopping other code.
 
-### 14.5 `delay_stop(t, func)`
+### 16.5 `delay_stop(t, func)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `number` (R)

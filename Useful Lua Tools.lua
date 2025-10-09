@@ -12,6 +12,192 @@ local function errorMsg(expected, name, value, index)
   end
 end
 
+---Function for json.encode
+local function jsonEncode(val)
+  local valType = type(val)
+
+  if valType == "string" then
+    return '"' .. val:gsub('\\', '\\\\'):gsub('"', '\\"'):gsub('\n', '\\n'):gsub('\r', '\\r'):gsub('\t', '\\t') .. '"'
+  elseif valType == "number" then
+    if val ~= val then
+      return "null"
+    elseif val == math.huge then
+      return "null"
+    elseif val == -math.huge then
+      return "null"
+    else
+      return tostring(val)
+    end
+  elseif valType == "boolean" then
+    return tostring(val)
+  elseif valType == "nil" then
+    return "null"
+  elseif valType == "table" then
+    local isTable = true
+    local count = 0
+
+    for k, _ in pairs(val) do
+      count = count + 1
+      if type(k) ~= "number" or k ~= count then
+        isArray = false
+        break
+      end
+    end
+
+    if isTable and count > 0 then
+      local result = {}
+      for i = 1, count do result[i] = jsonEncode(val[i]) end
+      return "[" .. table.concat(result, ",") .. "]"
+    else
+      local result = {}
+      for k, v in pairs(val) do
+        if type(k) == "string" then
+          table.insert(result, '"' .. k .. '":' .. jsonEncode(v))
+        elseif type(k) == "number" then
+          table.insert(result, '"' .. tostring(k) .. '":' .. jsonEncode(v))
+        end
+      end
+      return "{" .. table.concat(result, ",") .. "}"
+    end
+  else
+    error("Cannot encode value of type: " .. valType)
+  end
+end
+
+---Function for json.decode
+local function jsonDecode(str)
+  local pos = 1
+
+  local function decodeValue()
+    local function skipWhitespace()
+      while pos <= #str and str:sub(pos, pos):match("%s") do pos = pos + 1 end
+    end
+    skipWhitespace()
+
+    local char = str:sub(pos, pos)
+
+    if char == '"' then
+      pos = pos + 1
+      local result = ""
+      while pos <= #str do
+        char = str:sub(pos, pos)
+        if char == '"' then
+          pos = pos + 1
+          return result
+        elseif char == "\\" then
+          pos = pos + 1
+          char = str:sub(pos, pos)
+          if char == "n" then
+            result = result .. "\n"
+          elseif char == "r" then
+            result = result .. "\r"
+          elseif char == "t" then
+            result = result .. "\t"
+          elseif char == "\\" then
+            result = result .. "\\"
+          elseif char == '"' then
+            result = result .. '"'
+          else
+            result = result .. char
+          end
+          pos = pos + 1
+        else
+          result = result .. char
+          pos = pos + 1
+        end
+      end
+      error("Unterminated string at position " .. pos)
+    elseif char == "{" then
+      pos = pos + 1
+      local result = {}
+      skipWhitespace()
+
+      if str:sub(pos, pos) == "}" then
+        pos = pos + 1
+        return result
+      end
+
+      while true do
+        skipWhitespace()
+        local key = decodeValue() or ""
+        skipWhitespace()
+
+        if str:sub(pos, pos) ~= ":" then error("Expected ':' at position " .. pos) end
+        pos = pos + 1
+
+        local value = decodeValue()
+        result[key] = value
+
+        skipWhitespace()
+        char = str:sub(pos, pos)
+
+        if char == "}" then
+          pos = pos + 1
+          return result
+        elseif char == "," then
+          pos = pos + 1
+        else
+          error("Expected ',' or '}' at position " .. pos)
+        end
+      end
+    elseif char == "[" then
+      pos = pos + 1
+      local result = {}
+      skipWhitespace()
+
+      if str:sub(pos, pos) == "]" then
+        pos = pos + 1
+        return result
+      end
+
+      while true do
+        table.insert(result, decodeValue())
+        skipWhitespace()
+        char = str:sub(pos, pos)
+
+        if char == "]" then
+          pos = pos + 1
+          return result
+        elseif char == "," then
+          pos = pos + 1
+        else
+          error("Expected ',' or ']' at position " .. pos)
+        end
+      end
+    elseif char == "t" then
+      if str:sub(pos, pos + 3) == "true" then
+        pos = pos + 4
+        return true
+      else
+        error("Invalid value at position " .. pos)
+      end
+    elseif char == "f" then
+      if str:sub(pos, pos + 4) == "false" then
+        pos = pos + 5
+        return false
+      else
+        error("Invalid value at position " .. pos)
+      end
+    elseif char == "n" then
+      if str:sub(pos, pos + 3) == "null" then
+        pos = pos + 4
+        return nil
+      else
+        error("Invalid value at position " .. pos)
+      end
+    elseif char == "-" or char:match("%d") then
+      local numStr = ""
+      while pos <= #str and str:sub(pos, pos):match("[%d%.eE+%-]") do
+        numStr = numStr .. str:sub(pos, pos)
+        pos = pos + 1
+      end
+      return tonumber(numStr)
+    else
+      error("Unexpected character '" .. char .. "' at position " .. pos)
+    end
+  end
+end
+
 --Function for both uuid1 and uuid6
 local function uuid1and6(v)
   local timestamp = (os.time() + 12219292800) * 10000000
@@ -2728,6 +2914,42 @@ function math.acotangent(x)
   return math.atan(1 / x)
 end
 
+---***SRG Custom Function***
+---
+---Calculates the `n`th root of `x`.
+---@param x number
+---@param n number
+---@return number
+---@nodiscard
+function math.nroot(x, n)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(n) ~= "number" then errorMsg("Number", "n", n) end
+
+  return x ^ (1 / n)
+end
+
+---***SRG Custom Function***
+---
+---Clamps `x` between `min` and `max`, ensuring it stays within the proper range.
+---@param x number
+---@param min number
+---@param max number
+---@return number
+---@nodiscard
+function math.clamp(x, min, max)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(min) ~= "number" then errorMsg("Number", "min", min) end
+  if type(max) ~= "number" then errorMsg("Number", "max", max) end
+
+  if x < min then
+    return min
+  elseif x > max then
+    return max
+  else
+    return x
+  end
+end
+
 ---------String Library Extension---------
 
 ---***SRG Custom Function***
@@ -3375,8 +3597,11 @@ function table.from_string(str, sep)
 
       while i <= #str and depth > 0 do
         local c = str:sub(i, i)
-        if c == "{" then depth = depth + 1
-        elseif c == "}" then depth = depth - 1 end
+        if c == "{" then
+          depth = depth + 1
+        elseif c == "}" then
+          depth = depth - 1
+        end
         i = i + 1
       end
 
@@ -3452,6 +3677,74 @@ function table.filter(t, func)
     if not success or type(res) ~= "boolean" then error("'func' is not a valid function: " .. res) end
     if res then result[i] = v end
   end
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Returns a table of each element in `t` with no duplicates.
+---@param t table
+---@return table
+---@nodiscard
+function table.unique(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if #t == 0 then error("'t' is empty") end
+
+  local result = {}
+  for _, v in ipairs(t) do
+    if not table.contains(v, result) then table.insert(result, v) end
+  end
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Returns a table that contains each element in the given tables.
+---@param ... table
+---@return table
+---@nodiscard
+function table.zip(...)
+  if type(...) ~= "table" then errorMsg("Table", "...", ...) end
+
+  local args = { ... }
+
+  local result = {}
+  for i, t in ipairs(args) do
+    if type(t) ~= "table" then errorMsg("Table", "t", t, i) end
+    if #t == 0 then error("'t" .. i .. "' is empty") end
+
+    for k, v in ipairs(t) do
+      if not result[k] then result[k] = v end
+    end
+  end
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Returns a table containing each key in `t`.
+---@param t table
+---@return table
+---@nodiscard
+function table.keys(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  local result = {}
+  for k, _ in ipairs(t) do table.insert(result, k) end
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Returns a table containing each value in `t`.
+---@param t table
+---@return table
+---@nodiscard
+function table.values(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  local result = {}
+  for _, v in ipairs(t) do table.insert(result, v) end
   return result
 end
 
@@ -3580,234 +3873,173 @@ end
 
 ---***SRG Custom Function***
 ---
----Send a POST request to the specified `url` with the specified `data`.
+---Send a POST request to the specified `url` with the specified json `data`.
 ---@param url string
 ---@param data string
+---@return string
 ---@nodiscard
--- function http.post(url, data)
---   if type(url) ~= "string" then errorMsg("String", "url", url) end
---   if type(data) ~= "string" then errorMsg("String", "data", data) end
+function http.post(url, data)
+  if type(url) ~= "string" then errorMsg("String", "url", url) end
+  if type(data) ~= "string" then errorMsg("String", "data", data) end
 
---   if system.is_windows then
---     success, err = io.popen(string.format(
---       "powershell -command \"Invoke-WebRequest -Uri '%s' -Method POST -Body %s\"",
---       url, data
---     )):read("*a")
---     if not success then error("Failed to send POST request: " .. err) end
---   elseif system.is_mac or system.is_linux then
---     success, err = io.popen(string.format()
---   end
--- end
+  local result = ""
+  if system.is_windows then
+    local success, res = io.popen(string.format(
+      "powershell -Command \"Invoke-WebRequest -Uri '%s' -Method POST -Body %s\"",
+      url, data
+    )):read()
+    if not success then error("Failed to send POST request: " .. res) else result = res end
+  elseif system.is_mac or system.is_linux then
+    local success, res = io.popen(string.format(
+      "curl -X POST -H 'Content-Type: application/json' -d '%s' %s",
+      data, url
+    )):read()
+    if not success then error("Failed to send POST request: " .. res) else result = res end
+  elseif system.is_chrome then
+    warn("Chrome OS is not supported for HTTP requests.")
+  end
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Send a GET request to the specified `url`.
+---@param url string
+---@return string
+---@nodiscard
+function http.get(url)
+  if type(url) ~= "string" then errorMsg("String", "url", url) end
+
+  local result = ""
+  if system.is_windows then
+    local success, res = io.popen(string.format(
+      "powershell -Command \"Invoke-WebRequest -Uri '%s' -Method GET\"",
+      url
+    )):read()
+    if not success then error("Failed to send GET request: " .. res) else result = res end
+  elseif system.is_mac or system.is_linux then
+    local success, res = io.popen(string.format(
+      "curl -X GET %s",
+      url
+    )):read()
+    if not success then error("Failed to send GET request: " .. res) else result = res end
+  elseif system.is_chrome then
+    warn("Chrome OS is not supported for HTTP requests.")
+  end
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Send a DELETE request to the specified `url`.
+---@param url string
+---@return string
+---@nodiscard
+function http.delete(url)
+  if type(url) ~= "string" then errorMsg("String", "url", url) end
+
+  local result = ""
+  if system.is_windows then
+    local success, res = io.popen(string.format(
+      "powershell -Command \"Invoke-WebRequest -Uri '%s' -Method DELETE\"",
+      url
+    )):read()
+    if not success then error("Failed to send DELETE request: " .. res) else result = res end
+  elseif system.is_mac or system.is_linux then
+    local success, res = io.popen(string.format(
+      "curl -X DELETE %s",
+      url
+    )):read()
+    if not success then error("Failed to send DELETE request: " .. res) else result = res end
+  elseif system.is_chrome then
+    warn("Chrome OS is not supported for HTTP requests.")
+  end
+end
+
+---***SRG Custom Function***
+---
+---Send a PUT request to the specified `url` with the specified json `data`.
+---@param url string
+---@param data string
+---@return string
+---@nodiscard
+function http.put(url, data)
+  if type(url) ~= "string" then errorMsg("String", "url", url) end
+  if type(data) ~= "string" then errorMsg("String", "data", data) end
+
+  local result = ""
+  if system.is_windows then
+    local success, res = io.popen(string.format(
+      "powershell -Command \"Invoke-WebRequest -Uri '%s' -Method PUT -Body %s\"",
+      url, data
+    )):read()
+    if not success then error("Failed to send PUT request: " .. res) else result = res end
+  elseif system.is_mac or system.is_linux then
+    local success, res = io.popen(string.format(
+      "curl -X PUT -H 'Content-Type: application/json' -d '%s' %s",
+      data, url
+    )):read()
+    if not success then error("Failed to send PUT request: " .. res) else result = res end
+  elseif system.is_chrome then
+    warn("Chrome OS is not supported for HTTP requests.")
+  end
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Send a PATCH request to the specified `url` with the specified json `data`.
+---@param url string
+---@param data string
+---@return string
+---@nodiscard
+function http.patch(url, data)
+  if type(url) ~= "string" then errorMsg("String", "url", url) end
+  if type(data) ~= "string" then errorMsg("String", "data", data) end
+
+  local result = ""
+  if system.is_windows then
+    local success, res = io.popen(string.format(
+      "powershell -Command \"Invoke-WebRequest -Uri '%s' -Method PATCH -Body %s\"",
+      url, data
+    )):read()
+    if not success then error("Failed to send PATCH request: " .. res) else result = res end
+  elseif system.is_mac or system.is_linux then
+    local success, res = io.popen(string.format(
+      "curl -X PATCH -H 'Content-Type: application/json' -d '%s' %s",
+      data, url
+    )):read()
+    if not success then error("Failed to send PATCH request: " .. res) else result = res end
+  elseif system.is_chrome then
+    warn("Chrome OS is not supported for HTTP requests.")
+  end
+  return result
+end
 
 -------------JSON Library-------------
 
 ---***SRG Custom Function***
 ---
----Encodes a Lua table to a JSON string.
----@param value any
+---Encodes a Lua table (`t`) to a JSON string.
+---@param t table
 ---@return string
 ---@nodiscard
-function json.encode(value)
-  local function encodeValue(val)
-    local valType = type(val)
-    
-    if valType == "string" then
-      return '"' .. val:gsub('\\', '\\\\'):gsub('"', '\\"'):gsub('\n', '\\n'):gsub('\r', '\\r'):gsub('\t', '\\t') .. '"'
-    elseif valType == "number" then
-      if val ~= val then
-        return "null"
-      elseif val == math.huge then
-        return "null"
-      elseif val == -math.huge then
-        return "null"
-      else
-        return tostring(val)
-      end
-    elseif valType == "boolean" then
-      return tostring(val)
-    elseif valType == "nil" then
-      return "null"
-    elseif valType == "table" then
-      local isArray = true
-      local count = 0
-      
-      for k, _ in pairs(val) do
-        count = count + 1
-        if type(k) ~= "number" or k ~= count then
-          isArray = false
-          break
-        end
-      end
-      
-      if isArray and count > 0 then
-        local result = {}
-        for i = 1, count do
-          result[i] = encodeValue(val[i])
-        end
-        return "[" .. table.concat(result, ",") .. "]"
-      else
-        local result = {}
-        for k, v in pairs(val) do
-          if type(k) == "string" then
-            table.insert(result, '"' .. k .. '":' .. encodeValue(v))
-          elseif type(k) == "number" then
-            table.insert(result, '"' .. tostring(k) .. '":' .. encodeValue(v))
-          end
-        end
-        return "{" .. table.concat(result, ",") .. "}"
-      end
-    else
-      error("Cannot encode value of type: " .. valType)
-    end
-  end
-  
-  return encodeValue(value)
+function json.encode(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  return jsonEncode(t)
 end
 
 ---***SRG Custom Function***
 ---
----Decodes a JSON string to a Lua table.
----@param str string
+---Decodes a JSON string (`s`) to a Lua table.
+---@param s string
 ---@return any
 ---@nodiscard
-function json.decode(str)
-  if type(str) ~= "string" then errorMsg("String", "str", str) end
+function json.decode(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
 
-  local pos = 1
-
-  local function skipWhitespace()
-    while pos <= #str and str:sub(pos, pos):match("%s") do pos = pos + 1 end
-  end
-
-  local function decodeValue()
-    skipWhitespace()
-
-    local char = str:sub(pos, pos)
-
-    if char == '"' then
-      pos = pos + 1
-      local result = ""
-      while pos <= #str do
-        char = str:sub(pos, pos)
-        if char == '"' then
-          pos = pos + 1
-          return result
-        elseif char == "\\" then
-          pos = pos + 1
-          char = str:sub(pos, pos)
-          if char == "n" then
-            result = result .. "\n"
-          elseif char == "r" then
-            result = result .. "\r"
-          elseif char == "t" then
-            result = result .. "\t"
-          elseif char == "\\" then
-            result = result .. "\\"
-          elseif char == '"' then
-            result = result .. '"'
-          else
-            result = result .. char
-          end
-          pos = pos + 1
-        else
-          result = result .. char
-          pos = pos + 1
-        end
-      end
-      error("Unterminated string at position " .. pos)
-    elseif char == "{" then
-      pos = pos + 1
-      local result = {}
-      skipWhitespace()
-
-      if str:sub(pos, pos) == "}" then
-        pos = pos + 1
-        return result
-      end
-      
-      while true do
-        skipWhitespace()
-        local key = decodeValue()
-        skipWhitespace()
-        
-        if str:sub(pos, pos) ~= ":" then
-          error("Expected ':' at position " .. pos)
-        end
-        pos = pos + 1
-        
-        local value = decodeValue()
-        result[key] = value
-        
-        skipWhitespace()
-        char = str:sub(pos, pos)
-        
-        if char == "}" then
-          pos = pos + 1
-          return result
-        elseif char == "," then
-          pos = pos + 1
-        else
-          error("Expected ',' or '}' at position " .. pos)
-        end
-      end
-    elseif char == "[" then
-      pos = pos + 1
-      local result = {}
-      skipWhitespace()
-      
-      if str:sub(pos, pos) == "]" then
-        pos = pos + 1
-        return result
-      end
-      
-      while true do
-        table.insert(result, decodeValue())
-        skipWhitespace()
-        char = str:sub(pos, pos)
-        
-        if char == "]" then
-          pos = pos + 1
-          return result
-        elseif char == "," then
-          pos = pos + 1
-        else
-          error("Expected ',' or ']' at position " .. pos)
-        end
-      end
-    elseif char == "t" then
-      if str:sub(pos, pos + 3) == "true" then
-        pos = pos + 4
-        return true
-      else
-        error("Invalid value at position " .. pos)
-      end
-    elseif char == "f" then
-      if str:sub(pos, pos + 4) == "false" then
-        pos = pos + 5
-        return false
-      else
-        error("Invalid value at position " .. pos)
-      end
-    elseif char == "n" then
-      if str:sub(pos, pos + 3) == "null" then
-        pos = pos + 4
-        return nil
-      else
-        error("Invalid value at position " .. pos)
-      end
-    elseif char == "-" or char:match("%d") then
-      local numStr = ""
-      while pos <= #str and str:sub(pos, pos):match("[%d%.eE+%-]") do
-        numStr = numStr .. str:sub(pos, pos)
-        pos = pos + 1
-      end
-      return tonumber(numStr)
-    else
-      error("Unexpected character '" .. char .. "' at position " .. pos)
-    end
-  end
-  
-  return decodeValue()
+  return jsonDecode(s)
 end
 
 ------------Global Library------------

@@ -121,12 +121,15 @@
   - Added 1 new `string` library function: `string.levenshtein(s1, s2)`
   - Added 1 new `cryptography` library function: `cryptography.luhn(s)`
 
-# V1.6.0
+# V2.0.0
 - ## Date: Oct 8, 2025 - Oct 9, 2025
   - ## Oct 8, 2025
     - Added 1 new library
       - `file`: `file.new(name, content)`, `file.read(name)`, `file.rewrite(name, content)`, `file.append(name, content)`, `file.exists(name)`, `file.size(name)`, `file.lines(name)`, and `file.deletes(name)`
   - ## Oct 9, 2025
     - Added 2 new `cryptography` library function: `cryptography.is_ip(ip, v6)` and `cryptography.is_email(email)`
-    - Added 2 new `table` library functions: `table.map(t, func)` and `table.filter(t, func)`
-    - 
+    - Added 6 new `table` library functions: `table.map(t, func)`, `table.filter(t, func)`, `table.unique(t)`, `table.zip(...)`, `table.keys(t)`, and `table.values(t)`
+    - Added 2 new `math` library functions: `math.nroot(x, n)` and `math.clamp(x, min, max)`
+    - Added 2 new libraries:
+      - `json`: `json.encode(t)` and `json.decode(s)`
+      - `http`: `http.post(url, data)`, `http.get(url)`, `http.delete(url)`, `http.put(url, data)`, and `http.patch(url, data)`
