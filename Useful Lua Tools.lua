@@ -396,8 +396,11 @@ queue = {}
 ---@class datetimelib
 datetime = {}
 
---@class filelib
+---@class filelib
 file = {}
+
+---@class httplib
+http = {}
 
 -----------ULT Main Library-----------
 
@@ -1470,6 +1473,44 @@ function cryptography.luhn(x)
   end
 
   return sum % 10 == 0
+end
+
+---***SRG Custom Function***
+---
+---Validates wether or not `ip` is a valid ip adress.
+---
+---If `v6` is true, validates for IPv6, otherwise validates for IPv4.
+---@param ip string
+---@param v6? boolean
+---@return boolean
+---@nodiscard
+function cryptography.is_ip(ip, v6)
+  if type(ip) ~= "string" then errorMsg("String", "ip", ip) end
+  if v6 and type(v6) ~= "boolean" then errorMsg("Boolean", "v6", v6) end
+
+  if v6 then
+    return ip:match("^%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x$") ~= nil
+  else
+    local t = string.split(ip, ".")
+    if #t ~= 4 then return false end
+    for _, v in ipairs(t) do
+      local num = tonumber(v)
+      if not num or num < 0 or num > 255 then return false end
+    end
+    return true
+  end
+end
+
+---***SRG Custom Function***
+---
+---Validates wether or not `email` is a valid email adress.
+---@param email string
+---@return boolean
+---@nodiscard
+function cryptography.is_email(email)
+  if type(email) ~= "string" then errorMsg("String", "email", email) end
+
+  return email:match("^[%w%.%-]+@[%w%.%-]+%.[%w%.%-]+$") ~= nil
 end
 
 ---------Input Library---------
@@ -3369,6 +3410,48 @@ function table.from_string(str, sep)
   return t
 end
 
+---***SRG Custom Function***
+---
+---Applies `func` to each element in `t` and returns a new table with the results.
+---@param t table
+---@param func function
+---@return table
+---@nodiscard
+function table.map(t, func)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if type(func) ~= "function" then errorMsg("Function", "func", func) end
+  if #t == 0 then error("'t' is empty") end
+
+  local result = {}
+  for i, v in ipairs(t) do
+    local success, res = pcall(func(v))
+    if not success then error("'func' is not a valid function: " .. res) end
+    result[i] = res
+  end
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Filters `t` using `func` and returns a new table with the results.
+---@param t table
+---@param func function
+---@return table
+---@nodiscard
+function table.filter(t, func)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if type(func) ~= "function" then errorMsg("Function", "func", func) end
+  if #t == 0 then error("'t' is empty") end
+
+  local result = {}
+  for i, v in ipairs(t) do
+    local success, res = pcall(func(v))
+    if not success or type(res) ~= "boolean" then error("'func' is not a valid function: " .. res) end
+    if res then result[i] = v end
+  end
+  return result
+end
+
 -------------File Library-------------
 
 ---***SRG Custom Function***
@@ -3409,8 +3492,10 @@ function file.rewrite(name, content)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if type(content) ~= "string" then errorMsg("String", "content", content) end
 
-  local f = io.open(name, "w+")
-  if not f then error("Failed to rewrite file: " .. name) end
+  local f, err = io.open(name, "w+")
+  if not f then error("Failed to rewrite file: " .. err) end
+  f:write(content)
+  f:close()
 end
 
 ---***SRG Custom Function***
@@ -3422,9 +3507,95 @@ function file.append(name, content)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if type(content) ~= "string" then errorMsg("String", "content", content) end
 
-  local f = io.open(name, "w")
-  if not f then error("Failed to append to file: " .. name) end
-  
+  local f, err = io.open(name, "a")
+  if not f then error("Failed to append to file: " .. err) end
+  f:write(content)
+  f:close()
+end
+
+---***SRG Custom Function***
+---
+---Checks if the file with the specified `name` exists.
+---@param name string
+---@return boolean
+function file.exists(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+
+  local f = io.open(name, "r")
+  if f then
+    f:close()
+    return true
+  else
+    return false
+  end
+end
+
+---***SRG Custom Function***
+---
+---Returns the size of the file with the specified `name` in bytes.
+---@param name string
+---@return number
+function file.size(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+
+  local f, err = io.open(name, "r")
+  if not f then error("Failed to get file size: " .. err) end
+  local size = f:seek("end")
+  f:close()
+  return size
+end
+
+---***SRG Custom Function***
+---
+---Returns the amount of lines in the file with the specified `name`.
+---@param name string
+---@return number
+function file.lines(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+
+  local f, err = io.open(name, "r")
+  if not f then error("Failed to get file lines: " .. err) end
+
+  local lines = 0
+  for _ in f:lines() do lines = lines + 1 end
+  f:close()
+  return lines
+end
+
+---***SRG Custom Function***
+---
+---Deletes the file with the specified `name`.
+---@param name string
+function file.delete(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+
+  local success, err = os.remove(name)
+  if not success then error("Failed to delete file: " .. err) end
+end
+
+--------------Http Library-------------
+
+---***SRG Custom Function***
+---
+---Send a POST request to the specified `url` with the specified `data`.
+---@param url string
+---@param data string
+---@nodiscard
+-- function http.post(url, data)
+--   if type(url) ~= "string" then errorMsg("String", "url", url) end
+--   if type(data) ~= "string" then errorMsg("String", "data", data) end
+
+--   if system.is_windows then
+--     success, err = io.popen(string.format(
+--       "powershell -command \"Invoke-WebRequest -Uri '%s' -Method POST -Body %s\"",
+--       url, data
+--     )):read("*a")
+--     if not success then error("Failed to send POST request: " .. err) end
+--   elseif system.is_mac or system.is_linux then
+--     success, err = io.popen(string.format()
+--   end
+-- end
+
 ------------Global Library------------
 
 ---***SRG Custom Function***
