@@ -402,6 +402,9 @@ file = {}
 ---@class httplib
 http = {}
 
+---@class jsonlib
+json = {}
+
 -----------ULT Main Library-----------
 
 ---***SRG Custom Variable***
@@ -3595,6 +3598,219 @@ end
 --     success, err = io.popen(string.format()
 --   end
 -- end
+
+-------------JSON Library-------------
+
+---***SRG Custom Function***
+---
+---Encodes a Lua table to a JSON string.
+---@param value any
+---@return string
+---@nodiscard
+function json.encode(value)
+  local function encodeValue(val)
+    local valType = type(val)
+    
+    if valType == "string" then
+      return '"' .. val:gsub('\\', '\\\\'):gsub('"', '\\"'):gsub('\n', '\\n'):gsub('\r', '\\r'):gsub('\t', '\\t') .. '"'
+    elseif valType == "number" then
+      if val ~= val then
+        return "null"
+      elseif val == math.huge then
+        return "null"
+      elseif val == -math.huge then
+        return "null"
+      else
+        return tostring(val)
+      end
+    elseif valType == "boolean" then
+      return tostring(val)
+    elseif valType == "nil" then
+      return "null"
+    elseif valType == "table" then
+      local isArray = true
+      local count = 0
+      
+      for k, _ in pairs(val) do
+        count = count + 1
+        if type(k) ~= "number" or k ~= count then
+          isArray = false
+          break
+        end
+      end
+      
+      if isArray and count > 0 then
+        local result = {}
+        for i = 1, count do
+          result[i] = encodeValue(val[i])
+        end
+        return "[" .. table.concat(result, ",") .. "]"
+      else
+        local result = {}
+        for k, v in pairs(val) do
+          if type(k) == "string" then
+            table.insert(result, '"' .. k .. '":' .. encodeValue(v))
+          elseif type(k) == "number" then
+            table.insert(result, '"' .. tostring(k) .. '":' .. encodeValue(v))
+          end
+        end
+        return "{" .. table.concat(result, ",") .. "}"
+      end
+    else
+      error("Cannot encode value of type: " .. valType)
+    end
+  end
+  
+  return encodeValue(value)
+end
+
+---***SRG Custom Function***
+---
+---Decodes a JSON string to a Lua table.
+---@param str string
+---@return any
+---@nodiscard
+function json.decode(str)
+  if type(str) ~= "string" then errorMsg("String", "str", str) end
+  
+  local pos = 1
+  
+  local function skipWhitespace()
+    while pos <= #str and str:sub(pos, pos):match("%s") do
+      pos = pos + 1
+    end
+  end
+  
+  local function decodeValue()
+    skipWhitespace()
+    
+    local char = str:sub(pos, pos)
+    
+    if char == '"' then
+      pos = pos + 1
+      local result = ""
+      while pos <= #str do
+        char = str:sub(pos, pos)
+        if char == '"' then
+          pos = pos + 1
+          return result
+        elseif char == "\\" then
+          pos = pos + 1
+          char = str:sub(pos, pos)
+          if char == "n" then
+            result = result .. "\n"
+          elseif char == "r" then
+            result = result .. "\r"
+          elseif char == "t" then
+            result = result .. "\t"
+          elseif char == "\\" then
+            result = result .. "\\"
+          elseif char == '"' then
+            result = result .. '"'
+          else
+            result = result .. char
+          end
+          pos = pos + 1
+        else
+          result = result .. char
+          pos = pos + 1
+        end
+      end
+      error("Unterminated string at position " .. pos)
+    elseif char == "{" then
+      pos = pos + 1
+      local result = {}
+      skipWhitespace()
+      
+      if str:sub(pos, pos) == "}" then
+        pos = pos + 1
+        return result
+      end
+      
+      while true do
+        skipWhitespace()
+        local key = decodeValue()
+        skipWhitespace()
+        
+        if str:sub(pos, pos) ~= ":" then
+          error("Expected ':' at position " .. pos)
+        end
+        pos = pos + 1
+        
+        local value = decodeValue()
+        result[key] = value
+        
+        skipWhitespace()
+        char = str:sub(pos, pos)
+        
+        if char == "}" then
+          pos = pos + 1
+          return result
+        elseif char == "," then
+          pos = pos + 1
+        else
+          error("Expected ',' or '}' at position " .. pos)
+        end
+      end
+    elseif char == "[" then
+      pos = pos + 1
+      local result = {}
+      skipWhitespace()
+      
+      if str:sub(pos, pos) == "]" then
+        pos = pos + 1
+        return result
+      end
+      
+      while true do
+        table.insert(result, decodeValue())
+        skipWhitespace()
+        char = str:sub(pos, pos)
+        
+        if char == "]" then
+          pos = pos + 1
+          return result
+        elseif char == "," then
+          pos = pos + 1
+        else
+          error("Expected ',' or ']' at position " .. pos)
+        end
+      end
+    elseif char == "t" then
+      if str:sub(pos, pos + 3) == "true" then
+        pos = pos + 4
+        return true
+      else
+        error("Invalid value at position " .. pos)
+      end
+    elseif char == "f" then
+      if str:sub(pos, pos + 4) == "false" then
+        pos = pos + 5
+        return false
+      else
+        error("Invalid value at position " .. pos)
+      end
+    elseif char == "n" then
+      if str:sub(pos, pos + 3) == "null" then
+        pos = pos + 4
+        return nil
+      else
+        error("Invalid value at position " .. pos)
+      end
+    elseif char == "-" or char:match("%d") then
+      local numStr = ""
+      while pos <= #str and str:sub(pos, pos):match("[%d%.eE+%-]") do
+        numStr = numStr .. str:sub(pos, pos)
+        pos = pos + 1
+      end
+      return tonumber(numStr)
+    else
+      error("Unexpected character '" .. char .. "' at position " .. pos)
+    end
+  end
+  
+  return decodeValue()
+end
 
 ------------Global Library------------
 
