@@ -31,7 +31,7 @@ description = {
       Designed to streamline Lua development with pre-built, well-documented solutions.
    ]],
    license = "MIT",
-   homepage = "https://replit.com/@SomeRandomGamer/useful-lua-tools",
+   homepage = "https://replit.com/@Yesitssrg/Useful-Lua-Tools?v=1",
    maintainer = "Some Random Gamer (SRG)"
 }
 
