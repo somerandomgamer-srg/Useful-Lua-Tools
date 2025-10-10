@@ -600,7 +600,7 @@ json = {}
 ---
 ---"Major Update"."Minor Update"."Patch/Very Minor Update"
 ---@nodiscard
-ult.version = "1.5.2"
+ult.version = "2.0.0"
 
 ---***SRG Custom Variable***
 ---
@@ -624,7 +624,7 @@ end
 ---
 ---The release date of the current ULT version
 ---@nodiscard
-ult.release_date = "09/30/2025"
+ult.release_date = "10/10/2025"
 
 ---***SRG Custom Variable***
 ---

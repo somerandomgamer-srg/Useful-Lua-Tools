@@ -121,8 +121,8 @@
   - Added 1 new `string` library function: `string.levenshtein(s1, s2)`
   - Added 1 new `cryptography` library function: `cryptography.luhn(s)`
 
-# V2.0.0
-- ## Date: Oct 8, 2025 - Oct 9, 2025
+# V2.0.0!
+- ## Date: Oct 8, 2025 - Oct 10, 2025
   - ## Oct 8, 2025
     - Added 1 new library
       - `file`: `file.new(name, content)`, `file.read(name)`, `file.rewrite(name, content)`, `file.append(name, content)`, `file.exists(name)`, `file.size(name)`, `file.lines(name)`, and `file.delete(name)`
@@ -136,5 +136,7 @@
     - ## Oct 10, 2025
       - Added 1 new `system` library variable: `system.mac_address`
       - Fixed several bugs:
-        - string.levenshtein
-        - 
+        - `string.levenshtein`: Fixed off-by-one error in character comparison where substring indices were incorrectly offset by 1.
+        - `cryptography.text_to_ascii`: Fixed invalid string indexing where string was accessed using bracket notation instead of substring method.
+        - `cryptography.text_to_hex`: Fixed invalid string indexing where string was accessed using bracket notation instead of substring method.
+        - `cryptography.text_to_octal`: Fixed invalid string indexing where string was accessed using bracket notation instead of substring method.
