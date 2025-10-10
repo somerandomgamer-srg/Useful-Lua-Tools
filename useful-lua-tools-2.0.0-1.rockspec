@@ -3,7 +3,7 @@ package = "useful-lua-tools"
 version = "2.0.0-1"
 
 source = {
-   url = ""
+   url = "file:///home/runner/workspace/useful-lua-tools-2.0.0.tar.gz"
 }
 
 description = {
