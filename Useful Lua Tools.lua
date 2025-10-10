@@ -196,6 +196,7 @@ local function jsonDecode(str)
       error("Unexpected character '" .. char .. "' at position " .. pos)
     end
   end
+  return decodeValue()
 end
 
 --Function for both uuid1 and uuid6
@@ -844,7 +845,7 @@ system.is_linux_based = io.popen("uname"):read() ~= nil
 
 ---***SRG Custom Variable***
 ---
----Returns the Mac
+---Returns the Mac Address of the host system, or nil if it cannot be determined
 system.mac_address = getMac()
 
 -------------Color Library------------
@@ -3954,6 +3955,7 @@ function http.delete(url)
   elseif system.is_chrome then
     warn("Chrome OS is not supported for HTTP requests.")
   end
+  return result
 end
 
 ---***SRG Custom Function***

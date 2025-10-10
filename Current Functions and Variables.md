@@ -24,9 +24,9 @@
   - **Total `http` Functions**: 5
   - **Total Global Functions**: 5
 
-- ## **Total Variables**: 14
+- ## **Total Variables**: 15
   - **Total `ult` Variables**: 5
-  - **Total `system` Variables**: 9
+  - **Total `system` Variables**: 10
   - **Total `math` Variables**: 0
   - **Total `string` Variables**: 0
   - **Total `table` Variables**: 0
@@ -40,7 +40,7 @@
   - **Total `datetime` Variables**: 0
   - **Total Global Variables**: 0
 
-- ## **Total Functions and Variables**: 188
+- ## **Total Functions and Variables**: 189
 
 ## 1. ULT Library Variables
 
@@ -115,6 +115,11 @@
 - **Type**: `variable`
 - **Returns**: `boolean`
 - **Description**: True if the host system is built on Linux, false otherwise.
+
+### 2.10 `system.mac_address`
+- **Type**: `variable`
+- **Returns**: `string` or `nil`
+- **Description**: The MAC address of the host system, or nil if it cannot be determined. Supported on Windows, macOS, and Linux. Cannot be determined on ChromeOS due to security restrictions.
 
 # 3. Math Library Functions
 

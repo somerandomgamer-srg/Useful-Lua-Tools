@@ -133,3 +133,5 @@
     - Added 2 new libraries:
       - `json`: `json.encode(t)` and `json.decode(s)`
       - `http`: `http.post(url, data)`, `http.get(url)`, `http.delete(url)`, `http.put(url, data)`, and `http.patch(url, data)`
+    - ## Oct 10, 2025
+      - Added 1 new `system` library variable: `system.mac_address`
