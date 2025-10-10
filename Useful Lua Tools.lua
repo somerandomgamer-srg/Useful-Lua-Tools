@@ -1506,7 +1506,6 @@ end
 ---@param ... number
 ---@return boolean
 function cryptography.btest(...)
-  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
   local args = { ... }
   if #args < 2 then error("At least two numbers are required") end
   for i, num in ipairs(args) do
@@ -1701,6 +1700,93 @@ function cryptography.is_email(email)
   if type(email) ~= "string" then errorMsg("String", "email", email) end
 
   return email:match("^[%w%.%-]+@[%w%.%-]+%.[%w%.%-]+$") ~= nil
+end
+
+---***SRG Custom Function***
+---
+---Adds two or more binary numbers together.
+---@param ... string
+---@return string
+---@nodiscard
+function cryptography.binary_add(...)
+  local args = { ... }
+  if #args < 2 then error("At least two binary numbers are required") end
+
+  for i, num in ipairs(args) do
+    if type(num) ~= "string" then errorMsg("String", "num", num, i) end
+    if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
+  end
+
+  local result = ""
+  local carry = 0
+  local length = math.max(table.unpack(table.map(args, function(x) return #x end)))
+
+  for i = 1, #args do
+    while #args[i] < length do args[i] = "0" .. args[i] end
+  end
+
+  for i = length, 1, -1 do
+    local sum = carry
+    for _, num in ipairs(args) do sum = sum + tonumber(num:sub(i, i)) end
+
+    result = tostring(sum % 2) .. result
+    carry = math.floor(sum / 2)
+  end
+
+  while carry > 0 do
+    result = tostring(carry % 2) .. result
+    carry = math.floor(carry / 2)
+  end
+
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Subtracts two or more binary numbers (first - second - third - ...).
+---Returns negative results with "-" prefix.
+---@param ... string
+---@return string
+---@nodiscard
+function cryptography.binary_subtract(...)
+  local args = { ... }
+  if #args < 2 then error("At least two binary numbers are required") end
+  
+  for i, num in ipairs(args) do
+    if type(num) ~= "string" then errorMsg("String", "num", num, i) end
+    if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
+  end
+
+  local function bin_to_dec(bin)
+    local dec = 0
+    for i = 1, #bin do
+      dec = dec * 2 + tonumber(bin:sub(i, i))
+    end
+    return dec
+  end
+
+  local function dec_to_bin(dec)
+    if dec == 0 then return "0" end
+    local bin = ""
+    while dec > 0 do
+      bin = tostring(dec % 2) .. bin
+      dec = math.floor(dec / 2)
+    end
+    return bin
+  end
+
+  local result = bin_to_dec(args[1])
+  for i = 2, #args do
+    result = result - bin_to_dec(args[i])
+  end
+
+  if result < 0 then
+    return "-" .. dec_to_bin(-result)
+  elseif result == 0 then
+    return "0"
+  else
+    return dec_to_bin(result)
+  end
 end
 
 ---------Input Library---------
@@ -2125,7 +2211,6 @@ end
 function datetime.add(return_table, ...)
   if return_table and type(return_table) ~= "boolean" then errorMsg("Boolean", "return_table", return_table) end
 
-  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
   local args = { ... }
   if #args < 2 then error("At least two numbers are required") end
   for i, num in ipairs(args) do
@@ -2225,9 +2310,9 @@ end
 ---Calls all functions registered under the given remotes. Multiple functions can be registered under the same name.
 ---@param ... string
 function remote.call(...)
-  if type(...) ~= "string" then errorMsg("String", "...", ...) end
   local args = { ... }
   for i, name in ipairs(args) do
+    if type(name) ~= "string" then errorMsg("String", "name", name, i) end
     if not remotes[name] then error(string.format("Remote '%s' does not exist.", name)) end
     for _, func in ipairs(remotes[name]) do func() end
   end
@@ -2248,9 +2333,9 @@ end
 ---Removes one or more remotes from the remote registry.
 ---@param ... string
 function remote.remove(...)
-  if type(...) ~= "string" then errorMsg("String", "...", ...) end
   local args = { ... }
   for i, name in ipairs(args) do
+    if type(name) ~= "string" then errorMsg("String", "name", name, i) end
     if not remotes[name] then error(string.format("Remote '%s' does not exist.", name)) end
     remotes[name] = nil
   end
@@ -2294,7 +2379,6 @@ function remote.clear() remotes = {} end
 ---@return number
 ---@nodiscard
 function math.average(...)
-  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
   local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
@@ -2313,7 +2397,6 @@ end
 ---@return number
 ---@nodiscard
 function math.median(...)
-  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
   local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
@@ -2336,7 +2419,6 @@ end
 ---@return number
 ---@nodiscard
 function math.range(...)
-  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
   local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
@@ -2356,7 +2438,6 @@ end
 ---@return number
 ---@nodiscard
 function math.mode(...)
-  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
   local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
@@ -2388,7 +2469,6 @@ end
 ---@return number
 ---@nodiscard
 function math.standard_deviation(...)
-  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
   local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
@@ -2408,7 +2488,6 @@ end
 ---@return number
 ---@nodiscard
 function math.sum(...)
-  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
   local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
@@ -2429,7 +2508,6 @@ end
 ---@return number
 ---@nodiscard
 function math.gcd(...)
-  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
   local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
@@ -2475,7 +2553,6 @@ end
 ---@return number
 ---@nodiscard
 function math.lcm(...)
-  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
   local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
@@ -2827,7 +2904,6 @@ end
 ---@nodiscard
 function math.z_score(x, ...)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
-  if type(...) ~= "number" then errorMsg("Number", "...", ...) end
   local t = { ... }
   if #t < 2 then error("At least two numbers are required") end
   for i, num in ipairs(t) do
@@ -2996,7 +3072,6 @@ end
 ---@nodiscard
 function string.split(s, ...)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if type(...) ~= "string" then errorMsg("String", "...", ...) end
 
   local toReturn = {}
   local start = 1
@@ -3004,6 +3079,7 @@ function string.split(s, ...)
   for i = 1, #s do
     local isPattern = false
     for _, pattern in ipairs({ ... }) do
+      if type(pattern) ~= "string" then errorMsg("String", "pattern", pattern, i + 1) end
       if s:sub(i, i) == pattern then isPattern = true end
       break
     end
@@ -3027,12 +3103,12 @@ end
 ---@nodiscard
 function string.starts_with(s, ...)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if type(...) ~= "string" then errorMsg("String", "...", ...) end
   local args = { ... }
 
   local startsWith = false
-  for i, name in ipairs(args) do
-    if s:sub(1, #name) == name then startsWith = true end
+  for i, pattern in ipairs(args) do
+    if type(pattern) ~= "string" then errorMsg("String", "pattern", pattern, i + 1) end
+    if s:sub(1, #pattern) == pattern then startsWith = true end
   end
   return startsWith
 end
@@ -3046,12 +3122,12 @@ end
 ---@nodiscard
 function string.ends_with(s, ...)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if type(...) ~= "string" then errorMsg("String", "...", ...) end
   local args = { ... }
 
   local startsWith = false
-  for i, name in ipairs(args) do
-    if s:sub(- #name) == name then startsWith = true end
+  for i, pattern in ipairs(args) do
+    if type(pattern) ~= "string" then errorMsg("String", "pattern", pattern, i + 1) end
+    if s:sub(- #pattern) == pattern then startsWith = true end
   end
   return startsWith
 end
@@ -3126,10 +3202,10 @@ end
 ---@nodiscard
 function string.count(s, ...)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-  if type(...) ~= "string" then errorMsg("String", "...", ...) end
 
   local amount = 0
-  for _, pattern in ipairs({ ... }) do
+  for i, pattern in ipairs({ ... }) do
+    if type(pattern) ~= "string" then errorMsg("String", "pattern", pattern, i + 1) end
     for _ in s:gmatch(pattern) do amount = amount + 1 end
   end
   return amount
@@ -3172,8 +3248,11 @@ end
 ---@return number instances
 ---@nodiscard
 function table.contains(value, ...)
-  if type(...) ~= "table" then errorMsg("Table", "...", ...) end
   local args = { ... }
+  if #args < 1 then error("At least one table is required") end
+  for i, tabl in ipairs(args) do
+    if type(tabl) ~= "table" then errorMsg("Table", "tabl", tabl, i + 1) end
+  end
 
   local amount = 0
   for _, t in pairs(args) do
@@ -3350,9 +3429,11 @@ end
 ---@param ... table
 ---@return table
 function table.intersection(...)
-  if type(...) ~= "table" then errorMsg("Table", "...", ...) end
   local args = { ... }
-  if #args < 2 then error("At least two tables are required") end
+  if #args < 1 then error("At least two or more table are required") end
+  for i, tabl in ipairs(args) do
+    if type(tabl) ~= "table" then errorMsg("Table", "tabl", tabl, i) end
+  end
 
   local intersectionTable = {}
   for _, v in pairs(args) do
@@ -3369,9 +3450,11 @@ end
 ---@param ... table
 ---@return table
 function table.difference(...)
-  if type(...) ~= "table" then errorMsg("Table", "...", ...) end
   local args = { ... }
-  if #args < 2 then error("At least two tables are required") end
+  if #args < 1 then error("At least one table is required") end
+  for i, tabl in ipairs(args) do
+    if type(tabl) ~= "table" then errorMsg("Table", "tabl", tabl, i) end
+  end
 
   local differenceTable = {}
   for _, v in pairs(args) do
@@ -3480,9 +3563,11 @@ end
 ---@return table
 ---@nodiscard
 function table.combine(...)
-  if type(...) ~= "table" then errorMsg("Table", "...", ...) end
   local args = { ... }
-  if #args < 2 then error("At least two tables are required") end
+  if #args < 1 then error("At least two or more tables are required") end
+  for i, tabl in ipairs(args) do
+    if type(tabl) ~= "table" then errorMsg("Table", "tabl", tabl, i) end
+  end
 
   for i, t in ipairs(args) do
     if type(t) ~= "table" then errorMsg("Table", "t", t, i) end
@@ -3705,9 +3790,11 @@ end
 ---@return table
 ---@nodiscard
 function table.zip(...)
-  if type(...) ~= "table" then errorMsg("Table", "...", ...) end
-
   local args = { ... }
+  if #args < 1 then error("At least two or more tables are required") end
+  for i, tabl in ipairs(args) do
+    if type(tabl) ~= "table" then errorMsg("Table", "tabl", tabl, i) end
+  end
 
   local result = {}
   local maxLen = 0
