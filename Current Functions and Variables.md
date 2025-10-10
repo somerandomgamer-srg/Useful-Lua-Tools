@@ -5,7 +5,7 @@
 
 # Summary
 
-- ## **Total Functions**: 174
+- ## **Total Functions**: 172
   - **Total `ult` Functions**: 0
   - **Total `system` Functions**: 0
   - **Total `math` Functions**: 41
@@ -40,7 +40,7 @@
   - **Total `datetime` Variables**: 0
   - **Total Global Variables**: 0
 
-- ## **Total Functions and Variables**: 189
+- ## **Total Functions and Variables**: 187
 
 ## 1. ULT Library Variables
 
