@@ -125,7 +125,7 @@
 - ## Date: Oct 8, 2025 - Oct 9, 2025
   - ## Oct 8, 2025
     - Added 1 new library
-      - `file`: `file.new(name, content)`, `file.read(name)`, `file.rewrite(name, content)`, `file.append(name, content)`, `file.exists(name)`, `file.size(name)`, `file.lines(name)`, and `file.deletes(name)`
+      - `file`: `file.new(name, content)`, `file.read(name)`, `file.rewrite(name, content)`, `file.append(name, content)`, `file.exists(name)`, `file.size(name)`, `file.lines(name)`, and `file.delete(name)`
   - ## Oct 9, 2025
     - Added 2 new `cryptography` library function: `cryptography.is_ip(ip, v6)` and `cryptography.is_email(email)`
     - Added 6 new `table` library functions: `table.map(t, func)`, `table.filter(t, func)`, `table.unique(t)`, `table.zip(...)`, `table.keys(t)`, and `table.values(t)`
@@ -133,5 +133,13 @@
     - Added 2 new libraries:
       - `json`: `json.encode(t)` and `json.decode(s)`
       - `http`: `http.post(url, data)`, `http.get(url)`, `http.delete(url)`, `http.put(url, data)`, and `http.patch(url, data)`
-    - ## Oct 10, 2025
-      - Added 1 new `system` library variable: `system.mac_address`
+  - ## Oct 10, 2025
+    - Added 1 new `system` library variable: `system.mac_address`
+    - Fixed critical bugs in multiple functions:
+      - `string.levenshtein`: Fixed off-by-one error in character comparison where substring indices were incorrectly offset by 1, causing the algorithm to compare wrong characters.
+      - `cryptography.text_to_ascii`: Fixed invalid loop syntax that attempted to iterate over a string with incorrect syntax, preventing the function from executing.
+      - `cryptography.text_to_hex`: Fixed invalid string indexing where string was accessed using bracket notation instead of substring method, causing runtime errors.
+      - `cryptography.text_to_octal`: Fixed invalid string indexing where string was accessed using bracket notation instead of substring method, causing runtime errors.
+      - `table.filter`: Fixed implementation that created sparse arrays with gaps by preserving original indices, now properly creates compact arrays by appending filtered elements sequentially.
+      - `table.map`: Fixed incorrect pcall usage where function was called before being passed to pcall, breaking error handling.
+      - `table.zip`: Fixed implementation that only returned first table's values, now properly creates tuples of corresponding elements from all input tables.

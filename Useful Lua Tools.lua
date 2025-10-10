@@ -386,7 +386,7 @@ end
 local function levenshteinMain(s1, s2, len1, len2)
   if len1 == 0 then return len2 end
   if len2 == 0 then return len1 end
-  if s1:sub(len1 - 1, len1 - 1) == s2:sub(len2 - 1, len2 - 1) then return levenshteinMain(s1, s2, len1 - 1, len2 - 1) end
+  if s1:sub(len1, len1) == s2:sub(len2, len2) then return levenshteinMain(s1, s2, len1 - 1, len2 - 1) end
 
   return 1 + math.min(
     levenshteinMain(s1, s2, len1, len2 - 1),
@@ -1012,7 +1012,7 @@ function cryptography.text_to_ascii(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   local ascii = ""
-  for i in s do ascii = ascii .. s[i]:byte() .. " " end
+  for i = 1, #s do ascii = ascii .. s:sub(i, i):byte() .. " " end
   return string.trim(ascii)
 end
 
@@ -1045,7 +1045,7 @@ function cryptography.text_to_hex(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   local hex = ""
-  for i = 1, #s do hex = hex .. ("%02X"):format(s[i]:byte()) .. " " end
+  for i = 1, #s do hex = hex .. ("%02X"):format(s:sub(i, i):byte()) .. " " end
   return hex
 end
 
@@ -1124,7 +1124,7 @@ function cryptography.text_to_octal(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   local octal = ""
-  for i = 1, #s do octal = octal .. ("%o"):format(s[i]:byte()) .. " " end
+  for i = 1, #s do octal = octal .. ("%o"):format(s:sub(i, i):byte()) .. " " end
   return string.trim(octal)
 end
 
@@ -1249,7 +1249,7 @@ function cryptography.base64_to_text(s, alphabet)
 
   local binary = ""
 
-  for i = 1, #s do binary = binary .. base64Reverse[s[i]] end
+  for i = 1, #s do binary = binary .. base64Reverse[s:sub(i, i)] end
 
   if #binary % 8 ~= 0 then binary = binary:sub(1, #binary - (#binary % 8)) end
 
@@ -1324,7 +1324,7 @@ function cryptography.base32_to_text(s, alphabet)
 
   local binary = ""
 
-  for i = 1, #s do binary = binary .. base32Reverse[s[i]] end
+  for i = 1, #s do binary = binary .. base32Reverse[s:sub(i, i)] end
 
   if #binary % 8 ~= 0 then binary = binary:sub(1, #binary - (#binary % 8)) end
 
@@ -3653,7 +3653,7 @@ function table.map(t, func)
 
   local result = {}
   for i, v in ipairs(t) do
-    local success, res = pcall(func(v))
+    local success, res = pcall(func, v)
     if not success then error("'func' is not a valid function: " .. res) end
     result[i] = res
   end
@@ -3674,9 +3674,9 @@ function table.filter(t, func)
 
   local result = {}
   for i, v in ipairs(t) do
-    local success, res = pcall(func(v))
+    local success, res = pcall(func, v)
     if not success or type(res) ~= "boolean" then error("'func' is not a valid function: " .. res) end
-    if res then result[i] = v end
+    if res then table.insert(result, v) end
   end
   return result
 end
@@ -3710,13 +3710,12 @@ function table.zip(...)
   local args = { ... }
 
   local result = {}
-  for i, t in ipairs(args) do
-    if type(t) ~= "table" then errorMsg("Table", "t", t, i) end
-    if #t == 0 then error("'t" .. i .. "' is empty") end
-
-    for k, v in ipairs(t) do
-      if not result[k] then result[k] = v end
-    end
+  local maxLen = 0
+  for _, t in ipairs(args) do maxLen = math.max(maxLen, #t) end
+  for i = 1, maxLen do
+    local tuple = {}
+    for _, t in ipairs(args) do table.insert(tuple, t[i]) end
+    table.insert(result, tuple)
   end
   return result
 end
