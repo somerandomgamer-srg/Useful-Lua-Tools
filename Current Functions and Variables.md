@@ -5,7 +5,7 @@
 
 # Summary
 
-- ## **Total Functions**: 169
+- ## **Total Functions**: 174
   - **Total `ult` Functions**: 0
   - **Total `system` Functions**: 0
   - **Total `math` Functions**: 41
@@ -21,6 +21,7 @@
   - **Total `datetime` Functions**: 5
   - **Total `file` Functions**: 8
   - **Total `json` Functions**: 2
+  - **Total `http` Functions**: 5
   - **Total Global Functions**: 5
 
 - ## **Total Variables**: 14
@@ -39,7 +40,7 @@
   - **Total `datetime` Variables**: 0
   - **Total Global Variables**: 0
 
-- ## **Total Functions and Variables**: 183
+- ## **Total Functions and Variables**: 188
 
 ## 1. ULT Library Variables
 
@@ -1365,16 +1366,56 @@
 - **Returns**: `any`
 - **Description**: Decodes a JSON string to a Lua table or value.
 
-## 16. Global Functions
+## 16. HTTP Library
 
-### 16.1 `wait(x)`
+### 16.1 `http.post(url, data)`
+- **Type**: `function`
+- **Arguments**: 
+  - `url`: `string` (R)
+  - `data`: `string` (R)
+- **Returns**: `string`
+- **Description**: Sends a POST request to the specified `url` with the given JSON `data`. Supported on Windows, macOS, and Linux.
+
+### 16.2 `http.get(url)`
+- **Type**: `function`
+- **Arguments**: 
+  - `url`: `string` (R)
+- **Returns**: `string`
+- **Description**: Sends a GET request to the specified `url`. Supported on Windows, macOS, and Linux.
+
+### 16.3 `http.delete(url)`
+- **Type**: `function`
+- **Arguments**: 
+  - `url`: `string` (R)
+- **Returns**: `string`
+- **Description**: Sends a DELETE request to the specified `url`. Supported on Windows, macOS, and Linux.
+
+### 16.4 `http.put(url, data)`
+- **Type**: `function`
+- **Arguments**: 
+  - `url`: `string` (R)
+  - `data`: `string` (R)
+- **Returns**: `string`
+- **Description**: Sends a PUT request to the specified `url` with the given JSON `data`. Supported on Windows, macOS, and Linux.
+
+### 16.5 `http.patch(url, data)`
+- **Type**: `function`
+- **Arguments**: 
+  - `url`: `string` (R)
+  - `data`: `string` (R)
+- **Returns**: `string`
+- **Description**: Sends a PATCH request to the specified `url` with the given JSON `data`. Supported on Windows, macOS, and Linux.
+
+## 17. Global Functions
+
+### 17.1 `wait(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `nothing`
 - **Description**: Yields the code for `x` seconds. (Similar to python's wait function).
 
-### 16.2 `benchmark(func, iterations)`
+### 17.2 `benchmark(func, iterations)`
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
@@ -1383,14 +1424,14 @@
 - **Description**: Runs `func` `iterations` times. Returns Total Execution Time, Average Execution Time Per Run, The Last Result (if return is added in the code).
 - **NOTE: If `iterations` is not given, the code will run 10 times**
 
-### 16.3 `execution_time(func)`
+### 17.3 `execution_time(func)`
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
 - **Returns**: `number`, `any`
 - **Description**: Runs `func` and returns the time it takes to run `func`.
 
-### 16.4 `delay(t, func)`
+### 17.4 `delay(t, func)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `number` (R)
@@ -1398,7 +1439,7 @@
 - **Returns**: `nothing`
 - **Description**: Yields `t` seconds before running `func` without stopping other code.
 
-### 16.5 `delay_stop(t, func)`
+### 17.5 `delay_stop(t, func)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `number` (R)
