@@ -5,14 +5,14 @@
 
 # Summary
 
-- ## **Total Functions**: 172
+- ## **Total Functions**: 174
   - **Total `ult` Functions**: 0
   - **Total `system` Functions**: 0
   - **Total `math` Functions**: 41
   - **Total `string` Functions**: 11
   - **Total `table` Functions**: 24
   - **Total `input` Functions**: 6
-  - **Total `cryptography` Functions**: 30
+  - **Total `cryptography` Functions**: 32
   - **Total `color` Functions**: 6
   - **Total `remote` Functions**: 8
   - **Total `random` Functions**: 7
@@ -40,7 +40,7 @@
   - **Total `datetime` Variables**: 0
   - **Total Global Variables**: 0
 
-- ## **Total Functions and Variables**: 187
+- ## **Total Functions and Variables**: 189
 
 ## 1. ULT Library Variables
 
@@ -966,6 +966,20 @@
   - `email`: `string` (R)
 - **Returns**: `boolean`
 - **Description**: Validates whether `email` is a valid email address.
+
+### 7.31 `cryptography.binary_add(...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `...`: `string` (R)
+- **Returns**: `string`
+- **Description**: Adds two or more binary numbers together. Handles carries correctly even when adding 3+ numbers.
+
+### 7.32 `cryptography.binary_subtract(...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `...`: `string` (R)
+- **Returns**: `string`
+- **Description**: Subtracts two or more binary numbers (first - second - third - ...). Returns negative results with "-" prefix.
 
 ## 8. Color Library Functions
 

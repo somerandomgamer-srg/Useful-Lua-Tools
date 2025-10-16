@@ -1751,7 +1751,7 @@ end
 function cryptography.binary_subtract(...)
   local args = { ... }
   if #args < 2 then error("At least two binary numbers are required") end
-  
+
   for i, num in ipairs(args) do
     if type(num) ~= "string" then errorMsg("String", "num", num, i) end
     if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
