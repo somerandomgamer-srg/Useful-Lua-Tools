@@ -140,3 +140,6 @@
         - `cryptography.text_to_ascii`: Fixed invalid string indexing where string was accessed using bracket notation instead of substring method.
         - `cryptography.text_to_hex`: Fixed invalid string indexing where string was accessed using bracket notation instead of substring method.
         - `cryptography.text_to_octal`: Fixed invalid string indexing where string was accessed using bracket notation instead of substring method.
+
+# V2.0.1
+  - ## Date: Oct
