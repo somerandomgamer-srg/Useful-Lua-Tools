@@ -141,5 +141,11 @@
         - `cryptography.text_to_hex`: Fixed invalid string indexing where string was accessed using bracket notation instead of substring method.
         - `cryptography.text_to_octal`: Fixed invalid string indexing where string was accessed using bracket notation instead of substring method.
 
-# V2.0.1
-  - ## Date: Oct
+# V2.1.0
+- ## Date: Oct 16, 2025
+  - Started deprecating functions instead of just simply removing them.
+  - Added 1 new library
+    - `binary`: `binary.add(...)`, `binary.subtract(...)`, `binary.multiply(...)`, `binary.divide(...)`, `binary.band(...)`, `binary.bor(...)`, `binary.bxor(...)`, and `binary.bnot(bin)`
+  - Moved `cryptography.is_email(email)` and `cryptography.is_ip(ip, v6)` to the new `validate` library.
+  - Added 1 new `string` library function: `string.wrap(s, length)`
+  

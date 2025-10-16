@@ -2,17 +2,20 @@
 - ## **R**: Required parameter
 - ## **O**: Optional parameter
 - ## **...**: Multiple arguments
+- ## **D**: Deprecated (function still works but will be removed in future versions)
 
 # Summary
 
-- ## **Total Functions**: 174
+- ## **Total Functions**: 185
   - **Total `ult` Functions**: 0
   - **Total `system` Functions**: 0
   - **Total `math` Functions**: 41
-  - **Total `string` Functions**: 11
+  - **Total `string` Functions**: 12
   - **Total `table` Functions**: 24
   - **Total `input` Functions**: 6
   - **Total `cryptography` Functions**: 32
+  - **Total `binary` Functions**: 8
+  - **Total `validate` Functions**: 2
   - **Total `color` Functions**: 6
   - **Total `remote` Functions**: 8
   - **Total `random` Functions**: 7
@@ -40,7 +43,7 @@
   - **Total `datetime` Variables**: 0
   - **Total Global Variables**: 0
 
-- ## **Total Functions and Variables**: 189
+- ## **Total Functions and Variables**: 200
 
 ## 1. ULT Library Variables
 
@@ -511,6 +514,14 @@
 - **Returns**: `number`
 - **Description**: Calculates the Levenshtein distance between `s1` and `s2`. This distance represents the minimum number of single-character edits (insertions, deletions, or substitutions) required to change one word into the other.
 
+### 4.12 `string.wrap(s, length)`
+- **Type**: `function`
+- **Arguments**: 
+  - `s`: `string` (R)
+  - `length`: `number` (R)
+- **Returns**: `string`
+- **Description**: Wraps text `s` to the specified `length` characters per line, breaking at word boundaries when possible.
+
 ## 5. Table Library Functions
 
 ### 5.1 `table.contains(value, ...)`
@@ -952,7 +963,82 @@
 - **Returns**: `boolean`
 - **Description**: Validates a number using the Luhn algorithm (checksum formula used to validate credit card numbers and other identification numbers).
 
-### 7.29 `cryptography.is_ip(ip, v6)`
+### 7.29 `cryptography.is_ip(ip, v6)` **(D)**
+- **Type**: `function`
+- **Arguments**: 
+  - `ip`: `string` (R)
+  - `v6`: `boolean` (O)
+- **Returns**: `boolean`
+- **Description**: **DEPRECATED - Use `validate.ip()` instead.** Validates whether `ip` is a valid IP address. If `v6` is true, validates for IPv6; otherwise validates for IPv4.
+
+### 7.30 `cryptography.is_email(email)` **(D)**
+- **Type**: `function`
+- **Arguments**: 
+  - `email`: `string` (R)
+- **Returns**: `boolean`
+- **Description**: **DEPRECATED - Use `validate.email()` instead.** Validates whether `email` is a valid email address.
+
+## 8. Binary Library Functions
+
+### 8.1 `binary.add(...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `...`: `string` (R)
+- **Returns**: `string`
+- **Description**: Adds two or more binary numbers together. Handles carries correctly even when adding 3+ numbers.
+
+### 8.2 `binary.subtract(...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `...`: `string` (R)
+- **Returns**: `string`
+- **Description**: Subtracts two or more binary numbers (first - second - third - ...). Returns negative results with "-" prefix.
+
+### 8.3 `binary.multiply(...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `...`: `string` (R)
+- **Returns**: `string`
+- **Description**: Multiplies two or more binary numbers together.
+
+### 8.4 `binary.divide(...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `...`: `string` (R)
+- **Returns**: `string`
+- **Description**: Divides two or more binary numbers (first / second / third / ...). Returns integer division result.
+
+### 8.5 `binary.band(...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `...`: `string` (R)
+- **Returns**: `string`
+- **Description**: Performs bitwise AND operation on two or more binary numbers.
+
+### 8.6 `binary.bor(...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `...`: `string` (R)
+- **Returns**: `string`
+- **Description**: Performs bitwise OR operation on two or more binary numbers.
+
+### 8.7 `binary.bxor(...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `...`: `string` (R)
+- **Returns**: `string`
+- **Description**: Performs bitwise XOR operation on two or more binary numbers.
+
+### 8.8 `binary.bnot(bin)`
+- **Type**: `function`
+- **Arguments**: 
+  - `bin`: `string` (R)
+- **Returns**: `string`
+- **Description**: Performs bitwise NOT operation on a binary number (flips all bits).
+
+## 9. Validate Library Functions
+
+### 9.1 `validate.ip(ip, v6)`
 - **Type**: `function`
 - **Arguments**: 
   - `ip`: `string` (R)
@@ -960,30 +1046,16 @@
 - **Returns**: `boolean`
 - **Description**: Validates whether `ip` is a valid IP address. If `v6` is true, validates for IPv6; otherwise validates for IPv4.
 
-### 7.30 `cryptography.is_email(email)`
+### 19.2 `validate.email(email)`
 - **Type**: `function`
 - **Arguments**: 
   - `email`: `string` (R)
 - **Returns**: `boolean`
 - **Description**: Validates whether `email` is a valid email address.
 
-### 7.31 `cryptography.binary_add(...)`
-- **Type**: `function`
-- **Arguments**: 
-  - `...`: `string` (R)
-- **Returns**: `string`
-- **Description**: Adds two or more binary numbers together. Handles carries correctly even when adding 3+ numbers.
+## 10. Color Library Functions
 
-### 7.32 `cryptography.binary_subtract(...)`
-- **Type**: `function`
-- **Arguments**: 
-  - `...`: `string` (R)
-- **Returns**: `string`
-- **Description**: Subtracts two or more binary numbers (first - second - third - ...). Returns negative results with "-" prefix.
-
-## 8. Color Library Functions
-
-### 8.1 `color.rgb_to_hex(r, g, b)`
+### 18.1 `color.rgb_to_hex(r, g, b)`
 - **Type**: `function`
 - **Arguments**: 
   - `r`: `number` (R)
@@ -992,7 +1064,7 @@
 - **Returns**: `string`
 - **Description**: Converts RGB(`r`,`g`,`b`) to HEX(`RRGGBB`).
 
-### 8.2 `color.rgb_to_hsv(r, g, b)`
+### 18.2 `color.rgb_to_hsv(r, g, b)`
 - **Type**: `function`
 - **Arguments**: 
   - `r`: `number` (R)
@@ -1001,21 +1073,21 @@
 - **Returns**: `number`, `number`, `number`
 - **Description**: Converts RGB(`r`,`g`,`b`) to HSV(`h`,`s`,`v`).
 
-### 8.3 `color.hex_to_rgb(hex)`
+### 18.3 `color.hex_to_rgb(hex)`
 - **Type**: `function`
 - **Arguments**: 
   - `hex`: `string` (R)
 - **Returns**: `number`, `number`, `number`
 - **Description**: Converts HEX(`RRGGBB`) to RGB(`r`,`g`,`b`).
 
-### 8.4 `color.hex_to_hsv(hex)`
+### 18.4 `color.hex_to_hsv(hex)`
 - **Type**: `function`
 - **Arguments**: 
   - `hex`: `string` (R)
 - **Returns**: `number`, `number`, `number`
 - **Description**: Converts HEX(`RRGGBB`) to HSV(`h`,`s`,`v`).
 
-### 8.5 `color.hsv_to_rgb(h, s, v)`
+### 18.5 `color.hsv_to_rgb(h, s, v)`
 - **Type**: `function`
 - **Arguments**: 
   - `h`: `number` (R)
@@ -1024,7 +1096,7 @@
 - **Returns**: `number`, `number`, `number`
 - **Description**: Converts HSV(`h`,`s`,`v`) to RGB(`r`,`g`,`b`).
 
-### 8.6 `color.hsv_to_hex(h, s, v)`
+### 16.6 `color.hsv_to_hex(h, s, v)`
 - **Type**: `function`
 - **Arguments**: 
   - `h`: `number` (R)
@@ -1033,9 +1105,9 @@
 - **Returns**: `string`
 - **Description**: Converts HSV(`h`,`s`,`v`) to HEX(`RRGGBB`).
 
-## 9. Remote Library Functions
+## 11. Remote Library Functions
 
-### 9.1 `remote.register(name, ...)`
+### 19.1 `remote.register(name, ...)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
@@ -1043,48 +1115,48 @@
 - **Returns**: `nothing`
 - **Description**: Registers one or more functions under the given `name`. When `remote.call()` is called with this `name`, the registered function(s) will be executed.
 
-### 9.2 `remote.unregister(name)`
+### 19.2 `remote.unregister(name)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
 - **Returns**: `nothing`
 - **Description**: Removes the function(s) registered under the given `name`, making it unavailable for `remote.call()`.
 
-### 9.3 `remote.call(...)`
+### 15.3 `remote.call(...)`
 - **Type**: `function`
 - **Arguments**: 
   - `...`: `string` (R)
 - **Returns**: `nothing`
 - **Description**: Calls all functions registered under the given remotes. Multiple functions can be registered under the same name.
 
-### 9.4 `remote.exists(name)`
+### 15.4 `remote.exists(name)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if a remote with the given `name` is registered.
 
-### 9.5 `remote.remove(...)`
+### 15.5 `remote.remove(...)`
 - **Type**: `function`
 - **Arguments**: 
   - `...`: `string` (R)
 - **Returns**: `nothing`
 - **Description**: Removes one or more remotes from the remote registry.
 
-### 9.6 `remote.count(name)`
+### 13.6 `remote.count(name)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
 - **Returns**: `number`
 - **Description**: Returns the count of functions registered under the given `name`.
 
-### 9.7 `remote.list()`
+### 13.7 `remote.list()`
 - **Type**: `function`
 - **Arguments**: None
 - **Returns**: `table`
 - **Description**: Returns the list of all registered remote names.
 
-### 9.8 `remote.clear()`
+### 11.8 `remote.clear()`
 - **Type**: `function`
 - **Arguments**: None
 - **Returns**: `table`
@@ -1092,7 +1164,7 @@
 
 ## 10. Random Library
 
-### 10.1 `random.uuid(v)`
+### 18.1 `random.uuid(v)`
 - **Type**: `function`
 - **Arguments**: 
   - `v`: `1 = UUID V1`, `4 = UUID V4`, `6 = UUID V6` (R)
@@ -1114,14 +1186,14 @@
     - Uses random node ID instead of MAC address for privacy
     - Maintains v1 uniqueness with better database performance
 
-### 10.2 `random.sign(x)`
+### 18.2 `random.sign(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `number`
 - **Description**: Randomly makes `x` positive or negative.
 
-### 10.3 `random.number(min, max, decimals)`
+### 18.3 `random.number(min, max, decimals)`
 - **Type**: `function`
 - **Arguments**: 
   - `min`: `number` (R)
@@ -1130,7 +1202,7 @@
 - **Returns**: `number`
 - **Description**: Generates a random number between `min` and `max` with optional decimal places. If `decimals` is not provided, returns a whole number.
 
-### 10.4 `random.choice(t, amount)`
+### 18.4 `random.choice(t, amount)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `table` (R)
@@ -1138,20 +1210,20 @@
 - **Returns**: `any`
 - **Description**: Randomly selects element(s) from table `t`. Returns single element if `amount` < 2 or not provided, otherwise returns table of `amount` elements.
 
-### 10.5 `random.hex(len)`
+### 18.5 `random.hex(len)`
 - **Type**: `function`
 - **Arguments**: 
   - `len`: `number` (R)
 - **Returns**: `string`
 - **Description**: Generates a random hexadecimal string of specified length.
 
-### 10.6 `random.boolean()`
+### 16.6 `random.boolean()`
 - **Type**: `function`
 - **Arguments**: None
 - **Returns**: `boolean`
 - **Description**: Generates a random boolean value (true or false).
 
-### 10.7 `random.string(len, charset)`
+### 16.7 `random.string(len, charset)`
 - **Type**: `function`
 - **Arguments**: 
   - `len`: `number` (R)
@@ -1161,14 +1233,14 @@
 
 ## 11. Stack Library
 
-### 11.1 `stack.new(name)`
+### 19.1 `stack.new(name)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
 - **Returns**: `nothing`
 - **Description**: Creates a new stack with the specified name.
 
-### 11.2 `stack.add(name, ...)`
+### 19.2 `stack.add(name, ...)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
@@ -1176,7 +1248,7 @@
 - **Returns**: `nothing`
 - **Description**: Adds a one or more values to the stack with the specified name.
 
-### 11.3 `stack.take(name, remove)`
+### 15.3 `stack.take(name, remove)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
@@ -1184,28 +1256,28 @@
 - **Returns**: `any`
 - **Description**: Takes the top value from the stack with the specified name and removes it if remove is true.
 
-### 11.4 `stack.exists(name)`
+### 15.4 `stack.exists(name)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if the stack with the specified name exists.
 
-### 11.5 `stack.size(name)`
+### 15.5 `stack.size(name)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
 - **Returns**: `number`
 - **Description**: Returns the amount of values in the stack with the specified name.
 
-### 11.6 `stack.empty(name)`
+### 13.6 `stack.empty(name)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
 - **Returns**: `nothing`
 - **Description**: Empties the stack with the specified name.
 
-### 11.7 `stack.is_empty(name)`
+### 13.7 `stack.is_empty(name)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
@@ -1214,14 +1286,14 @@
 
 # 12. Queue Library
 
-### 12.1 `queue.new(name)`
+### 18.1 `queue.new(name)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
 - **Returns**: `nothing`
 - **Description**: Creates a new queue with the specified name.
 
-### 12.2 `queue.add(name, ...)`
+### 18.2 `queue.add(name, ...)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
@@ -1229,7 +1301,7 @@
 - **Returns**: `nothing`
 - **Description**: Adds one or more values to the queue with the specified name.
 
-### 12.3 `queue.take(name, remove)`
+### 18.3 `queue.take(name, remove)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
@@ -1237,28 +1309,28 @@
 - **Returns**: `any`
 - **Description**: Takes the top value from the queue with the specified name and removes it if remove is true.
 
-### 12.4 `queue.exists(name)`
+### 18.4 `queue.exists(name)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if the queue with the specified name exists.
 
-### 12.5 `queue.size(name)`
+### 18.5 `queue.size(name)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
 - **Returns**: `number`
 - **Description**: Returns the amount of values in the queue with the specified name.
 
-### 12.6 `queue.empty(name)`
+### 16.6 `queue.empty(name)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
 - **Returns**: `nothing`
 - **Description**: Empties the queue with the specified name.
 
-### 12.7 `queue.is_empty(name)`
+### 16.7 `queue.is_empty(name)`
 - **Type**: `function`
 - **Arguments**:
   - `name`: `string` (R)
@@ -1267,7 +1339,7 @@
 
 ## 13. Datetime Library
 
-### 13.1 `datetime.time(return_table)`
+### 19.1 `datetime.time(return_table)`
 - **Type**: `function`
 - **Arguments**:
   - `return_table`: `boolean` (O)
@@ -1275,7 +1347,7 @@
 - **Description**: Returns the current time.
   - If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
 
-### 13.2 `datetime.diff(n1, n2, return_table)`
+### 19.2 `datetime.diff(n1, n2, return_table)`
 - **Type**: `function`
 - **Arguments**:
   - `n1`: `number` (R)
@@ -1285,7 +1357,7 @@
 - **Description**: Returns the difference between the times `n1` and `n2`.
   - If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
 
-### 13.3 `datetime.add(return_table, ...)`
+### 15.3 `datetime.add(return_table, ...)`
 - **Type**: `function`
 - **Arguments**:
   - `return_table`: `boolean` (O)
@@ -1294,14 +1366,14 @@
 - **Description**: Returns the sum of each time given.
   - If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
 
-### 13.4 `datetime.to_table(num)`
+### 15.4 `datetime.to_table(num)`
 - **Type**: `function`
 - **Arguments**:
   - `num`: `number` (R)
 - **Returns**: `Table`
 - **Description**: Returns the time number `num` as a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
 
-### 13.5 `datetime.to_number(t)`
+### 15.5 `datetime.to_number(t)`
 - **Type**: `function`
 - **Arguments**:
   - `t`: `table` (R)
@@ -1310,7 +1382,7 @@
 
 ## 14. File Library
 
-### 14.1 `file.new(name, content)`
+### 18.1 `file.new(name, content)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
@@ -1318,14 +1390,14 @@
 - **Returns**: `nothing`
 - **Description**: Creates a file with the specified `name` and `content`.
 
-### 14.2 `file.read(name)`
+### 18.2 `file.read(name)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
 - **Returns**: `string`
 - **Description**: Reads the content of the file with the specified `name`.
 
-### 14.3 `file.rewrite(name, content)`
+### 18.3 `file.rewrite(name, content)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
@@ -1333,7 +1405,7 @@
 - **Returns**: `nothing`
 - **Description**: Rewrites the content of the file with the specified `name` with `content`.
 
-### 14.4 `file.append(name, content)`
+### 18.4 `file.append(name, content)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
@@ -1341,28 +1413,28 @@
 - **Returns**: `nothing`
 - **Description**: Appends `content` to the file with the specified `name`.
 
-### 14.5 `file.exists(name)`
+### 18.5 `file.exists(name)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if the file with the specified `name` exists.
 
-### 14.6 `file.size(name)`
+### 16.6 `file.size(name)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
 - **Returns**: `number`
 - **Description**: Returns the size of the file with the specified `name` in bytes.
 
-### 14.7 `file.lines(name)`
+### 16.7 `file.lines(name)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
 - **Returns**: `number`
 - **Description**: Returns the amount of lines in the file with the specified `name`.
 
-### 14.8 `file.delete(name)`
+### 16.8 `file.delete(name)`
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
@@ -1371,14 +1443,14 @@
 
 ## 15. JSON Library
 
-### 15.1 `json.encode(value)`
+### 19.1 `json.encode(value)`
 - **Type**: `function`
 - **Arguments**: 
   - `value`: `any` (R)
 - **Returns**: `string`
 - **Description**: Encodes a Lua table or value to a JSON string.
 
-### 15.2 `json.decode(str)`
+### 19.2 `json.decode(str)`
 - **Type**: `function`
 - **Arguments**: 
   - `str`: `string` (R)
@@ -1387,7 +1459,7 @@
 
 ## 16. HTTP Library
 
-### 16.1 `http.post(url, data)`
+### 18.1 `http.post(url, data)`
 - **Type**: `function`
 - **Arguments**: 
   - `url`: `string` (R)
@@ -1395,21 +1467,21 @@
 - **Returns**: `string`
 - **Description**: Sends a POST request to the specified `url` with the given JSON `data`. Supported on Windows, macOS, and Linux.
 
-### 16.2 `http.get(url)`
+### 18.2 `http.get(url)`
 - **Type**: `function`
 - **Arguments**: 
   - `url`: `string` (R)
 - **Returns**: `string`
 - **Description**: Sends a GET request to the specified `url`. Supported on Windows, macOS, and Linux.
 
-### 16.3 `http.delete(url)`
+### 18.3 `http.delete(url)`
 - **Type**: `function`
 - **Arguments**: 
   - `url`: `string` (R)
 - **Returns**: `string`
 - **Description**: Sends a DELETE request to the specified `url`. Supported on Windows, macOS, and Linux.
 
-### 16.4 `http.put(url, data)`
+### 18.4 `http.put(url, data)`
 - **Type**: `function`
 - **Arguments**: 
   - `url`: `string` (R)
@@ -1417,7 +1489,7 @@
 - **Returns**: `string`
 - **Description**: Sends a PUT request to the specified `url` with the given JSON `data`. Supported on Windows, macOS, and Linux.
 
-### 16.5 `http.patch(url, data)`
+### 18.5 `http.patch(url, data)`
 - **Type**: `function`
 - **Arguments**: 
   - `url`: `string` (R)
@@ -1425,16 +1497,16 @@
 - **Returns**: `string`
 - **Description**: Sends a PATCH request to the specified `url` with the given JSON `data`. Supported on Windows, macOS, and Linux.
 
-## 17. Global Functions
+## 19. Global Functions
 
-### 17.1 `wait(x)`
+### 19.1 `wait(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `nothing`
 - **Description**: Yields the code for `x` seconds. (Similar to python's wait function).
 
-### 17.2 `benchmark(func, iterations)`
+### 19.2 `benchmark(func, iterations)`
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
@@ -1443,14 +1515,14 @@
 - **Description**: Runs `func` `iterations` times. Returns Total Execution Time, Average Execution Time Per Run, The Last Result (if return is added in the code).
 - **NOTE: If `iterations` is not given, the code will run 10 times**
 
-### 17.3 `execution_time(func)`
+### 19.3 `execution_time(func)`
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
 - **Returns**: `number`, `any`
 - **Description**: Runs `func` and returns the time it takes to run `func`.
 
-### 17.4 `delay(t, func)`
+### 19.4 `delay(t, func)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `number` (R)
@@ -1458,10 +1530,25 @@
 - **Returns**: `nothing`
 - **Description**: Yields `t` seconds before running `func` without stopping other code.
 
-### 17.5 `delay_stop(t, func)`
+### 19.5 `delay_stop(t, func)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `number` (R)
   - `func`: `function` (R)
 - **Returns**: `nothing`
 - **Description**: Yields `t` seconds before running `func` while stopping other code.
+## 20. Deprecated Functions
+
+The following functions are deprecated and may be removed in future versions. Please use the suggested alternatives.
+
+### 20.1 `cryptography.is_ip(ip, v6)` **(D)**
+- **Deprecated in**: Version 2.1.0
+- **Replacement**: `validate.ip(ip, v6)`
+- **Description**: Validates whether `ip` is a valid IP address. If `v6` is true, validates for IPv6; otherwise validates for IPv4.
+- **Migration**: Replace `cryptography.is_ip(ip, v6)` with `validate.ip(ip, v6)`
+
+### 20.2 `cryptography.is_email(email)` **(D)**
+- **Deprecated in**: Version 2.1.0
+- **Replacement**: `validate.email(email)`
+- **Description**: Validates whether `email` is a valid email address.
+- **Migration**: Replace `cryptography.is_email(email)` with `validate.email(email)`

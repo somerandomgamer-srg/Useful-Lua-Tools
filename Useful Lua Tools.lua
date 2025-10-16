@@ -12,6 +12,24 @@ local function errorMsg(expected, name, value, index)
   end
 end
 
+---Helper function for binary library
+local function bin_to_dec(bin)
+  local dec = 0
+  for i = 1, #bin do dec = dec * 2 + tonumber(bin:sub(i, i)) end
+  return dec
+end
+
+---Helper function for binary library
+local function dec_to_bin(dec)
+  if dec == 0 then return "0" end
+  local bin = ""
+  while dec > 0 do
+    bin = tostring(dec % 2) .. bin
+    dec = math.floor(dec / 2)
+  end
+  return bin
+end
+
 ---Function for json.encode
 local function jsonEncode(val)
   local valType = type(val)
@@ -592,6 +610,12 @@ http = {}
 ---@class jsonlib
 json = {}
 
+---@class binarylib
+binary = {}
+
+---@class validatelib
+validate = {}
+
 -----------ULT Main Library-----------
 
 ---***SRG Custom Variable***
@@ -600,7 +624,7 @@ json = {}
 ---
 ---"Major Update"."Minor Update"."Patch/Very Minor Update"
 ---@nodiscard
-ult.version = "2.0.0"
+ult.version = "2.0.1"
 
 ---***SRG Custom Variable***
 ---
@@ -624,7 +648,7 @@ end
 ---
 ---The release date of the current ULT version
 ---@nodiscard
-ult.release_date = "10/10/2025"
+ult.release_date = "10/16/2025"
 
 ---***SRG Custom Variable***
 ---
@@ -633,6 +657,46 @@ ult.release_date = "10/10/2025"
 ---"Project"-"version"-"date of release"-"minimum lua version"
 ---@nodiscard
 ult.build = ("ult-%s-%s-%s"):format(ult.version, ult.release_date, ult.min_lua_ver)
+
+-----------Validate Library-----------
+
+---***SRG Custom Function***
+---
+---Validates whether or not `ip` is a valid ip address.
+---
+---If `v6` is true, validates for IPv6, otherwise validates for IPv4.
+---@param ip string
+---@param v6? boolean
+---@return boolean
+---@nodiscard
+function validate.ip(ip, v6)
+  if type(ip) ~= "string" then errorMsg("String", "ip", ip) end
+  if v6 and type(v6) ~= "boolean" then errorMsg("Boolean", "v6", v6) end
+
+  if v6 then
+    return ip:match("^%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x$") ~= nil
+  else
+    local t = string.split(ip, ".")
+    if #t ~= 4 then return false end
+    for _, v in ipairs(t) do
+      local num = tonumber(v)
+      if not num or num < 0 or num > 255 then return false end
+    end
+    return true
+  end
+end
+
+---***SRG Custom Function***
+---
+---Validates whether or not `email` is a valid email address.
+---@param email string
+---@return boolean
+---@nodiscard
+function validate.email(email)
+  if type(email) ~= "string" then errorMsg("String", "email", email) end
+
+  return email:match("^[%w%.%-]+@[%w%.%-]+%.[%w%.%-]+$") ~= nil
+end
 
 ------------Random Library------------
 
@@ -847,6 +911,249 @@ system.is_linux_based = io.popen("uname"):read() ~= nil
 ---
 ---Returns the Mac Address of the host system, or nil if it cannot be determined
 system.mac_address = getMac()
+
+------------Binary Library------------
+
+---***SRG Custom Function***
+---
+---Adds two or more binary numbers together.
+---@param ... string
+---@return string
+---@nodiscard
+function binary.add(...)
+  local args = { ... }
+  if #args < 2 then error("At least two binary numbers are required") end
+
+  for i, num in ipairs(args) do
+    if type(num) ~= "string" then errorMsg("String", "num", num, i) end
+    if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
+  end
+
+  local result = ""
+  local carry = 0
+  local length = math.max(table.unpack(table.map(args, function(x) return #x end)))
+
+  for i = 1, #args do
+    while #args[i] < length do args[i] = "0" .. args[i] end
+  end
+
+  for i = length, 1, -1 do
+    local sum = carry
+    for _, num in ipairs(args) do sum = sum + tonumber(num:sub(i, i)) end
+
+    result = tostring(sum % 2) .. result
+    carry = math.floor(sum / 2)
+  end
+
+  while carry > 0 do
+    result = tostring(carry % 2) .. result
+    carry = math.floor(carry / 2)
+  end
+
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Subtracts two or more binary numbers (first - second - third - ...).
+---Returns negative results with "-" prefix.
+---@param ... string
+---@return string
+---@nodiscard
+function binary.subtract(...)
+  local args = { ... }
+  if #args < 2 then error("At least two binary numbers are required") end
+
+  for i, num in ipairs(args) do
+    if type(num) ~= "string" then errorMsg("String", "num", num, i) end
+    if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
+  end
+
+  local result = bin_to_dec(args[1])
+  for i = 2, #args do result = result - bin_to_dec(args[i]) end
+
+  if result < 0 then
+    return "-" .. dec_to_bin(-result)
+  elseif result == 0 then
+    return "0"
+  else
+    return dec_to_bin(result)
+  end
+end
+
+---***SRG Custom Function***
+---
+---Multiplies two or more binary numbers together.
+---@param ... string
+---@return string
+---@nodiscard
+function binary.multiply(...)
+  local args = { ... }
+  if #args < 2 then error("At least two binary numbers are required") end
+
+  for i, num in ipairs(args) do
+    if type(num) ~= "string" then errorMsg("String", "num", num, i) end
+    if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
+  end
+
+  local result = bin_to_dec(args[1])
+  for i = 2, #args do result = result * bin_to_dec(args[i]) end
+
+  return dec_to_bin(result)
+end
+
+---***SRG Custom Function***
+---
+---Divides two or more binary numbers (first / second / third / ...).
+---@param ... string
+---@return string
+---@nodiscard
+function binary.divide(...)
+  local args = { ... }
+  if #args < 2 then error("At least two binary numbers are required") end
+
+  for i, num in ipairs(args) do
+    if type(num) ~= "string" then errorMsg("String", "num", num, i) end
+    if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
+  end
+
+  local result = bin_to_dec(args[1])
+  for i = 2, #args do
+    local d = bin_to_dec(args[i])
+    if d == 0 then error("Division by zero") end
+    result = result / d
+  end
+  result = math.floor(result)
+
+  return dec_to_bin(result)
+end
+
+---***SRG Custom Function***
+---
+---Performs bitwise AND operation on two or more binary numbers.
+---@param ... string
+---@return string
+---@nodiscard
+function binary.band(...)
+  local args = { ... }
+  if #args < 2 then error("At least two binary numbers are required") end
+
+  for i, num in ipairs(args) do
+    if type(num) ~= "string" then errorMsg("String", "num", num, i) end
+    if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
+  end
+
+  local length = math.max(table.unpack(table.map(args, function(x) return #x end)))
+
+  for i = 1, #args do
+    while #args[i] < length do args[i] = "0" .. args[i] end
+  end
+
+  local result = args[1]
+  for i = 2, #args do
+    for j = 1, #result do
+      if result:sub(j, j) == "1" and args[i]:sub(j, j) == "1" then
+        result = result:sub(1, j - 1) .. "1" .. result:sub(j + 1)
+      else
+        result = result:sub(1, j - 1) .. "0" .. result:sub(j + 1)
+      end
+    end
+  end
+
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Performs bitwise OR operation on two or more binary numbers.
+---@param ... string
+---@return string
+---@nodiscard
+function binary.bor(...)
+  local args = { ... }
+  if #args < 2 then error("At least two binary numbers are required") end
+
+  for i, num in ipairs(args) do
+    if type(num) ~= "string" then errorMsg("String", "num", num, i) end
+    if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
+  end
+
+  local length = math.max(table.unpack(table.map(args, function(x) return #x end)))
+
+  for i = 1, #args do
+    while #args[i] < length do args[i] = "0" .. args[i] end
+  end
+
+  local result = args[1]
+  for i = 2, #args do
+    for j = 1, #result do
+      if result:sub(j, j) == "1" or args[i]:sub(j, j) == "1" then
+        result = result:sub(1, j - 1) .. "1" .. result:sub(j + 1)
+      else
+        result = result:sub(1, j - 1) .. "0" .. result:sub(j + 1)
+      end
+    end
+  end
+
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Performs bitwise XOR operation on two or more binary numbers.
+---@param ... string
+---@return string
+---@nodiscard
+function binary.bxor(...)
+  local args = { ... }
+  if #args < 2 then error("At least two binary numbers are required") end
+
+  for i, num in ipairs(args) do
+    if type(num) ~= "string" then errorMsg("String", "num", num, i) end
+    if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
+  end
+
+  local length = math.max(table.unpack(table.map(args, function(x) return #x end)))
+
+  for i = 1, #args do
+    while #args[i] < length do args[i] = "0" .. args[i] end
+  end
+
+  local result = args[1]
+  for i = 2, #args do
+    for j = 1, #result do
+      if result:sub(j, j) == args[i]:sub(j, j) then
+        result = result:sub(1, j - 1) .. "0" .. result:sub(j + 1)
+      else
+        result = result:sub(1, j - 1) .. "1" .. result:sub(j + 1)
+      end
+    end
+  end
+
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Performs bitwise NOT operation on a binary number.
+---@param bin string
+---@return string
+---@nodiscard
+function binary.bnot(bin)
+  if type(bin) ~= "string" then errorMsg("String", "bin", bin) end
+  if not bin:match("^[01]+$") then error("Invalid binary number: " .. bin) end
+
+  local result = ""
+  for i = 1, #bin do
+    if bin:sub(i, i) == "1" then
+      result = result .. "0"
+    else
+      result = result .. "1"
+    end
+  end
+
+  return result
+end
 
 -------------Color Library------------
 
@@ -1084,9 +1391,9 @@ function cryptography.text_to_binary(s, x)
     x = 8
   end
 
-  local binary = ""
-  for i = 1, #s do binary = binary .. ("%0*b"):format(x, s:byte(i)) end
-  return string.trim(binary)
+  local bin = ""
+  for i = 1, #s do bin = bin .. ("%0*b"):format(x, s:byte(i)) end
+  return string.trim(bin)
 end
 
 ---***SRG Custom Function***
@@ -1207,10 +1514,10 @@ function cryptography.text_to_base64(s, alphabet)
 
   local bits = {}
   local encoded = ""
-  local binary = cryptography.text_to_binary(s)
+  local bin = cryptography.text_to_binary(s)
 
   for i = 1, #binary, 6 do
-    local chunk = binary:sub(i, i + 5)
+    local chunk = bin:sub(i, i + 5)
     while #chunk < 6 do chunk = chunk .. "0" end
     table.insert(bits, chunk)
   end
@@ -1247,13 +1554,13 @@ function cryptography.base64_to_text(s, alphabet)
 
   s = s:gsub("=", "")
 
-  local binary = ""
+  local bin = ""
 
-  for i = 1, #s do binary = binary .. base64Reverse[s:sub(i, i)] end
+  for i = 1, #s do bin = bin .. base64Reverse[s:sub(i, i)] end
 
-  if #binary % 8 ~= 0 then binary = binary:sub(1, #binary - (#binary % 8)) end
+  if #bin % 8 ~= 0 then bin = bin:sub(1, #bin - (#bin % 8)) end
 
-  return cryptography.binary_to_text(binary)
+  return cryptography.binary_to_text(bin)
 end
 
 ---***SRG Custom Function***
@@ -1282,10 +1589,10 @@ function cryptography.text_to_base32(s, alphabet)
 
   local bits = {}
   local encoded = ""
-  local binary = cryptography.text_to_binary(s)
+  local bin = cryptography.text_to_binary(s)
 
   for i = 1, #binary, 5 do
-    local chunk = binary:sub(i, i + 4)
+    local chunk = bin:sub(i, i + 4)
     while #chunk < 5 do chunk = chunk .. "0" end
     table.insert(bits, chunk)
   end
@@ -1322,13 +1629,13 @@ function cryptography.base32_to_text(s, alphabet)
 
   s = s:gsub("=", "")
 
-  local binary = ""
+  local bin = ""
 
-  for i = 1, #s do binary = binary .. base32Reverse[s:sub(i, i)] end
+  for i = 1, #s do bin = bin .. base32Reverse[s:sub(i, i)] end
 
-  if #binary % 8 ~= 0 then binary = binary:sub(1, #binary - (#binary % 8)) end
+  if #bin % 8 ~= 0 then bin = bin:sub(1, #bin - (#bin % 8)) end
 
-  return cryptography.binary_to_text(binary)
+  return cryptography.binary_to_text(bin)
 end
 
 ---***SRG Custom Function***
@@ -1666,127 +1973,31 @@ end
 
 ---***SRG Custom Function***
 ---
----Validates wether or not `ip` is a valid ip adress.
+---Validates whether or not `ip` is a valid ip address.
 ---
 ---If `v6` is true, validates for IPv6, otherwise validates for IPv4.
+---
+---Deprecated in favor of `validate.email()`
 ---@param ip string
 ---@param v6? boolean
 ---@return boolean
+---@deprecated
 ---@nodiscard
 function cryptography.is_ip(ip, v6)
-  if type(ip) ~= "string" then errorMsg("String", "ip", ip) end
-  if v6 and type(v6) ~= "boolean" then errorMsg("Boolean", "v6", v6) end
-
-  if v6 then
-    return ip:match("^%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x:%x%x%x%x$") ~= nil
-  else
-    local t = string.split(ip, ".")
-    if #t ~= 4 then return false end
-    for _, v in ipairs(t) do
-      local num = tonumber(v)
-      if not num or num < 0 or num > 255 then return false end
-    end
-    return true
-  end
+  return validate.ip(ip, v6)
 end
 
 ---***SRG Custom Function***
 ---
----Validates wether or not `email` is a valid email adress.
+---Validates whether or not `email` is a valid email address.
+---
+---Deprecated in favor of `validate.email(email)`
 ---@param email string
 ---@return boolean
+---@deprecated
 ---@nodiscard
 function cryptography.is_email(email)
-  if type(email) ~= "string" then errorMsg("String", "email", email) end
-
-  return email:match("^[%w%.%-]+@[%w%.%-]+%.[%w%.%-]+$") ~= nil
-end
-
----***SRG Custom Function***
----
----Adds two or more binary numbers together.
----@param ... string
----@return string
----@nodiscard
-function cryptography.binary_add(...)
-  local args = { ... }
-  if #args < 2 then error("At least two binary numbers are required") end
-
-  for i, num in ipairs(args) do
-    if type(num) ~= "string" then errorMsg("String", "num", num, i) end
-    if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
-  end
-
-  local result = ""
-  local carry = 0
-  local length = math.max(table.unpack(table.map(args, function(x) return #x end)))
-
-  for i = 1, #args do
-    while #args[i] < length do args[i] = "0" .. args[i] end
-  end
-
-  for i = length, 1, -1 do
-    local sum = carry
-    for _, num in ipairs(args) do sum = sum + tonumber(num:sub(i, i)) end
-
-    result = tostring(sum % 2) .. result
-    carry = math.floor(sum / 2)
-  end
-
-  while carry > 0 do
-    result = tostring(carry % 2) .. result
-    carry = math.floor(carry / 2)
-  end
-
-  return result
-end
-
----***SRG Custom Function***
----
----Subtracts two or more binary numbers (first - second - third - ...).
----Returns negative results with "-" prefix.
----@param ... string
----@return string
----@nodiscard
-function cryptography.binary_subtract(...)
-  local args = { ... }
-  if #args < 2 then error("At least two binary numbers are required") end
-
-  for i, num in ipairs(args) do
-    if type(num) ~= "string" then errorMsg("String", "num", num, i) end
-    if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
-  end
-
-  local function bin_to_dec(bin)
-    local dec = 0
-    for i = 1, #bin do
-      dec = dec * 2 + tonumber(bin:sub(i, i))
-    end
-    return dec
-  end
-
-  local function dec_to_bin(dec)
-    if dec == 0 then return "0" end
-    local bin = ""
-    while dec > 0 do
-      bin = tostring(dec % 2) .. bin
-      dec = math.floor(dec / 2)
-    end
-    return bin
-  end
-
-  local result = bin_to_dec(args[1])
-  for i = 2, #args do
-    result = result - bin_to_dec(args[i])
-  end
-
-  if result < 0 then
-    return "-" .. dec_to_bin(-result)
-  elseif result == 0 then
-    return "0"
-  else
-    return dec_to_bin(result)
-  end
+  return validate.email(email)
 end
 
 ---------Input Library---------
@@ -3233,6 +3444,34 @@ function string.levenshtein(s1, s2)
   if type(s1) ~= "string" then errorMsg("String", "s1", s1) end
   if type(s2) ~= "string" then errorMsg("String", "s2", s2) end
   return levenshteinMain(s1, s2, #s1, #s2)
+end
+
+---***SRG Custom Function***
+---
+---Wraps `s` to `length` characters per line
+---@param s string
+---@param length number
+---@return string
+---@nodiscard
+function string.wrap(s, length)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(length) ~= "number" then errorMsg("Number", "length", length) end
+
+  local wrapped = ""
+  local line = ""
+  for word in s:gmatch("%S+") do
+  if #line > 0 then
+    if #line + #word + 1 > length then
+      wrapped = wrapped .. line .. "\n"
+      line = word
+    else
+      line = line .. " " .. word
+    end
+  else
+    line = word
+  end
+  wrapped = wrapped .. line
+  return wrapped
 end
 
 ---------Table Library Extension---------
