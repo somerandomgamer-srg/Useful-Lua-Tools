@@ -2840,7 +2840,7 @@ end
 ---@param x number
 ---@return number
 ---@nodiscard
-math.sinh = function(x)
+function math.sinh(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return (math.exp(x) - math.exp(-x)) / 2
 end
@@ -2851,7 +2851,7 @@ end
 ---@param x number
 ---@return number
 ---@nodiscard
-math.cosh = function(x)
+function math.cosh(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return (math.exp(x) + math.exp(-x)) / 2
 end
@@ -2862,7 +2862,7 @@ end
 ---@param x number
 ---@return number
 ---@nodiscard
-math.tanh = function(x)
+function math.tanh(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   return math.sinh(x) / math.cosh(x)
 end
@@ -3460,15 +3460,16 @@ function string.wrap(s, length)
   local wrapped = ""
   local line = ""
   for word in s:gmatch("%S+") do
-  if #line > 0 then
-    if #line + #word + 1 > length then
-      wrapped = wrapped .. line .. "\n"
-      line = word
+    if #line > 0 then
+      if #line + #word + 1 > length then
+        wrapped = wrapped .. line .. "\n"
+        line = word
+      else
+        line = line .. " " .. word
+      end
     else
-      line = line .. " " .. word
+      line = word
     end
-  else
-    line = word
   end
   wrapped = wrapped .. line
   return wrapped
