@@ -6,44 +6,31 @@
 
 # Summary
 
-- ## **Total Functions**: 185
-  - **Total `ult` Functions**: 0
-  - **Total `system` Functions**: 0
+- ## **Total Functions**: 186
   - **Total `math` Functions**: 41
+  - **Total `cryptography` Functions**: 30
+  - **Total `table` Functions**: 27
   - **Total `string` Functions**: 12
-  - **Total `table` Functions**: 24
-  - **Total `input` Functions**: 6
-  - **Total `cryptography` Functions**: 32
-  - **Total `binary` Functions**: 8
-  - **Total `validate` Functions**: 2
-  - **Total `color` Functions**: 6
   - **Total `remote` Functions**: 8
-  - **Total `random` Functions**: 7
-  - **Total `stack` Functions**: 7
-  - **Total `queue` Functions**: 7
-  - **Total `datetime` Functions**: 5
   - **Total `file` Functions**: 8
-  - **Total `json` Functions**: 2
+  - **Total `binary` Functions**: 8
+  - **Total `stack` Functions**: 7
+  - **Total `random` Functions**: 7
+  - **Total `queue` Functions**: 7
+  - **Total `color` Functions**: 6
+  - **Total `input` Functions**: 6
   - **Total `http` Functions**: 5
+  - **Total `datetime` Functions**: 5
+  - **Total `validate` Functions**: 2
+  - **Total `json` Functions**: 2
+
   - **Total Global Functions**: 5
 
 - ## **Total Variables**: 15
   - **Total `ult` Variables**: 5
   - **Total `system` Variables**: 10
-  - **Total `math` Variables**: 0
-  - **Total `string` Variables**: 0
-  - **Total `table` Variables**: 0
-  - **Total `input` Variables**: 0
-  - **Total `cryptography` Variables**: 0
-  - **Total `color` Variables**: 0
-  - **Total `remote` Variables**: 0
-  - **Total `random` Variables**: 0
-  - **Total `stack` Variables**: 0
-  - **Total `queue` Variables**: 0
-  - **Total `datetime` Variables**: 0
-  - **Total Global Variables**: 0
 
-- ## **Total Functions and Variables**: 200
+- ## **Total Functions and Variables**: 201
 
 ## 1. ULT Library Variables
 

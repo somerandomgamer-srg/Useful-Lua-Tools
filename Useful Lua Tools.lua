@@ -648,7 +648,7 @@ end
 ---
 ---The release date of the current ULT version
 ---@nodiscard
-ult.release_date = "10/16/2025"
+ult.release_date = "10/17/2025"
 
 ---***SRG Custom Variable***
 ---

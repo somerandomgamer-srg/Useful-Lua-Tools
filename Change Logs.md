@@ -142,10 +142,12 @@
         - `cryptography.text_to_octal`: Fixed invalid string indexing where string was accessed using bracket notation instead of substring method.
 
 # V2.1.0
-- ## Date: Oct 16, 2025
-  - Started deprecating functions instead of just simply removing them.
-  - Added 1 new library
-    - `binary`: `binary.add(...)`, `binary.subtract(...)`, `binary.multiply(...)`, `binary.divide(...)`, `binary.band(...)`, `binary.bor(...)`, `binary.bxor(...)`, and `binary.bnot(bin)`
-  - Moved `cryptography.is_email(email)` and `cryptography.is_ip(ip, v6)` to the new `validate` library.
-  - Added 1 new `string` library function: `string.wrap(s, length)`
-  
+- ## Date: Oct 16, 2025 - Oct 17, 2025
+  - ## Oct 16, 2025
+    - Started deprecating functions instead of just simply removing them.
+    - Added 1 new library
+      - `binary`: `binary.add(...)`, `binary.subtract(...)`, `binary.multiply(...)`, `binary.divide(...)`, `binary.band(...)`, `binary.bor(...)`, `binary.bxor(...)`, and `binary.bnot(bin)`
+    - Moved `cryptography.is_email(email)` and `cryptography.is_ip(ip, v6)` to the new `validate` library.
+    - Added 1 new `string` library function: `string.wrap(s, length)`
+  - ## Oct 17, 2025
+    - Added `cmds.sh` for developer use. Example commands include: getting file-size of the ULT file and counting total functions and variables
