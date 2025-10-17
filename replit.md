@@ -1,133 +1,151 @@
-# Useful Lua Tools
+# Useful Lua Tools (ULT)
 
 ## Overview
 
-Useful Lua Tools (ULT) is a comprehensive Lua utility library that provides 186 functions and 15 variables organized into 16 specialized libraries. The project aims to simplify Lua development by offering pre-built solutions for cryptography, input handling, mathematical operations, string manipulation, table operations, system detection, color utilities, remote events, random number generation, data structures (stack/queue), datetime operations, file I/O, JSON handling, HTTP requests, binary operations, and validation utilities. Currently at version 2.1.0, the library is designed to be cross-platform compatible and supports Lua 5.3+ (uses native bitwise operators).
+Useful Lua Tools is a comprehensive Lua utility library providing **186 functions** and **15 variables** across **16 specialized libraries**. This toolkit simplifies Lua development by offering pre-built solutions for common tasks including cryptography, mathematical operations, string manipulation, data structures, file I/O, HTTP requests, and much more.
 
-## Project Status
+**Current Version**: 2.1.0  
+**Minimum Lua Version**: 5.3+
 
-- **Current Version**: 2.1.0
-- **Total Functions**: 186
-- **Total Variables**: 15
-- **Total Libraries**: 16
-- **Distribution Status**: Prepared for LuaRocks (awaiting unrestricted internet access)
-- **Latest Features**: Binary library, validate library, deprecation system
+## Features
 
-## Recent Changes (v2.1.0)
+### 📚 16 Specialized Libraries
 
-### New Libraries Added
-- **Binary Library** (8 functions): Binary string arithmetic and bitwise operations
-  - `binary.add`, `binary.subtract`, `binary.multiply`, `binary.divide`
-  - `binary.band`, `binary.bor`, `binary.bxor`, `binary.bnot`
-- **Validate Library** (2 functions): Input validation utilities
-  - `validate.ip` - IP address validation
-  - `validate.email` - Email validation
+- **Core Libraries**
+  - `ult` (5 variables) - Toolkit metadata and version info
+  - `system` (10 variables) - OS detection and system information
 
-### New Functions
-- **string.wrap** - Text wrapping with word boundary handling
+- **Data Manipulation**
+  - `math` (41 functions) - Advanced mathematical operations
+  - `string` (12 functions) - Text processing and manipulation
+  - `table` (24 functions) - Table utilities and operations
 
-### Deprecation System
-- Introduced backward-compatible deprecation system (v2.1.0)
-- Deprecated functions still work but will be removed in future versions
-- **Deprecated Functions**:
-  - `cryptography.is_ip` → Use `validate.ip` instead
-  - `cryptography.is_email` → Use `validate.email` instead
+- **Input/Output**
+  - `input` (6 functions) - User input handling
+  - `file` (8 functions) - File I/O operations
+  - `json` (2 functions) - JSON encoding/decoding
+  - `http` (5 functions) - HTTP requests (GET, POST, PUT, PATCH, DELETE)
 
-### Bug Fixes
-- Fixed binary_add multi-digit carry handling
-- Completely rewrote binary_subtract logic
-- Fixed binary.multiply missing function call
-- Fixed bitwise operations padding issues
+- **Security & Validation**
+  - `cryptography` (32 functions) - Encryption, hashing, encoding
+  - `validate` (2 functions) - Input validation (email, IP)
 
-## User Preferences
+- **Utilities**
+  - `binary` (8 functions) - Binary string arithmetic and bitwise operations
+  - `color` (6 functions) - Color conversion (RGB, HEX, HSV)
+  - `datetime` (5 functions) - Date and time operations
+  - `random` (7 functions) - Enhanced randomization
 
-Preferred communication style: Simple, everyday language.
+- **Data Structures & Events**
+  - `stack` (7 functions) - Stack data structure
+  - `queue` (7 functions) - Queue data structure
+  - `remote` (8 functions) - Event-driven programming
 
-## System Architecture
+- **Global Functions** (5 functions) - Utility functions available globally
 
-### Library Structure
-The project follows a modular library architecture where functionality is organized into specialized namespaces:
+### 🆕 What's New in v2.1.0
 
-- **Core Libraries**: `ult` (5 variables), `system` (10 variables)
-- **Math Library**: 41 functions for advanced mathematical operations
-- **String Library**: 12 functions for text manipulation
-- **Table Library**: 24 functions for table operations
-- **Input Library**: 6 functions for user input handling
-- **Cryptography Library**: 32 functions for encryption, hashing, and encoding
-- **Binary Library**: 8 functions for binary string operations (NEW in v2.1.0)
-- **Validate Library**: 2 functions for input validation (NEW in v2.1.0)
-- **Color Library**: 6 functions for color conversion (RGB, HEX, HSV)
-- **Remote Library**: 8 functions for event-driven programming
-- **Random Library**: 7 functions for enhanced randomization
-- **Stack Library**: 7 functions for stack data structure
-- **Queue Library**: 7 functions for queue data structure
-- **Datetime Library**: 5 functions for date/time operations
-- **File Library**: 8 functions for file I/O operations
-- **JSON Library**: 2 functions for JSON encoding/decoding
-- **HTTP Library**: 5 functions for HTTP requests (GET, POST, PUT, PATCH, DELETE)
-- **Global Functions**: 5 utility functions available globally
+**New Libraries:**
+- **Binary Library** - Perform arithmetic and bitwise operations on binary strings
+- **Validate Library** - Validate emails and IP addresses
+
+**New Functions:**
+- `string.wrap` - Wrap text to specified width with word boundary handling
+
+**Improvements:**
+- Introduced deprecation system for backward compatibility
+- Fixed binary arithmetic bugs (carry handling, subtraction logic)
+- Fixed bitwise operation padding issues
+
+**Deprecated Functions:**
+- `cryptography.is_ip()` → Use `validate.ip()` instead
+- `cryptography.is_email()` → Use `validate.email()` instead
+
+*Note: Deprecated functions still work but will be removed in future versions.*
+
+## Installation
+
+### Via LuaRocks (Coming Soon)
+```bash
+luarocks install useful-lua-tools
+```
+
+### Manual Installation
+1. Download `Useful Lua Tools.lua`
+2. Place it in your project directory
+3. Require it in your code:
+```lua
+require("Useful Lua Tools")
+```
+
+### Via Replit Template
+Fork the Replit template to get started immediately with examples and documentation.
+
+## Quick Start
+
+```lua
+-- Require the library
+require("Useful Lua Tools")
+
+-- Use any function from the libraries
+local hash = cryptography.sha256("Hello World")
+local shuffled = table.shuffle({1, 2, 3, 4, 5})
+local wrapped = string.wrap("This is a long text that needs wrapping", 20)
+local response = http.get("https://api.example.com/data")
+
+-- Check toolkit version
+print(ult.version)  -- "2.1.0"
+print(ult.build)    -- Full build information
+```
+
+## Compatibility
+
+### Platform Support
+- ✅ Windows
+- ✅ Linux
+- ✅ macOS
+- ✅ ChromeOS
+
+### Lua Version Support
+- **Minimum**: Lua 5.3 (required for native bitwise operators)
+- **Recommended**: Lua 5.4+
+
+### Dependencies
+- **Required**: Standard Lua libraries (`os`, `math`, `string`, `table`, `io`)
+- **Optional**: None - fully self-contained
+
+## Documentation
+
+- **Complete Function Reference**: See `Current Functions and Variables.md` for detailed documentation of all 186 functions
+- **Change History**: See `Change Logs.md` for version history and updates
+- **README**: See `README.md` for quick overview and examples
+
+### Function Notation
+- **(R)** - Required parameter
+- **(O)** - Optional parameter
+- **...** - Multiple arguments accepted
+- **(D)** - Deprecated (still works, but use alternative)
+
+## Architecture
+
+### Design Principles
+- **Namespace Isolation** - Functions grouped by purpose to avoid naming conflicts
+- **Self-Contained** - No external dependencies required
+- **Cross-Platform** - Automatic OS detection with fallback mechanisms
+- **Backward Compatible** - Deprecated functions continue to work while you migrate
 
 ### Module Organization
-Each library is self-contained and focuses on a specific domain of functionality. The architecture promotes:
-- **Namespace Isolation**: Functions are grouped by purpose to avoid naming conflicts
-- **Incremental Loading**: Libraries can be used independently
-- **Version Management**: Built-in version tracking and compatibility checking
-- **Backward Compatibility**: Deprecated functions continue to work while users migrate to new APIs
+Each library is independent and focused on a specific domain. You can use any combination of libraries without conflicts.
 
-### Cross-Platform Compatibility
-The system includes robust platform detection mechanisms:
-- **OS Detection**: Automatic identification of Windows, Linux, MacOS, and ChromeOS
-- **Lua Version Support**: Backward compatibility with older Lua versions (5.3+)
-- **Fallback Mechanisms**: Graceful degradation when certain features aren't available
+## License & Credits
 
-### Function Design Patterns
-- **LuaDoc Annotations**: Comprehensive documentation for all functions
-- **Error Handling**: Robust error checking and fallback behaviors
-- **Optional Parameters**: Flexible function signatures with sensible defaults
-- **Deprecation Warnings**: Clear migration paths for deprecated functions
+See the toolkit metadata for contributor information:
+```lua
+print(ult.contributors)
+```
 
-## Distribution Strategy
+---
 
-### LuaRocks Preparation
-- **Rockspec file**: `useful-lua-tools-2.0.0-1.rockspec` (ready for publishing)
-- **Source rock**: `useful-lua-tools-2.0.0-1.src.rock` (packaged with local tarball)
-- **Status**: Ready to publish when unrestricted internet access is available
+**Happy Coding with Useful Lua Tools!** 🚀
 
-### Access Blockers
-- School network (Securely software) blocks GitHub, Discord, Reddit, docs.replit.com
-- Alabama phone law prevents mobile workarounds
-- Restricted Chromebook environment
-- **Plan**: Publish to LuaRocks when accessing from home/library/college/summer break
-
-### Current Distribution
-- Available as Replit template
-- Direct download via `.src.rock` file
-- Manual installation supported
-
-## External Dependencies
-
-### Runtime Dependencies
-- **Lua Runtime**: Minimum version 5.3 (uses native bitwise operators &, |, <<, >>)
-- **Standard Lua Libraries**: Built-in `os`, `math`, `string`, `table`, and `io` libraries
-- **Platform-Specific APIs**: OS detection relies on system-level calls
-
-### Development Dependencies
-- **Lua Language Server**: Configuration provided via `.luarc.json` for development tooling
-- **Documentation Tools**: LuaDoc-compatible annotation system for function documentation
-
-### Optional Integrations
-- **Remote Events**: Inspired by Roblox Studio's remote event system for inter-component communication
-- **Cryptographic Functions**: Self-contained implementations without external crypto libraries
-- **Random Number Generation**: Enhanced random utilities beyond standard Lua math.random
-- **HTTP Requests**: Cross-platform support (Windows, macOS, Linux)
-- **JSON Operations**: Lightweight JSON encoding/decoding
-
-## Project Notes
-
-- This toolkit is the user's main coding project (user doesn't actively code applications)
-- Focus on maintaining comprehensive, well-documented utilities
-- Emphasis on backward compatibility through deprecation system
-- All changes tracked in `Change Logs.md`
-- Complete function reference maintained in `Current Functions and Variables.md`
-
-The architecture prioritizes simplicity and self-containment, minimizing external dependencies while providing comprehensive functionality for common Lua development tasks.
+For questions, issues, or contributions, please refer to the project repository.

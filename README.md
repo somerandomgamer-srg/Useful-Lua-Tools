@@ -43,9 +43,9 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 ## Disclaimers
-1. **No Support Obligation**: SRG is under no obligation to provide support, updates, or maintenance for this software.
+1. **No Support Obligation**: SRG is under no obligation to provide support, updates, or maintenance for this toolkit.
 
-2. **No Liability for Data Loss**: SRG is not responsible for any data loss or corruption that may occur from using this software.
+2. **No Liability for Data Loss**: SRG is not responsible for any data loss or corruption that may occur from using this toolkit.
 
 3. **Performance Considerations**: The functions provided may not be optimized for all use cases or performance requirements.
 
