@@ -624,7 +624,7 @@ validate = {}
 ---
 ---"Major Update"."Minor Update"."Patch/Very Minor Update"
 ---@nodiscard
-ult.version = "2.0.1"
+ult.version = "2.1.0"
 
 ---***SRG Custom Variable***
 ---
