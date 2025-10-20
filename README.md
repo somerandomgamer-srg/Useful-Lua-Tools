@@ -50,9 +50,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 3. **Performance Considerations**: The functions provided may not be optimized for all use cases or performance requirements.
 
-4. **Security Disclaimer**: While efforts have been made to implement secure functions, this software should not be used for critical security applications without thorough review and testing.
+4. **Security Disclaimer**: While efforts have been made to implement secure functions, this toolkit should not be used for critical security applications without thorough review and testing.
 
-5. **Compatibility**: The library may not be compatible with all Lua versions or implementations. Users should verify compatibility with their specific environment.
+5. **Compatibility**: The toolkit may not be compatible with all Lua versions or implementations. Users should verify compatibility with their specific environment.
 
 6. **Resource Usage**: Some functions may consume significant computational resources depending on input size and complexity. Users should test performance with their specific use cases.
 
