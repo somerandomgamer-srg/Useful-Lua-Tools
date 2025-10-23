@@ -23,21 +23,6 @@ Nothing much to say here.
 ```
 2. Start using the various functions in your application
 
-## What's New in 2.2.0
-This version adds 4 new functions:
-
-### Cryptography
-- **`cryptography.sha256(s)`** - SHA-256 cryptographic hashing for file integrity, password hashing, and data verification
-
-### HTTP
-- **`http.escape(s)`** - URL encoding for safe URLs (RFC 3986 compliant)
-- **`http.unescape(s)`** - URL decoding for percent-encoded strings
-
-### Validation
-- **`validate.url(url)`** - Validates URL format (with or without protocol)
-
-**Total Functions: 190** (up from 186)
-
 ## Contact
 For questions, suggestions, or contributions related to this template:
 
