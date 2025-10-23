@@ -151,3 +151,21 @@
     - Added 1 new `string` library function: `string.wrap(s, length)`
   - ## Oct 17, 2025
     - Added `cmds.sh` for developer use. Example commands include: getting file-size of the ULT file and counting total functions and variables
+
+# V2.2.0
+- ## Date: Oct 23, 2025
+- ## Description: Cryptography, HTTP, and Validation Enhancements
+  - Added 1 new `cryptography` library function: `cryptography.sha256(s)`
+    - Implements SHA-256 cryptographic hashing algorithm
+    - Works with both Lua 5.3+ (native bit operators) and Lua 5.2 (bit32 library)
+    - Useful for file integrity checks, password hashing, and data verification
+  - Added 2 new `http` library functions: `http.escape(s)` and `http.unescape(s)`
+    - `http.escape()`: URL encoding following RFC 3986 standards
+    - `http.unescape()`: URL decoding for percent-encoded strings
+  - Added 1 new `validate` library function: `validate.url(url)`
+    - Validates URL format with or without protocol (http:// or https://)
+    - Checks for proper domain structure, TLD, and optional paths/query parameters
+  - Fixed critical bugs in SHA-256 initialization:
+    - Fixed operator precedence in constant generation
+    - Fixed `maj()` function XOR operation
+  - **Total Functions: 190** (up from 186)
