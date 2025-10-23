@@ -6,9 +6,9 @@
 
 # Summary
 
-- ## **Total Functions**: 186
+- ## **Total Functions**: 190
   - **Total `math` Functions**: 41
-  - **Total `cryptography` Functions**: 30
+  - **Total `cryptography` Functions**: 31
   - **Total `table` Functions**: 27
   - **Total `string` Functions**: 12
   - **Total `remote` Functions**: 8
@@ -17,11 +17,11 @@
   - **Total `stack` Functions**: 7
   - **Total `random` Functions**: 7
   - **Total `queue` Functions**: 7
+  - **Total `http` Functions**: 7
   - **Total `color` Functions**: 6
   - **Total `input` Functions**: 6
-  - **Total `http` Functions**: 5
   - **Total `datetime` Functions**: 5
-  - **Total `validate` Functions**: 2
+  - **Total `validate` Functions**: 3
   - **Total `json` Functions**: 2
 
   - **Total Global Functions**: 5
@@ -30,7 +30,7 @@
   - **Total `ult` Variables**: 5
   - **Total `system` Variables**: 10
 
-- ## **Total Functions and Variables**: 201
+- ## **Total Functions and Variables**: 205
 
 ## 1. ULT Library Variables
 
@@ -965,6 +965,13 @@
 - **Returns**: `boolean`
 - **Description**: **DEPRECATED - Use `validate.email()` instead.** Validates whether `email` is a valid email address.
 
+### 7.31 `cryptography.sha256(s)`
+- **Type**: `function`
+- **Arguments**: 
+  - `s`: `string` (R)
+- **Returns**: `string`
+- **Description**: Computes the SHA-256 cryptographic hash of the input string `s`. Returns a 64-character hexadecimal string representing the 256-bit hash. Works with both Lua 5.3+ (native bit operators) and Lua 5.2 (bit32 library). Useful for file integrity checks, password hashing, and data verification.
+
 ## 8. Binary Library Functions
 
 ### 8.1 `binary.add(...)`
@@ -1033,12 +1040,19 @@
 - **Returns**: `boolean`
 - **Description**: Validates whether `ip` is a valid IP address. If `v6` is true, validates for IPv6; otherwise validates for IPv4.
 
-### 19.2 `validate.email(email)`
+### 9.2 `validate.email(email)`
 - **Type**: `function`
 - **Arguments**: 
   - `email`: `string` (R)
 - **Returns**: `boolean`
 - **Description**: Validates whether `email` is a valid email address.
+
+### 9.3 `validate.url(url)`
+- **Type**: `function`
+- **Arguments**: 
+  - `url`: `string` (R)
+- **Returns**: `boolean`
+- **Description**: Validates whether `url` is a valid URL. Accepts URLs with or without protocol (http:// or https://). Checks for proper domain structure, TLD, and optional paths/query parameters.
 
 ## 10. Color Library Functions
 
@@ -1483,6 +1497,20 @@
   - `data`: `string` (R)
 - **Returns**: `string`
 - **Description**: Sends a PATCH request to the specified `url` with the given JSON `data`. Supported on Windows, macOS, and Linux.
+
+### 18.6 `http.escape(s)`
+- **Type**: `function`
+- **Arguments**: 
+  - `s`: `string` (R)
+- **Returns**: `string`
+- **Description**: Escapes a string for safe use in URLs by converting special characters to percent-encoded format (e.g., space becomes %20). Follows RFC 3986 standards, preserving unreserved characters (alphanumeric, hyphen, underscore, period, tilde).
+
+### 18.7 `http.unescape(s)`
+- **Type**: `function`
+- **Arguments**: 
+  - `s`: `string` (R)
+- **Returns**: `string`
+- **Description**: Unescapes a percent-encoded URL string, converting %XX sequences back to their original characters. Complements `http.escape()` for decoding URL-encoded data.
 
 ## 19. Global Functions
 

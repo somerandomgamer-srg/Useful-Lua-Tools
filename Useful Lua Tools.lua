@@ -546,16 +546,16 @@ local sha256Constants = {}
 local function values256()
     for i, prime in ipairs({2, 3, 5, 7, 11, 13, 17, 19}) do
         local rt = math.sqrt(prime)
-        local frac = rt - math.floor(rt)
-        sha256Values[i] = math.floor(frac * 2^32)
+        local constant = math.floor(rt - math.floor(rt) * 2^32)
+        sha256Values[i] = string.format("0x%08X", constant)
     end
 end
 
 local function constants256()
   for i, prime in ipairs({2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311}) do
     local rt = prime ^ (1/3)
-    local frac = rt - math.floor(rt)
-    sha256Constants[i] = math.floor(frac * 2^32)
+    local constant = math.floor(rt - math.floor(rt) * 2^32)
+    sha256Constants[i] = string.format("0x%08X", constant)
   end
 end
 
@@ -646,7 +646,7 @@ validate = {}
 ---
 ---"Major Update"."Minor Update"."Patch/Very Minor Update"
 ---@nodiscard
-ult.version = "2.1.0"
+ult.version = "2.2.0"
 
 ---***SRG Custom Variable***
 ---
@@ -670,7 +670,7 @@ end
 ---
 ---The release date of the current ULT version
 ---@nodiscard
-ult.release_date = "10/17/2025"
+ult.release_date = "10/23/2025"
 
 ---***SRG Custom Variable***
 ---
@@ -2057,7 +2057,7 @@ function cryptography.sha256(s)
     if is53 then
       return (x & y) ~ (x & z) ~ (y & z)
     else
-      return bit32.bxor(bit32.band(x, y), bit32.band(x, z), bit32.band(y, z))
+      return bit32.bxor(bit32.band(x, y), bit32.band(x, z)), bit32.band(y, z)
     end
   end
 
@@ -2093,6 +2093,7 @@ function cryptography.sha256(s)
     end
   end
 
+
   local function add32(a, b)
     if is53 then
       return (a + b) & 0xFFFFFFFF
@@ -2101,42 +2102,32 @@ function cryptography.sha256(s)
       return sum % 0x100000000
     end
   end
-
   local msgLen = #s
   local bitLen = msgLen * 8
-  
+
   local padded = s .. string.char(0x80)
   local padLen = 64 - ((msgLen + 1 + 8) % 64)
-  if padLen < 64 then
-    padded = padded .. string.rep(string.char(0), padLen)
-  end
-  
-  for i = 7, 0, -1 do
-    padded = padded .. string.char(math.floor(bitLen / (2^(i*8))) % 256)
-  end
-  
+  if padLen < 64 then padded = padded .. string.rep(string.char(0), padLen) end
+
+  for i = 7, 0, -1 do padded = padded .. string.char(math.floor(bitLen / (2^(i*8))) % 256) end
+
   local h = {}
-  for i = 1, 8 do
-    h[i] = sha256Values[i]
-  end
-  
+  for i = 1, 8 do h[i] = sha256Values[i] end
+
   for chunk = 1, #padded, 64 do
     local w = {}
-    
+
     for i = 0, 15 do
       local offset = chunk + i * 4
-      w[i + 1] = padded:byte(offset) * 0x1000000 +
-                 padded:byte(offset + 1) * 0x10000 +
-                 padded:byte(offset + 2) * 0x100 +
-                 padded:byte(offset + 3)
+      w[i + 1] = padded:byte(offset) * 0x1000000 + padded:byte(offset + 1) * 0x10000 + padded:byte(offset + 2) * 0x100 + padded:byte(offset + 3)
     end
-    
+
     for i = 17, 64 do
       w[i] = add32(add32(add32(ssig1(w[i - 2]), w[i - 7]), ssig0(w[i - 15])), w[i - 16])
     end
-    
+
     local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
-    
+
     for i = 1, 64 do
       local t1 = add32(add32(add32(add32(h_, bsig1(e)), choose(e, f, g)), sha256Constants[i]), w[i])
       local t2 = add32(bsig0(a), maj(a, b, c))
@@ -2149,7 +2140,7 @@ function cryptography.sha256(s)
       b = a
       a = add32(t1, t2)
     end
-    
+
     h[1] = add32(h[1], a)
     h[2] = add32(h[2], b)
     h[3] = add32(h[3], c)
@@ -2159,12 +2150,10 @@ function cryptography.sha256(s)
     h[7] = add32(h[7], g)
     h[8] = add32(h[8], h_)
   end
-  
+
   local hash = ""
-  for i = 1, 8 do
-    hash = hash .. string.format("%08x", h[i])
-  end
-  
+  for i = 1, 8 do hash = hash .. string.format("%08x", h[i]) end
+
   return hash
 end
 
