@@ -540,6 +540,28 @@ local morseCodeTable = {
   ["?"] = "..--.."
 }
 
+local sha256Values = {}
+local sha256Constants = {}
+
+local function values256()
+    for i, prime in ipairs({2, 3, 5, 7, 11, 13, 17, 19}) do
+        local rt = math.sqrt(prime)
+        local frac = rt - math.floor(rt)
+        sha256Values[i] = math.floor(frac * 2^32)
+    end
+end
+
+local function constants256()
+  for i, prime in ipairs({2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311}) do
+    local rt = prime ^ (1/3)
+    local frac = rt - math.floor(rt)
+    sha256Constants[i] = math.floor(frac * 2^32)
+  end
+end
+
+values256()
+constants256()
+
 local function toBase64Table(alphabet)
   local base64Chars = {}
   for i = 1, #alphabet do
@@ -696,6 +718,18 @@ function validate.email(email)
   if type(email) ~= "string" then errorMsg("String", "email", email) end
 
   return email:match("^[%w%.%-]+@[%w%.%-]+%.[%w%.%-]+$") ~= nil
+end
+
+---***SRG Custom Function***
+---
+---Validates whether or not `url` is a valid URL.
+---@param url string
+---@return boolean
+---@nodiscard
+function validate.url(url)
+  if type(url) ~= "string" then errorMsg("String", "url", url) end
+
+  return url:match("^https?://[%w%-%.]+%.%w+[%w%.%-_/#?&=]*$") ~= nil or url:match("^[%w%-%.]+%.%w+[%w%.%-_/#?&=]*$") ~= nil
 end
 
 ------------Random Library------------
@@ -1998,6 +2032,140 @@ end
 ---@nodiscard
 function cryptography.is_email(email)
   return validate.email(email)
+end
+
+---***SRG Custom Function***
+---
+---Performs sha256 hashing on `s`.
+---@param s string
+---@return string
+---@nodiscard
+function cryptography.sha256(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  local words = {}
+
+  local function choose(x, y, z)
+    if is53 then
+      return (x & y) ~ ((~x) & z)
+    else
+      return bit32.bxor(bit32.band(x, y), bit32.band(bit32.bnot(x), z))
+    end
+  end
+
+  local function maj(x, y, z)
+    if is53 then
+      return (x & y) ~ (x & z) ~ (y & z)
+    else
+      return bit32.bxor(bit32.band(x, y), bit32.band(x, z), bit32.band(y, z))
+    end
+  end
+
+  local function bsig0(x)
+    if is53 then
+      return cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)
+    else
+      return bit32.bxor(bit32.rrotate(x, 2), bit32.rrotate(x, 13), bit32.rrotate(x, 22))
+    end
+  end
+
+  local function bsig1(x)
+    if is53 then
+      return cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)
+    else
+      return bit32.bxor(bit32.rrotate(x, 6), bit32.rrotate(x, 11), bit32.rrotate(x, 25))
+    end
+  end
+
+  local function ssig0(x)
+    if is53 then
+      return cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)
+    else
+      return bit32.bxor(bit32.rrotate(x, 7), bit32.rrotate(x, 18), bit32.rshift(x, 3))
+    end
+  end
+
+  local function ssig1(x)
+    if is53 then
+      return cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)
+    else
+      return bit32.bxor(bit32.rrotate(x, 17), bit32.rrotate(x, 19), bit32.rshift(x, 10))
+    end
+  end
+
+  local function add32(a, b)
+    if is53 then
+      return (a + b) & 0xFFFFFFFF
+    else
+      local sum = a + b
+      return sum % 0x100000000
+    end
+  end
+
+  local msgLen = #s
+  local bitLen = msgLen * 8
+  
+  local padded = s .. string.char(0x80)
+  local padLen = 64 - ((msgLen + 1 + 8) % 64)
+  if padLen < 64 then
+    padded = padded .. string.rep(string.char(0), padLen)
+  end
+  
+  for i = 7, 0, -1 do
+    padded = padded .. string.char(math.floor(bitLen / (2^(i*8))) % 256)
+  end
+  
+  local h = {}
+  for i = 1, 8 do
+    h[i] = sha256Values[i]
+  end
+  
+  for chunk = 1, #padded, 64 do
+    local w = {}
+    
+    for i = 0, 15 do
+      local offset = chunk + i * 4
+      w[i + 1] = padded:byte(offset) * 0x1000000 +
+                 padded:byte(offset + 1) * 0x10000 +
+                 padded:byte(offset + 2) * 0x100 +
+                 padded:byte(offset + 3)
+    end
+    
+    for i = 17, 64 do
+      w[i] = add32(add32(add32(ssig1(w[i - 2]), w[i - 7]), ssig0(w[i - 15])), w[i - 16])
+    end
+    
+    local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
+    
+    for i = 1, 64 do
+      local t1 = add32(add32(add32(add32(h_, bsig1(e)), choose(e, f, g)), sha256Constants[i]), w[i])
+      local t2 = add32(bsig0(a), maj(a, b, c))
+      h_ = g
+      g = f
+      f = e
+      e = add32(d, t1)
+      d = c
+      c = b
+      b = a
+      a = add32(t1, t2)
+    end
+    
+    h[1] = add32(h[1], a)
+    h[2] = add32(h[2], b)
+    h[3] = add32(h[3], c)
+    h[4] = add32(h[4], d)
+    h[5] = add32(h[5], e)
+    h[6] = add32(h[6], f)
+    h[7] = add32(h[7], g)
+    h[8] = add32(h[8], h_)
+  end
+  
+  local hash = ""
+  for i = 1, 8 do
+    hash = hash .. string.format("%08x", h[i])
+  end
+  
+  return hash
 end
 
 ---------Input Library---------
@@ -4342,6 +4510,32 @@ function http.patch(url, data)
     warn("Chrome OS is not supported for HTTP requests.")
   end
   return result
+end
+
+---***SRG Custom Function***
+---
+---Escapes a string for use in a URL.
+---@param s string
+---@return string
+---@nodiscard
+function http.escape(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  s = s:gsub("([^%w%-%.%_%~])", function(c) return string.format("%%%02X", c:byte()) end)
+  return s
+end
+
+---***SRG Custom Function***
+---
+---Unescapes a string from a URL.
+---@param s string
+---@return string
+---@nodiscard
+function http.unescape(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  s = s:gsub("%%(%x%x)", function(h) return string.char(tonumber(h, 16)) end)
+  return s
 end
 
 -------------JSON Library-------------
