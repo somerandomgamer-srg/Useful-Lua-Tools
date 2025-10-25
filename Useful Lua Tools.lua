@@ -2093,7 +2093,6 @@ function cryptography.sha256(s)
     end
   end
 
-
   local function add32(a, b)
     if is53 then
       return (a + b) & 0xFFFFFFFF
