@@ -57,7 +57,7 @@ local function jsonEncode(val)
     for k, _ in pairs(val) do
       count = count + 1
       if type(k) ~= "number" or k ~= count then
-        isArray = false
+        isTable = false
         break
       end
     end
