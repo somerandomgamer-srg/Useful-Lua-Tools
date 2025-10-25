@@ -1,0 +1,31 @@
+modules = ["lua-5.4"]
+
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+packages = ["lua5_4"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Lua 5.3+ Test"
+
+[[workflows.workflow]]
+name = "Lua 5.3+ Test"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "lua benchmark_sha256.lua"
+
+[workflows.workflow.metadata]
+outputType = "console"

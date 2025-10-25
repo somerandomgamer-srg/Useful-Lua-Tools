@@ -483,7 +483,6 @@ local function getMac()
   end
 end
 
-local is53 = tonumber(_VERSION:sub(5)) >= 5.3
 
 local morseCodeTable = {
   ["a"] = ".-",
@@ -546,16 +545,16 @@ local sha256Constants = {}
 local function values256()
     for i, prime in ipairs({2, 3, 5, 7, 11, 13, 17, 19}) do
         local rt = math.sqrt(prime)
-        local constant = math.floor(rt - math.floor(rt) * 2^32)
-        sha256Values[i] = string.format("0x%08X", constant)
+        local constant = math.floor((rt - math.floor(rt)) * 2^32)
+        sha256Values[i] = constant
     end
 end
 
 local function constants256()
   for i, prime in ipairs({2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311}) do
     local rt = prime ^ (1/3)
-    local constant = math.floor(rt - math.floor(rt) * 2^32)
-    sha256Constants[i] = string.format("0x%08X", constant)
+    local constant = math.floor((rt - math.floor(rt)) * 2^32)
+    sha256Constants[i] = constant
   end
 end
 
@@ -660,7 +659,7 @@ ult.contributors = {
 ---
 ---The minimum version of Lua required to run Useful Lua Tools
 ---@nodiscard
-ult.min_lua_ver = "5.2"
+ult.min_lua_ver = "5.3"
 
 if _VERSION:sub(5) < ult.min_lua_ver then
   error("Useful Lua Tools requires Lua " .. ult.min_lua_ver .. " or higher. You are running Lua " .. _VERSION:sub(5))
@@ -1764,15 +1763,11 @@ end
 function cryptography.bswap(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
-  if not is53 then
-    return bit.bswap(x)
-  else
-    local byte1 = (x & 0xFF) << 24
-    local byte2 = ((x >> 8) & 0xFF) << 16
-    local byte3 = ((x >> 16) & 0xFF) << 8
-    local byte4 = (x >> 24) & 0xFF
-    return (byte1 | byte2) | (byte3 | byte4)
-  end
+  local byte1 = (x & 0xFF) << 24
+  local byte2 = ((x >> 8) & 0xFF) << 16
+  local byte3 = ((x >> 16) & 0xFF) << 8
+  local byte4 = (x >> 24) & 0xFF
+  return (byte1 | byte2) | (byte3 | byte4)
 end
 
 ---***SRG Custom Function***
@@ -1785,12 +1780,11 @@ function cryptography.rol(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
+  x = x & 0xFFFFFFFF
   disp = disp % 32
-  if not is53 then
-    return bit32.lrotate(x, disp)
-  else
-    return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
-  end
+  local left = (x << disp) & 0xFFFFFFFF
+  local right = (x >> (32 - disp)) & 0xFFFFFFFF
+  return (left | right) & 0xFFFFFFFF
 end
 
 ---***SRG Custom Function***
@@ -1803,12 +1797,11 @@ function cryptography.ror(x, disp)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
+  x = x & 0xFFFFFFFF
   disp = disp % 32
-  if not is53 then
-    return bit32.rrotate(x, disp)
-  else
-    return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
-  end
+  local right = (x >> disp) & 0xFFFFFFFF
+  local left = (x << (32 - disp)) & 0xFFFFFFFF
+  return (right | left) & 0xFFFFFFFF
 end
 
 ---***SRG Custom Function***
@@ -1819,16 +1812,12 @@ end
 function cryptography.number_to_bit(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
-  if not is53 then
-    return bit.tobit(x)
-  else
-    local binary = ""
-    for i = 31, 0, -1 do
-      local bit = (x >> i) & 1
-      binary = binary .. bit
-    end
-    return binary
+  local binary = ""
+  for i = 31, 0, -1 do
+    local bit = (x >> i) & 1
+    binary = binary .. bit
   end
+  return binary
 end
 
 ---***SRG Custom Function***
@@ -1853,13 +1842,9 @@ function cryptography.btest(...)
     if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
   end
 
-  if not is53 then
-    return bit32.btest(table.unpack(args))
-  else
-    local result = args[1]
-    for i = 2, #args do result = result & args[i] end
-    return result ~= 0
-  end
+  local result = args[1]
+  for i = 2, #args do result = result & args[i] end
+  return result ~= 0
 end
 
 ---***SRG Custom Function***
@@ -1875,12 +1860,8 @@ function cryptography.extract(n, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
   width = width or 1
 
-  if not is53 then
-    return bit32.extract(n, field, width)
-  else
-    local mask = (1 << width) - 1
-    return (n >> field) & mask
-  end
+  local mask = (1 << width) - 1
+  return (n >> field) & mask
 end
 
 ---***SRG Custom Function***
@@ -1898,12 +1879,8 @@ function cryptography.replace(n, v, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
   width = width or 1
 
-  if not is53 then
-    return bit32.replace(n, v, field, width)
-  else
-    local mask = (1 << width) - (1 << field)
-    return (n & ~mask) | ((v & (1 << width) - 1) << field)
-  end
+  local mask = (1 << width) - (1 << field)
+  return (n & ~mask) | ((v & (1 << width) - 1) << field)
 end
 
 ---***SRG Custom Function***
@@ -1924,12 +1901,7 @@ function cryptography.xor(s, key)
   for i = 1, #s do
     local charByte = s:sub(i, i):byte()
     local keyByte = key:sub((i - 1) % #key + 1, (i - 1) % #key + 1):byte()
-    local encryptedByte
-    if not is53 then
-      encryptedByte = bit32.bxor(charByte, keyByte)
-    else
-      encryptedByte = charByte ~ keyByte
-    end
+    local encryptedByte = charByte ~ keyByte
     encrypted = encrypted .. string.char(encryptedByte)
   end
 
@@ -2046,60 +2018,31 @@ function cryptography.sha256(s)
   local words = {}
 
   local function choose(x, y, z)
-    if not is53 then
-      return bit32.bxor(bit32.band(x, y), bit32.band(bit32.bnot(x), z))
-    else
-      return (x & y) ~ ((~x) & z)
-    end
+    return ((x & y) ~ (((~x) & 0xFFFFFFFF) & z)) & 0xFFFFFFFF
   end
 
   local function maj(x, y, z)
-    if not is53 then
-      return bit32.bxor(bit32.band(x, y), bit32.band(x, z)), bit32.band(y, z)
-    else
-      return (x & y) ~ (x & z) ~ (y & z)
-    end
+    return ((x & y) ~ (x & z) ~ (y & z)) & 0xFFFFFFFF
   end
 
   local function bsig0(x)
-    if not is53 then
-      return bit32.bxor(bit32.rrotate(x, 2), bit32.rrotate(x, 13), bit32.rrotate(x, 22))
-    else
-      return cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)
-    end
+    return (cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)) & 0xFFFFFFFF
   end
 
   local function bsig1(x)
-    if not is53 then
-      return bit32.bxor(bit32.rrotate(x, 6), bit32.rrotate(x, 11), bit32.rrotate(x, 25))
-    else
-      return cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)
-    end
+    return (cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)) & 0xFFFFFFFF
   end
 
   local function ssig0(x)
-    if not is53 then
-      return bit32.bxor(bit32.rrotate(x, 7), bit32.rrotate(x, 18), bit32.rshift(x, 3))
-    else
-      return cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)
-    end
+    return (cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)) & 0xFFFFFFFF
   end
 
   local function ssig1(x)
-    if not is53 then
-      return bit32.bxor(bit32.rrotate(x, 17), bit32.rrotate(x, 19), bit32.rshift(x, 10))
-    else
-      return cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)
-    end
+    return (cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)) & 0xFFFFFFFF
   end
 
   local function add32(a, b)
-    if not is53 then
-      local sum = a + b
-      return sum % 0x100000000
-    else
-      return (a + b) & 0xFFFFFFFF
-    end
+    return (a + b) & 0xFFFFFFFF
   end
 
   local msgLen = #s
