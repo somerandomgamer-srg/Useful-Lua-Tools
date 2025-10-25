@@ -2101,6 +2101,7 @@ function cryptography.sha256(s)
       return sum % 0x100000000
     end
   end
+
   local msgLen = #s
   local bitLen = msgLen * 8
 
