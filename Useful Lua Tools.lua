@@ -1764,14 +1764,14 @@ end
 function cryptography.bswap(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
-  if is53 then
+  if not is53 then
+    return bit.bswap(x)
+  else
     local byte1 = (x & 0xFF) << 24
     local byte2 = ((x >> 8) & 0xFF) << 16
     local byte3 = ((x >> 16) & 0xFF) << 8
     local byte4 = (x >> 24) & 0xFF
     return (byte1 | byte2) | (byte3 | byte4)
-  else
-    return bit.bswap(x)
   end
 end
 
@@ -1786,10 +1786,10 @@ function cryptography.rol(x, disp)
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
   disp = disp % 32
-  if is53 then
-    return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
-  else
+  if not is53 then
     return bit32.lrotate(x, disp)
+  else
+    return ((x << disp) | (x >> (32 - disp))) & 0xFFFFFFFF
   end
 end
 
@@ -1804,10 +1804,10 @@ function cryptography.ror(x, disp)
   if type(disp) ~= "number" then errorMsg("Number", "disp", disp) end
 
   disp = disp % 32
-  if is53 then
-    return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
-  else
+  if not is53 then
     return bit32.rrotate(x, disp)
+  else
+    return ((x >> disp) | (x << (32 - disp))) & 0xFFFFFFFF
   end
 end
 
@@ -1819,15 +1819,15 @@ end
 function cryptography.number_to_bit(x)
   if type(x) ~= "number" then errorMsg("Number", "x", x) end
 
-  if is53 then
+  if not is53 then
+    return bit.tobit(x)
+  else
     local binary = ""
     for i = 31, 0, -1 do
       local bit = (x >> i) & 1
       binary = binary .. bit
     end
     return binary
-  else
-    return bit.tobit(x)
   end
 end
 
@@ -1853,12 +1853,12 @@ function cryptography.btest(...)
     if type(num) ~= "number" then errorMsg("Number", "num", num, i) end
   end
 
-  if is53 then
+  if not is53 then
+    return bit32.btest(table.unpack(args))
+  else
     local result = args[1]
     for i = 2, #args do result = result & args[i] end
     return result ~= 0
-  else
-    return bit32.btest(table.unpack(args))
   end
 end
 
@@ -1875,11 +1875,11 @@ function cryptography.extract(n, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
   width = width or 1
 
-  if is53 then
+  if not is53 then
+    return bit32.extract(n, field, width)
+  else
     local mask = (1 << width) - 1
     return (n >> field) & mask
-  else
-    return bit32.extract(n, field, width)
   end
 end
 
@@ -1898,11 +1898,11 @@ function cryptography.replace(n, v, field, width)
   if width and type(width) ~= "number" then errorMsg("Number", "width", width) end
   width = width or 1
 
-  if is53 then
+  if not is53 then
+    return bit32.replace(n, v, field, width)
+  else
     local mask = (1 << width) - (1 << field)
     return (n & ~mask) | ((v & (1 << width) - 1) << field)
-  else
-    return bit32.replace(n, v, field, width)
   end
 end
 
@@ -1925,10 +1925,10 @@ function cryptography.xor(s, key)
     local charByte = s:sub(i, i):byte()
     local keyByte = key:sub((i - 1) % #key + 1, (i - 1) % #key + 1):byte()
     local encryptedByte
-    if is53 then
-      encryptedByte = charByte ~ keyByte
-    else
+    if not is53 then
       encryptedByte = bit32.bxor(charByte, keyByte)
+    else
+      encryptedByte = charByte ~ keyByte
     end
     encrypted = encrypted .. string.char(encryptedByte)
   end
@@ -2046,59 +2046,59 @@ function cryptography.sha256(s)
   local words = {}
 
   local function choose(x, y, z)
-    if is53 then
-      return (x & y) ~ ((~x) & z)
-    else
+    if not is53 then
       return bit32.bxor(bit32.band(x, y), bit32.band(bit32.bnot(x), z))
+    else
+      return (x & y) ~ ((~x) & z)
     end
   end
 
   local function maj(x, y, z)
-    if is53 then
-      return (x & y) ~ (x & z) ~ (y & z)
-    else
+    if not is53 then
       return bit32.bxor(bit32.band(x, y), bit32.band(x, z)), bit32.band(y, z)
+    else
+      return (x & y) ~ (x & z) ~ (y & z)
     end
   end
 
   local function bsig0(x)
-    if is53 then
-      return cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)
-    else
+    if not is53 then
       return bit32.bxor(bit32.rrotate(x, 2), bit32.rrotate(x, 13), bit32.rrotate(x, 22))
+    else
+      return cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)
     end
   end
 
   local function bsig1(x)
-    if is53 then
-      return cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)
-    else
+    if not is53 then
       return bit32.bxor(bit32.rrotate(x, 6), bit32.rrotate(x, 11), bit32.rrotate(x, 25))
+    else
+      return cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)
     end
   end
 
   local function ssig0(x)
-    if is53 then
-      return cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)
-    else
+    if not is53 then
       return bit32.bxor(bit32.rrotate(x, 7), bit32.rrotate(x, 18), bit32.rshift(x, 3))
+    else
+      return cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)
     end
   end
 
   local function ssig1(x)
-    if is53 then
-      return cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)
-    else
+    if not is53 then
       return bit32.bxor(bit32.rrotate(x, 17), bit32.rrotate(x, 19), bit32.rshift(x, 10))
+    else
+      return cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)
     end
   end
 
   local function add32(a, b)
-    if is53 then
-      return (a + b) & 0xFFFFFFFF
-    else
+    if not is53 then
       local sum = a + b
       return sum % 0x100000000
+    else
+      return (a + b) & 0xFFFFFFFF
     end
   end
 
