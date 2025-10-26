@@ -154,10 +154,18 @@
 
 # V2.2.0
 - ## Date: Oct 23, 2025
-- ## Description: Cryptography, HTTP, and Validation Enhancements
+- ## Description: Cryptography, HTTP, Validation Enhancements, and Lua 5.3+ Migration
   - Added 1 new `cryptography` library function:
     - `cryptography.sha256(s)`
   - Added 2 new `http` library functions:
     - `http.escape()`, and `http.unescape()`
   - Added 1 new `validate` library function:
     - `validate.url(url)`
+  - **BREAKING CHANGE**: Migrated to Lua 5.3+ only (removed Lua 5.2 support)
+    - Updated `min_lua_ver` from "5.2" to "5.3"
+    - Removed all conditional version checks and Lua 5.2 fallback code
+    - Now uses native bitwise operators (`&`, `|`, `<<`, `>>`, `~`) exclusively
+    - Removed dependencies on `bit32` library and LuaJIT `bit` library
+    - Fixed critical bugs in SHA256 initialization (hash values were stored as strings instead of numbers)
+    - Added proper 32-bit masking throughout cryptographic functions for Lua 5.4 compatibility
+    - **Rationale**: Lua 5.2 cannot parse Lua 5.3+ bitwise operators even in conditional blocks, making true backward compatibility impossible without complex dynamic code loading
