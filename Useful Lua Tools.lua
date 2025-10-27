@@ -1,6 +1,10 @@
 ---@diagnostic disable: unused-local
+---@diagnostic disable: param-type-mismatch
+---@diagnostic disable: return-type-mismatch
+---@diagnostic disable: duplicate-set-field
+---@diagnostic disable: lowercase-global
 
----------Initiation and Module Variables---------
+---------Initiation and Module Variables
 
 ---Error message formatter
 local function errorMsg(expected, name, value, index)
@@ -2307,7 +2311,7 @@ end
 ---Takes the top value from the stack with the specified `name` and removes it if `remove` is true.
 ---@param name string
 ---@param remove? boolean
----@return value any
+---@return any
 function stack.take(name, remove)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
@@ -2394,7 +2398,7 @@ end
 ---Takes the first value from the queue with the specified `name` and removes it if `remove` is true.
 ---@param name string
 ---@param remove? boolean
----@return value any
+---@return any
 function queue.take(name, remove)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
@@ -2517,7 +2521,7 @@ end
 ---If `return_table` is false or not given, returns a number in the format `Year Month Day Hour Minute Second`. Otherwise, returns a table with the values `year`, `month`, `day`, `hour`, `minute`, and `second`.
 ---@param return_table? boolean
 ---@param ... number
----@return number
+---@return number|table
 ---@nodiscard
 function datetime.add(return_table, ...)
   if return_table and type(return_table) ~= "boolean" then errorMsg("Boolean", "return_table", return_table) end
@@ -4518,7 +4522,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Runs `func` `iterations` times
+---Runs `func` `iterations` times with the given arguments.
 ---
 ---NOTE: If `iterations` is not given, the code will run 10 times
 ---
@@ -4528,10 +4532,11 @@ end
 ---- `The Last Result (if return is added in the code)`
 ---@param func function
 ---@param iterations? number
+---@param ...? any
 ---@return number Total_Timer
 ---@return number Average_Time_Per_Run
 ---@return string Last_Result
-function benchmark(func, iterations)
+function benchmark(func, iterations, ...)
   if type(func) ~= "function" then errorMsg("Function", "func", func) end
   if iterations then
     if type(iterations) ~= "number" then errorMsg("Number", "iterations", iterations) end
@@ -4543,7 +4548,7 @@ function benchmark(func, iterations)
   local lastResult
 
   for i = 1, iterations do
-    local success, result = pcall(func)
+    local success, result = pcall(func, ...)
     if not success then error("Error in iteration " .. i .. ": " .. result) end
     lastResult = result
   end
@@ -4554,15 +4559,16 @@ end
 
 ---***SRG Custom Function***
 ---
----Runs `func` and returns the time it takes to run `func`
+---Runs `func` and returns the time it takes to run `func` with the given arguments.
 ---@param func function
+---@param ... any
 ---@return number Time
 ---@return string Result
-function execution_time(func)
+function execution_time(func, ...)
   if type(func) ~= "function" then errorMsg("Function", "func", func) end
 
   local start = os.clock()
-  local success, result = pcall(func)
+  local success, result = pcall(func, ...,)
   if not success then error("Error executing function: " .. result) end
 
   return os.clock() - start, result
@@ -4570,30 +4576,32 @@ end
 
 ---***SRG Custom Function***
 ---
----Yields `t` seconds before running `func` without stopping other code.
+---Yields `t` seconds before running `func` with the given arguments without stopping other code.
 ---@param t number
 ---@param func function
----@return any
-function delay(t, func)
+---@return boolean success
+---@return any result
+function delay(t, func, ...)
   if type(t) ~= "number" then errorMsg("Number", "t", t) end
   if type(func) ~= "function" then errorMsg("Function", "func", func) end
 
   return coroutine.wrap(function()
     wait(t)
-    return func()
+    return pcall(func, ...)
   end)()
 end
 
 ---***SRG Custom Function***
 ---
----Yields `t` seconds before running `func` while stopping other code.
+---Yields `t` seconds before running `func` with the given arguments while stopping other code.
 ---@param t number
 ---@param func function
----@return any
-function delay_stop(t, func)
+---@return boolean success
+---@return any result
+function delay_stop(t, func, ...)
   if type(t) ~= "number" then errorMsg("Number", "t", t) end
   if type(func) ~= "function" then errorMsg("Function", "func", func) end
 
   wait(t)
-  return func()
+  return pcall(func, ...)
 end

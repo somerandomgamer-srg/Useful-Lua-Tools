@@ -165,3 +165,9 @@
     - Updated `min_lua_ver` from "5.2" to "5.3"
     - Removed all conditional version checks and Lua 5.2 fallback code
     - Now uses native bitwise operators (`&`, `|`, `<<`, `>>`, `~`) exclusively
+
+# V2.3.0
+- ## Date: Oct 27, 2025 - ???
+  - ## Oct 27, 2025
+    - Functions with function arguments now accept arguments that are passed onto the function
+      - `delay_stop`, `delay`, `benchmark`, and `execution_time`
