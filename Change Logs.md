@@ -169,5 +169,5 @@
 # V2.3.0
 - ## Date: Oct 27, 2025 - ???
   - ## Oct 27, 2025
-    - Functions with function arguments now accept arguments that are passed onto the function
+    - Functions now accept additional arguments to pass to their `func` parameter.
       - `delay_stop`, `delay`, `benchmark`, and `execution_time`
