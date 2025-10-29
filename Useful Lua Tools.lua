@@ -2110,7 +2110,7 @@ function cryptography.sha256(s)
   for i = 1, 8 do h[i] = sha256Values[i] end
 
   for chunk = 1, #padded, 64 do
-    local w = {}
+    local w = table.create and table.create(64, 0) or {}
 
     for i = 0, 15 do
       local offset = chunk + i * 4
@@ -2146,10 +2146,10 @@ function cryptography.sha256(s)
     h[8] = add32(h[8], h_)
   end
 
-  local hash = ""
-  for i = 1, 8 do hash = hash .. string.format("%08x", h[i]) end
+  local hash = {}
+  for i = 1, 8 do hash[i] = string.format("%08x", h[i]) end
 
-  return hash
+  return table.concat(hash)
 end
 
 ---------Input Library---------
