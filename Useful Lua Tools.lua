@@ -2069,8 +2069,6 @@ end
 function cryptography.sha256(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
-  local words = {}
-
   local function choose(x, y, z)
     return ((x & y) ~ (((~x) & 0xFFFFFFFF) & z)) & 0xFFFFFFFF
   end
