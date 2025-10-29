@@ -2110,7 +2110,7 @@ function cryptography.sha256(s)
   for i = 1, 8 do h[i] = sha256Values[i] end
 
   for chunk = 1, #padded, 64 do
-    local w = table.create and table.create(64, 0) or {}
+    local w = {}
 
     for i = 0, 15 do
       local offset = chunk + i * 4
