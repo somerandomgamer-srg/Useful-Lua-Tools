@@ -2072,6 +2072,7 @@ function cryptography.sha256(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
   if cache256[s] then return cache256[s] end
+  if #cache256 > 1000 then cache256 = {} end
 
   local function choose(x, y, z) return ((x & y) ~ (((~x) & 0xFFFFFFFF) & z)) & 0xFFFFFFFF end
 
