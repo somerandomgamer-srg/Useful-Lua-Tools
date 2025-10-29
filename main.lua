@@ -9,8 +9,8 @@ local function benchmark(description, input, iterations)
     print("  Iterations: " .. iterations)
     
     local start_time = os.clock()
-    for i = 1, iterations do
-        cryptography.sha256(input)
+    for _ = 1, iterations do
+        _ = cryptography.sha256(input)
     end
     local end_time = os.clock()
     
