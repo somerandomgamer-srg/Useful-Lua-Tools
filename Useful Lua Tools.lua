@@ -543,6 +543,53 @@ local morseCodeTable = {
   ["?"] = "..--.."
 }
 
+---@alias terminal_styles
+---| "b" --Bold
+---| "i" --Italic
+---| "u" --Underline
+---| "s" --Strikethrough
+---| "tbk" --Text Black
+---| "tr" --Text Red
+---| "tg" --Text Green
+---| "ty" --Text Yellow
+---| "tbl" --Text Blue
+---| "tm" --Text Magenta
+---| "tc" --Text Cyan
+---| "tw" --Text White
+---| "bbk" --Background Black
+---| "br" --Background Red
+---| "bg" --Background Green
+---| "by" --Background Yellow
+---| "bbl" --Background Blue
+---| "bm" --Background Magenta
+---| "bc" --Background Cyan
+---| "bw" --Background White
+---| "o" --Overline
+
+local terminalStyles = {
+  ["b"] = 1, --Bold
+  ["i"] = 3, --Italic
+  ["u"] = 4, --Underline
+  ["s"] = 9, --Strikethrough
+  ["tbk"] = 30, --Text Black
+  ["tr"] = 31, --Text Red
+  ["tg"] = 32, --Text Green
+  ["ty"] = 33, --Text Yellow
+  ["tbl"] = 34, --Text Blue
+  ["tm"] = 35, --Text Magenta
+  ["tc"] = 36, --Text Cyan
+  ["tw"] = 37, --Text White
+  ["bbk"] = 40, --Background Black
+  ["br"] = 41, --Background Red
+  ["bg"] = 42, --Background Green
+  ["by"] = 43, --Background Yellow
+  ["bbl"] = 44, --Background Blue
+  ["bm"] = 45, --Background Magenta
+  ["bc"] = 46, --Background Cyan
+  ["bw"] = 47, --Background White
+  ["o"] = 53, --Overline
+}
+
 local sha256Values = {}
 local sha256Constants = {}
 
@@ -640,6 +687,9 @@ binary = {}
 
 ---@class validatelib
 validate = {}
+
+---@class terminallib
+terminal = {}
 
 -----------ULT Main Library-----------
 
@@ -3342,6 +3392,66 @@ function math.clamp(x, min, max)
   end
 end
 
+---***SRG Custom Function***
+---
+---Converts a value from one range to another.
+---@param x number
+---@param min1 number
+---@param max1 number
+---@param min2 number
+---@param max2 number
+---@return number
+---@nodiscard
+function math.map(x, min1, max1, min2, max2)
+  if type(x) ~= "number" then errorMsg("Number", "x", x) end
+  if type(min1) ~= "number" then errorMsg("Number", "min1", min1) end
+  if type(max1) ~= "number" then errorMsg("Number", "max1", max1) end
+  if type(min2) ~= "number" then errorMsg("Number", "min2", min2) end
+  if type(max2) ~= "number" then errorMsg("Number", "max2", max2) end
+
+  return (x - min1) * (max2 - min2) / (max1 - min1) + min2
+end
+
+---***SRG Custom Function***
+---
+---Calculates the distance between two points on a 2d plane.
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
+---@return number
+---@nodiscard
+function math.distance2d(x1, y1, x2, y2)
+  if type(x1) ~= "number" then errorMsg("Number", "x1", x1) end
+  if type(y1) ~= "number" then errorMsg("Number", "y1", y1) end
+  if type(x2) ~= "number" then errorMsg("Number", "x2", x2) end
+  if type(y2) ~= "number" then errorMsg("Number", "y2", y2) end
+
+  return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+end
+
+---***SRG Custom Function***
+---
+---Calculates the distance between two points on a 3d plane.
+---@param x1 number
+---@param y1 number
+---@param z1 number
+---@param x2 number
+---@param y2 number
+---@param z2 number
+---@return number
+---@nodiscard
+function math.distance3d(x1, y1, z1, x2, y2, z2)
+  if type(x1) ~= "number" then errorMsg("Number", "x1", x1) end
+  if type(y1) ~= "number" then errorMsg("Number", "y1", y1) end
+  if type(z1) ~= "number" then errorMsg("Number", "z1", z1) end
+  if type(x2) ~= "number" then errorMsg("Number", "x2", x2) end
+  if type(y2) ~= "number" then errorMsg("Number", "y2", y2) end
+  if type(z2) ~= "number" then errorMsg("Number", "z2", z2) end
+
+  return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2 + (z2 - z1) ^ 2)
+end
+
 ---------String Library Extension---------
 
 ---***SRG Custom Function***
@@ -4500,6 +4610,56 @@ function json.decode(s)
   return jsonDecode(s)
 end
 
+-----------Terminal Library-----------
+
+---***SRG Custom Function***
+---
+---Clears the terminal.
+function terminal.clear()
+  if system.is_windows then
+    os.execute("cls")
+  else
+    os.execute("clear")
+  end
+end
+
+---***SRG Custom Function***
+---
+---Makes a specific bit of text styled with the specified styles.
+---@param text string
+---@param ... terminal_styles
+---@return string
+---@nodiscard
+function terminal.style(text, ...)
+  if type(text) ~= "string" then errorMsg("String", "text", text) end
+
+  local styled = "\\033["
+  local styles = { ... }
+
+  for i, style in ipairs(styles) do
+    if type(style) ~= "string" then errorMsg("String", "style", style, i + 1) end
+    if not terminalStyles[style] then error("Invalid style: " .. style) end
+    styled = styled .. terminalStyles[style] .. ";"
+  end
+
+  styled = styled:sub(1, -2) .. "m" .. text .. "\\033[0m"
+  return styled
+end
+
+---***SRG Custom Function***
+---
+---Outputs text stylized with terminal.style() to the terminal.
+---@param text string
+function terminal.out(text)
+  if type(text) ~= "string" then errorMsg("String", "text", text) end
+
+  print(text)
+end
+
+---***SRG Custom Function***
+---
+---Returns the current terminal width.
+
 ------------Global Library------------
 
 ---***SRG Custom Function***
@@ -4568,7 +4728,7 @@ function execution_time(func, ...)
   if type(func) ~= "function" then errorMsg("Function", "func", func) end
 
   local start = os.clock()
-  local success, result = pcall(func, ...,)
+  local success, result = pcall(func, ...)
   if not success then error("Error executing function: " .. result) end
 
   return os.clock() - start, result
@@ -4579,15 +4739,17 @@ end
 ---Yields `t` seconds before running `func` with the given arguments without stopping other code.
 ---@param t number
 ---@param func function
+---@param ...? any
 ---@return boolean success
 ---@return any result
 function delay(t, func, ...)
   if type(t) ~= "number" then errorMsg("Number", "t", t) end
   if type(func) ~= "function" then errorMsg("Function", "func", func) end
 
+  local args = { ... }
   return coroutine.wrap(function()
     wait(t)
-    return pcall(func, ...)
+    return pcall(func, table.unpack(args))
   end)()
 end
 
@@ -4596,6 +4758,7 @@ end
 ---Yields `t` seconds before running `func` with the given arguments while stopping other code.
 ---@param t number
 ---@param func function
+---@param ...? any
 ---@return boolean success
 ---@return any result
 function delay_stop(t, func, ...)
