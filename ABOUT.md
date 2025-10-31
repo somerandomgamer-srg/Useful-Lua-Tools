@@ -16,9 +16,9 @@
 
 ### Functions per Library
 | Library | Function Count |
-|---------|----------------|
+|:-------:|:--------------:|
 | math | 44 |
-| **cryptography** | **31** |
+| **cryptography** | **31** (includes SHA-256) |
 | table | 27 |
 | string | 12 |
 | remote | 8 |
@@ -37,7 +37,7 @@
 
 ### Variables per Library
 | Library | Variable Count |
-|---------|----------------|
+|:-------:|:--------------:|
 | system | 10 |
 | ult | 5 |
 
@@ -81,7 +81,7 @@ Our implementation achieves impressive performance in pure interpreted Lua:
 Computing fresh SHA-256 hashes for unique data:
 
 | Test Case | Input Size | Throughput |
-|-----------|-----------|------------|
+|:----------|:----------:|:----------:|
 | Empty string | 0 bytes | ~7,000 h/s |
 | Short string (abc) | 3 bytes | ~7,500 h/s |
 | Medium string | 44 bytes | ~7,500 h/s |
@@ -95,7 +95,7 @@ Computing fresh SHA-256 hashes for unique data:
 When hashing the same data multiple times (cache enabled):
 
 | Test Case | Input Size | Throughput |
-|-----------|-----------|------------|
+|:----------|:----------:|:----------:|
 | Cached empty string | 0 bytes | **~10.5 million h/s** |
 | Cached short string | 3 bytes | **~9.4 million h/s** |
 | Cached medium string | 44 bytes | **~7.7 million h/s** |
