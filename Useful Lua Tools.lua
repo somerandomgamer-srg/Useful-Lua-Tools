@@ -4,13 +4,12 @@
 ---@diagnostic disable: duplicate-set-field
 ---@diagnostic disable: lowercase-global
 
----------Initiation and Module Variables
+---------Initiation and Module Variables---------
 
 ---Error message formatter
 local function errorMsg(expected, name, value, index)
   if index then
-    error(("%s expected for '%s' at argument %d, given: %s (%s)"):format(expected, name, index, tostring(value),
-      type(value)))
+    error(("%s expected for '%s' at argument %d, given: %s (%s)"):format(expected, name, index, tostring(value), type(value)))
   else
     error(("%s expected for '%s', given: %s (%s)"):format(expected, name, tostring(value), type(value)))
   end
@@ -29,7 +28,7 @@ local function dec_to_bin(dec)
   local bin = ""
   while dec > 0 do
     bin = tostring(dec % 2) .. bin
-    dec = math.floor(dec / 2)
+    dec = dec // 2
   end
   return bin
 end
@@ -263,8 +262,8 @@ local function uuid1and6(v)
   end
 
   local low = timestamp % 0x100000000
-  local middle = math.floor(timestamp / 0x100000000) % 0x10000
-  local high = math.floor(timestamp / 0x1000000000000) % 0x1000
+  local middle = (timestamp // 0x100000000) % 0x10000
+  local high = (timestamp // 0x1000000000000) % 0x1000
 
   if v == 1 then
     high = high + 0x1000
@@ -272,7 +271,7 @@ local function uuid1and6(v)
     high = high + 0x6000
   end
 
-  local cHigh = math.floor(clockSeq / 256) % 64 + 128
+  local cHigh = (clockSeq // 256) % 64 + 128
   local cLow = clockSeq % 256
 
   return low, middle, high, cHigh, cLow, macAddr
@@ -307,7 +306,7 @@ local function uuid6()
   local low, middle, high, cHigh, cLow, macAddr = uuid1and6(6)
 
   local time_high = math.floor((high % 0x1000) * 0x10000) + middle
-  local time_mid = math.floor(low / 0x10000)
+  local time_mid = low // 0x10000
   local time_low_and_version = (low % 0x1000) + 0x6000
 
   return string.format(
@@ -596,11 +595,11 @@ local sha256Values = {}
 local sha256Constants = {}
 
 local function values256()
-    for i, prime in ipairs({2, 3, 5, 7, 11, 13, 17, 19}) do
-        local rt = math.sqrt(prime)
-        local constant = math.floor((rt - math.floor(rt)) * 2^32)
-        sha256Values[i] = constant
-    end
+  for i, prime in ipairs({2, 3, 5, 7, 11, 13, 17, 19}) do
+      local rt = math.sqrt(prime)
+      local constant = math.floor((rt - math.floor(rt)) * 2^32)
+      sha256Values[i] = constant
+  end
 end
 
 local function constants256()
@@ -1031,12 +1030,12 @@ function binary.add(...)
     for _, num in ipairs(args) do sum = sum + tonumber(num:sub(i, i)) end
 
     result = tostring(sum % 2) .. result
-    carry = math.floor(sum / 2)
+    carry = sum // 2
   end
 
   while carry > 0 do
     result = tostring(carry % 2) .. result
-    carry = math.floor(carry / 2)
+    carry = carry // 2
   end
 
   return result
@@ -1261,7 +1260,7 @@ function color.rgb_to_hex(rgb)
     return str:sub(n, n), str:sub(nn, nn), str:sub(nnn, nnn)
   end
 
-  local n1, n3, n5 = process(math.floor(r / 16), math.floor(g / 16), math.floor(b / 16))
+  local n1, n3, n5 = process(r // 16, g // 16, b // 16)
 
   local n2, n4, n6 = process(r % 16, g % 16, b % 16)
 
@@ -1758,7 +1757,7 @@ function cryptography.text_to_base58(s, alphabet)
 
   while num >= 58 do
     local rem = num % 58
-    num = math.floor(num / 58)
+    num = num // 58
     encoded = base58Chars[rem] .. encoded
   end
 
@@ -1801,7 +1800,7 @@ function cryptography.base58_to_text(s, alphabet)
 
   while num >= 256 do
     local rem = num % 256
-    num = math.floor(num / 256)
+    num = num // 256
     decoded = string.char(rem) .. decoded
   end
 
@@ -2074,66 +2073,73 @@ function cryptography.sha256(s)
   if cache256[s] then return cache256[s] end
   if #cache256 > 1000 then cache256 = {} end
 
-  local function choose(x, y, z) return ((x & y) ~ (((~x) & 0xFFFFFFFF) & z)) & 0xFFFFFFFF end
+  -- local function choose(x, y, z) return ((x & y) ~ (((~x) & 0xFFFFFFFF) & z)) & 0xFFFFFFFF end
 
-  local function maj(x, y, z) return ((x & y) ~ (x & z) ~ (y & z)) & 0xFFFFFFFF end
+  -- local function maj(x, y, z) return ((x & y) ~ (x & z) ~ (y & z)) & 0xFFFFFFFF end
 
-  local function bsig0(x) return (cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)) & 0xFFFFFFFF end
+  -- local function bsig0(x) return (cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)) & 0xFFFFFFFF end
 
-  local function bsig1(x) return (cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)) & 0xFFFFFFFF end
+  -- local function bsig1(x) return (cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)) & 0xFFFFFFFF end
 
-  local function ssig0(x) return (cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)) & 0xFFFFFFFF end
+  -- local function ssig0(x) return (cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)) & 0xFFFFFFFF end
 
-  local function ssig1(x) return (cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)) & 0xFFFFFFFF end
+  -- local function ssig1(x) return (cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)) & 0xFFFFFFFF end
 
-  local function add32(a, b) return (a + b) & 0xFFFFFFFF end
+  -- local function add32(a, b) return (a + b) & 0xFFFFFFFF end
 
-  local msgLen = #s
-  local bitLen = msgLen * 8
+  -- local msgLen = #s
+  -- local bitLen = msgLen * 8
 
-  local padded = s .. string.char(0x80)
-  local padLen = 64 - ((msgLen + 1 + 8) % 64)
-  if padLen < 64 then padded = padded .. string.rep(string.char(0), padLen) end
+  -- local padLen = 64 - ((msgLen + 1 + 8) % 64)
+  -- local padded = s .. string.char(0x80) .. (padLen < 64 and string.rep(string.char(0), padLen) or "") .. string.char(
+  --   (bitLen >> 56) & 0xFF,
+  --   (bitLen >> 48) & 0xFF,
+  --   (bitLen >> 40) & 0xFF,
+  --   (bitLen >> 32) & 0xFF,
+  --   (bitLen >> 24) & 0xFF,
+  --   (bitLen >> 16) & 0xFF,
+  --   (bitLen >> 8) & 0xFF,
+  --   bitLen & 0xFF
+  -- )
 
-  for i = 7, 0, -1 do padded = padded .. string.char(math.floor(bitLen / (2^(i*8))) % 256) end
+  -- local h = {}
+  -- for i = 1, 8 do h[i] = sha256Values[i] end
 
-  local h = {}
-  for i = 1, 8 do h[i] = sha256Values[i] end
+  -- for chunk = 1, #padded, 64 do
+  --   local w = {}
 
-  for chunk = 1, #padded, 64 do
-    local w = {}
+  --   for i = 0, 15 do
+  --     local offset = chunk + i * 4
+  --     w[i + 1] = padded:byte(offset) * 0x1000000 + padded:byte(offset + 1) * 0x10000 + padded:byte(offset + 2) * 0x100 + padded:byte(offset + 3)
+  --   end
 
-    for i = 0, 15 do
-      local offset = chunk + i * 4
-      w[i + 1] = padded:byte(offset) * 0x1000000 + padded:byte(offset + 1) * 0x10000 + padded:byte(offset + 2) * 0x100 + padded:byte(offset + 3)
-    end
+  --   for i = 17, 64 do
+  --   w[i] = add32(add32(add32(ssig1(w[i - 2]), w[i - 7]), ssig0(w[i - 15])), w[i - 16]) end
 
-    for i = 17, 64 do w[i] = add32(add32(add32(ssig1(w[i - 2]), w[i - 7]), ssig0(w[i - 15])), w[i - 16]) end
+  --   local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
 
-    local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
+  --   for i = 1, 64 do
+  --     local t1 = add32(add32(add32(add32(h_, bsig1(e)), choose(e, f, g)), sha256Constants[i]), w[i])
+  --     local t2 = add32(bsig0(a), maj(a, b, c))
+  --     h_ = g
+  --     g = f
+  --     f = e
+  --     e = add32(d, t1)
+  --     d = c
+  --     c = b
+  --     b = a
+  --     a = add32(t1, t2)
+  --   end
 
-    for i = 1, 64 do
-      local t1 = add32(add32(add32(add32(h_, bsig1(e)), choose(e, f, g)), sha256Constants[i]), w[i])
-      local t2 = add32(bsig0(a), maj(a, b, c))
-      h_ = g
-      g = f
-      f = e
-      e = add32(d, t1)
-      d = c
-      c = b
-      b = a
-      a = add32(t1, t2)
-    end
-
-    h[1] = add32(h[1], a)
-    h[2] = add32(h[2], b)
-    h[3] = add32(h[3], c)
-    h[4] = add32(h[4], d)
-    h[5] = add32(h[5], e)
-    h[6] = add32(h[6], f)
-    h[7] = add32(h[7], g)
-    h[8] = add32(h[8], h_)
-  end
+  --   h[1] = add32(h[1], a)
+  --   h[2] = add32(h[2], b)
+  --   h[3] = add32(h[3], c)
+  --   h[4] = add32(h[4], d)
+  --   h[5] = add32(h[5], e)
+  --   h[6] = add32(h[6], f)
+  --   h[7] = add32(h[7], g)
+  --   h[8] = add32(h[8], h_)
+  -- end
 
   local hash = {}
   for i = 1, 8 do hash[i] = string.format("%08x", h[i]) end
@@ -2758,7 +2764,7 @@ function math.median(...)
   end
 
   table.sort(t)
-  local middle = math.floor(#t / 2) + 1
+  local middle = #t // 2 + 1
   if #t % 2 == 1 then
     return t[middle]
   else
@@ -2915,7 +2921,7 @@ function math.lcm(...)
 
   local lcm = t[1]
   for i = 2, #t do
-    lcm = math.floor(lcm / math.gcd(lcm, t[i])) * t[i]
+    lcm = lcm // math.gcd(lcm, t[i]) * t[i]
   end
   return lcm
 end
@@ -4634,20 +4640,6 @@ function terminal.style(text, ...)
   styled = styled:sub(1, -2) .. "m" .. text .. "\\033[0m"
   return styled
 end
-
----***SRG Custom Function***
----
----Outputs text stylized with terminal.style() to the terminal.
----@param text string
-function terminal.out(text)
-  if type(text) ~= "string" then errorMsg("String", "text", text) end
-
-  print(text)
-end
-
----***SRG Custom Function***
----
----Returns the current terminal width.
 
 ------------Global Library------------
 

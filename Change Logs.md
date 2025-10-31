@@ -172,4 +172,8 @@
     - Functions now accept additional arguments to pass to their `func` parameter.
       - `delay_stop`, `delay`, `benchmark`, and `execution_time`
     - Added 3 new `math` library functions:
-      - `math.map(x, min1, max1, min2, max2)`, `math.distance2d(x1, y1, x2, y2)`, and `math.distance3d(x1, y1, z1, x2, y2, z2)`, 
+      - `math.map(x, min1, max1, min2, max2)`, `math.distance2d(x1, y1, x2, y2)`, and `math.distance3d(x1, y1, z1, x2, y2, z2)`,
+  - ## Oct 29, 2025
+    - Added 1 new library:
+      - `terminal`: `terminal.clear()` and `terminal.style(text, ...)`
+    - Adding caching for `cryptography.sha256`
