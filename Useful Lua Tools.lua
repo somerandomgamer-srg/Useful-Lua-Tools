@@ -9,7 +9,8 @@
 ---Error message formatter
 local function errorMsg(expected, name, value, index)
   if index then
-    error(("%s expected for '%s' at argument %d, given: %s (%s)"):format(expected, name, index, tostring(value), type(value)))
+    error(("%s expected for '%s' at argument %d, given: %s (%s)"):format(expected, name, index, tostring(value),
+      type(value)))
   else
     error(("%s expected for '%s', given: %s (%s)"):format(expected, name, tostring(value), type(value)))
   end
@@ -568,44 +569,44 @@ local cache256 = {}
 ---| "o" --Overline
 
 local terminalStyles = {
-  ["b"] = 1, --Bold
-  ["i"] = 3, --Italic
-  ["u"] = 4, --Underline
-  ["s"] = 9, --Strikethrough
+  ["b"] = 1,    --Bold
+  ["i"] = 3,    --Italic
+  ["u"] = 4,    --Underline
+  ["s"] = 9,    --Strikethrough
   ["tbk"] = 30, --Text Black
-  ["tr"] = 31, --Text Red
-  ["tg"] = 32, --Text Green
-  ["ty"] = 33, --Text Yellow
+  ["tr"] = 31,  --Text Red
+  ["tg"] = 32,  --Text Green
+  ["ty"] = 33,  --Text Yellow
   ["tbl"] = 34, --Text Blue
-  ["tm"] = 35, --Text Magenta
-  ["tc"] = 36, --Text Cyan
-  ["tw"] = 37, --Text White
+  ["tm"] = 35,  --Text Magenta
+  ["tc"] = 36,  --Text Cyan
+  ["tw"] = 37,  --Text White
   ["bbk"] = 40, --Background Black
-  ["br"] = 41, --Background Red
-  ["bg"] = 42, --Background Green
-  ["by"] = 43, --Background Yellow
+  ["br"] = 41,  --Background Red
+  ["bg"] = 42,  --Background Green
+  ["by"] = 43,  --Background Yellow
   ["bbl"] = 44, --Background Blue
-  ["bm"] = 45, --Background Magenta
-  ["bc"] = 46, --Background Cyan
-  ["bw"] = 47, --Background White
-  ["o"] = 53, --Overline
+  ["bm"] = 45,  --Background Magenta
+  ["bc"] = 46,  --Background Cyan
+  ["bw"] = 47,  --Background White
+  ["o"] = 53,   --Overline
 }
 
 local sha256Values = {}
 local sha256Constants = {}
 
 local function values256()
-  for i, prime in ipairs({2, 3, 5, 7, 11, 13, 17, 19}) do
-      local rt = math.sqrt(prime)
-      local constant = math.floor((rt - math.floor(rt)) * 2^32)
-      sha256Values[i] = constant
+  for i, prime in ipairs({ 2, 3, 5, 7, 11, 13, 17, 19 }) do
+    local rt = math.sqrt(prime)
+    local constant = math.floor((rt - math.floor(rt)) * 2 ^ 32)
+    sha256Values[i] = constant
   end
 end
 
 local function constants256()
-  for i, prime in ipairs({2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311}) do
-    local rt = prime ^ (1/3)
-    local constant = math.floor((rt - math.floor(rt)) * 2^32)
+  for i, prime in ipairs({ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311 }) do
+    local rt = prime ^ (1 / 3)
+    local constant = math.floor((rt - math.floor(rt)) * 2 ^ 32)
     sha256Constants[i] = constant
   end
 end
@@ -783,7 +784,8 @@ end
 function validate.url(url)
   if type(url) ~= "string" then errorMsg("String", "url", url) end
 
-  return url:match("^https?://[%w%-%.]+%.%w+[%w%.%-_/#?&=]*$") ~= nil or url:match("^[%w%-%.]+%.%w+[%w%.%-_/#?&=]*$") ~= nil
+  return url:match("^https?://[%w%-%.]+%.%w+[%w%.%-_/#?&=]*$") ~= nil or
+      url:match("^[%w%-%.]+%.%w+[%w%.%-_/#?&=]*$") ~= nil
 end
 
 ------------Random Library------------
@@ -2077,9 +2079,15 @@ function cryptography.sha256(s)
 
   local function maj(x, y, z) return ((x & y) ~ (x & z) ~ (y & z)) & 0xFFFFFFFF end
 
-  local function bsig0(x) return (cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)) & 0xFFFFFFFF end
+  local function bsig0(x)
+    return (cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)) &
+        0xFFFFFFFF
+  end
 
-  local function bsig1(x) return (cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)) & 0xFFFFFFFF end
+  local function bsig1(x)
+    return (cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)) &
+        0xFFFFFFFF
+  end
 
   local function ssig0(x) return (cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)) & 0xFFFFFFFF end
 
@@ -2110,7 +2118,8 @@ function cryptography.sha256(s)
 
     for i = 0, 15 do
       local offset = chunk + i * 4
-      w[i + 1] = padded:byte(offset) * 0x1000000 + padded:byte(offset + 1) * 0x10000 + padded:byte(offset + 2) * 0x100 + padded:byte(offset + 3)
+      w[i + 1] = padded:byte(offset) * 0x1000000 + padded:byte(offset + 1) * 0x10000 + padded:byte(offset + 2) * 0x100 +
+          padded:byte(offset + 3)
     end
 
     for i = 17, 64 do
@@ -2142,7 +2151,7 @@ function cryptography.sha256(s)
     h[8] = add32(h[8], h_)
   end
 
-  local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x", 
+  local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x",
     h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
   -- cache256[s] = hashStr
   return hashStr
@@ -2187,30 +2196,26 @@ function cryptography.sha256_inlined(s)
     end
 
     for i = 17, 64 do
-      local wi2 = w[i - 2]
-      local wi7 = w[i - 7]
-      local wi15 = w[i - 15]
-      local wi16 = w[i - 16]
-      
-      local ssig1Val = ((cryptography.ror(w_i_2, 17) ~ cryptography.ror(w_i_2, 19) ~ (w_i_2 >> 10)) & 0xFFFFFFFF)
-      local ssig0Val = ((cryptography.ror(w_i_15, 7) ~ cryptography.ror(w_i_15, 18) ~ (w_i_15 >> 3)) & 0xFFFFFFFF)
-      
-      w[i] = (((ssig1_val + w_i_7) & 0xFFFFFFFF + ssig0_val) & 0xFFFFFFFF + w_i_16) & 0xFFFFFFFF
+      local w2 = w[i - 2]
+      local w7 = w[i - 7]
+      local w15 = w[i - 15]
+      local w16 = w[i - 16]
+
+      local ssig1Val = ((cryptography.ror(w2, 17) ~ cryptography.ror(w2, 19) ~ (w2 >> 10)) & 0xFFFFFFFF)
+      local ssig0Val = ((cryptography.ror(w15, 7) ~ cryptography.ror(w15, 18) ~ (w15 >> 3)) & 0xFFFFFFFF)
+
+      w[i] = (((ssig1Val + w7) & 0xFFFFFFFF + ssig0Val) & 0xFFFFFFFF + w16) & 0xFFFFFFFF
     end
 
     local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
 
     for i = 1, 64 do
       local bsig1_e = (cryptography.ror(e, 6) ~ cryptography.ror(e, 11) ~ cryptography.ror(e, 25)) & 0xFFFFFFFF
-      local choose_efg = ((e & f) ~ (((~e) & 0xFFFFFFFF) & g)) & 0xFFFFFFFF
-      
-      local t1 = ((((h_ + bsig1_e) & 0xFFFFFFFF + choose_efg) & 0xFFFFFFFF + sha256Constants[i]) & 0xFFFFFFFF + w[i]) & 0xFFFFFFFF
-      
-      local bsig0_a = (cryptography.ror(a, 2) ~ cryptography.ror(a, 13) ~ cryptography.ror(a, 22)) & 0xFFFFFFFF
-      local maj_abc = ((a & b) ~ (a & c) ~ (b & c)) & 0xFFFFFFFF
-      
-      local t2 = (bsig0_a + maj_abc) & 0xFFFFFFFF
-      
+
+      local t1 = ((((h_ + bsig1_e) & 0xFFFFFFFF + ((e & f) ~ (((~e) & 0xFFFFFFFF) & g)) & 0xFFFFFFFF) & 0xFFFFFFFF + sha256Constants[i]) & 0xFFFFFFFF + w[i]) & 0xFFFFFFFF
+
+      local t2 = (((cryptography.ror(a, 2) ~ cryptography.ror(a, 13) ~ cryptography.ror(a, 22)) & 0xFFFFFFFF) + ((a & b) ~ (a & c) ~ (b & c)) & 0xFFFFFFFF)
+
       h_ = g
       g = f
       f = e
@@ -2231,7 +2236,7 @@ function cryptography.sha256_inlined(s)
     h[8] = (h[8] + h_) & 0xFFFFFFFF
   end
 
-  local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x", 
+  local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x",
     h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
   -- cache256[s] = hashStr
   return hashStr
