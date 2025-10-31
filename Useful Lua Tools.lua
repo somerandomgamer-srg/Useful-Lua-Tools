@@ -2106,7 +2106,7 @@ function cryptography.sha256(s)
   for i = 1, 8 do h[i] = sha256Values[i] end
 
   for chunk = 1, #padded, 64 do
-    local w = table.create and table.create(64, 0) or {}
+    local w = {}
 
     for i = 0, 15 do
       local offset = chunk + i * 4
@@ -2179,7 +2179,7 @@ function cryptography.sha256_inlined(s)
   for i = 1, 8 do h[i] = sha256Values[i] end
 
   for chunk = 1, #padded, 64 do
-    local w = table.create and table.create(64, 0) or {}
+    local w = {}
 
     for i = 0, 15 do
       local offset = chunk + i * 4
@@ -2201,13 +2201,13 @@ function cryptography.sha256_inlined(s)
     local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
 
     for i = 1, 64 do
-      local bsig1_e = ((cryptography.ror(e, 6) ~ cryptography.ror(e, 11) ~ cryptography.ror(e, 25)) & 0xFFFFFFFF)
-      local choose_efg = (((e & f) ~ (((~e) & 0xFFFFFFFF) & g)) & 0xFFFFFFFF)
+      local bsig1_e = (cryptography.ror(e, 6) ~ cryptography.ror(e, 11) ~ cryptography.ror(e, 25)) & 0xFFFFFFFF
+      local choose_efg = ((e & f) ~ (((~e) & 0xFFFFFFFF) & g)) & 0xFFFFFFFF
       
-      local t1 = ((((((h_ + bsig1_e) & 0xFFFFFFFF) + choose_efg) & 0xFFFFFFFF) + sha256Constants[i]) & 0xFFFFFFFF) + w[i]) & 0xFFFFFFFF
+      local t1 = ((((h_ + bsig1_e) & 0xFFFFFFFF + choose_efg) & 0xFFFFFFFF + sha256Constants[i]) & 0xFFFFFFFF + w[i]) & 0xFFFFFFFF
       
-      local bsig0_a = ((cryptography.ror(a, 2) ~ cryptography.ror(a, 13) ~ cryptography.ror(a, 22)) & 0xFFFFFFFF)
-      local maj_abc = (((a & b) ~ (a & c) ~ (b & c)) & 0xFFFFFFFF)
+      local bsig0_a = (cryptography.ror(a, 2) ~ cryptography.ror(a, 13) ~ cryptography.ror(a, 22)) & 0xFFFFFFFF
+      local maj_abc = ((a & b) ~ (a & c) ~ (b & c)) & 0xFFFFFFFF
       
       local t2 = (bsig0_a + maj_abc) & 0xFFFFFFFF
       
