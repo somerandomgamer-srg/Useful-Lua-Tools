@@ -79,7 +79,6 @@ local function run_test_suite(hash_func, func_name)
 end
 
 run_test_suite(cryptography.sha256, "cryptography.sha256 (Regular)")
-run_test_suite(cryptography.sha256_inlined, "cryptography.sha256_inlined (Inlined)")
 
 f:write("\n" .. string.rep("=", 70) .. "\n")
 f:write("Benchmark Complete\n")

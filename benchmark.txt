@@ -10,44 +10,44 @@ Testing: cryptography.sha256 (Regular)
 Test 1: Empty string + counter [cryptography.sha256 (Regular)] - UNIQUE INPUTS (no cache)
   Base input length: 0 bytes
   Iterations: 10000
-  Total time: 1.329011 seconds
-  Time per hash: 0.132901 ms
-  Throughput: 7524 hashes/second
+  Total time: 1.420561 seconds
+  Time per hash: 0.142056 ms
+  Throughput: 7039 hashes/second
 
 Test 2: Short string + counter [cryptography.sha256 (Regular)] - UNIQUE INPUTS (no cache)
   Base input length: 3 bytes
   Iterations: 10000
-  Total time: 1.311799 seconds
-  Time per hash: 0.131180 ms
-  Throughput: 7623 hashes/second
+  Total time: 1.336260 seconds
+  Time per hash: 0.133626 ms
+  Throughput: 7484 hashes/second
 
 Test 3: Medium string + counter [cryptography.sha256 (Regular)] - UNIQUE INPUTS (no cache)
   Base input length: 44 bytes
   Iterations: 10000
-  Total time: 1.153533 seconds
-  Time per hash: 0.115353 ms
-  Throughput: 8669 hashes/second
+  Total time: 1.341288 seconds
+  Time per hash: 0.134129 ms
+  Throughput: 7456 hashes/second
 
 Test 4: Long string + counter [cryptography.sha256 (Regular)] - UNIQUE INPUTS (no cache)
   Base input length: 100 bytes
   Iterations: 5000
-  Total time: 1.345423 seconds
-  Time per hash: 0.269085 ms
-  Throughput: 3716 hashes/second
+  Total time: 1.444933 seconds
+  Time per hash: 0.288987 ms
+  Throughput: 3460 hashes/second
 
 Test 5: Exactly 1 block + counter [cryptography.sha256 (Regular)] - UNIQUE INPUTS (no cache)
   Base input length: 55 bytes
   Iterations: 10000
-  Total time: 2.249820 seconds
-  Time per hash: 0.224982 ms
-  Throughput: 4445 hashes/second
+  Total time: 2.899753 seconds
+  Time per hash: 0.289975 ms
+  Throughput: 3449 hashes/second
 
 Test 6: Just over 1 block + counter [cryptography.sha256 (Regular)] - UNIQUE INPUTS (no cache)
   Base input length: 56 bytes
   Iterations: 10000
-  Total time: 2.193109 seconds
-  Time per hash: 0.219311 ms
-  Throughput: 4560 hashes/second
+  Total time: 2.607837 seconds
+  Time per hash: 0.260784 ms
+  Throughput: 3835 hashes/second
 
 
 --- CACHED INPUT TESTS (Cache Hits) ---
@@ -55,31 +55,31 @@ Test 6: Just over 1 block + counter [cryptography.sha256 (Regular)] - UNIQUE INP
 Test 7: Cached empty string [cryptography.sha256 (Regular)] - CACHED (same input repeated)
   Input length: 0 bytes
   Iterations: 1000000
-  Total time: 0.100670 seconds
-  Time per hash: 0.000101 ms
-  Throughput: 9933446 hashes/second
+  Total time: 0.094768 seconds
+  Time per hash: 0.000095 ms
+  Throughput: 10552085 hashes/second
 
 Test 8: Cached short string [cryptography.sha256 (Regular)] - CACHED (same input repeated)
   Input length: 3 bytes
   Iterations: 1000000
-  Total time: 0.083631 seconds
-  Time per hash: 0.000084 ms
-  Throughput: 11957289 hashes/second
+  Total time: 0.105936 seconds
+  Time per hash: 0.000106 ms
+  Throughput: 9439662 hashes/second
 
 Test 9: Cached medium string [cryptography.sha256 (Regular)] - CACHED (same input repeated)
   Input length: 44 bytes
   Iterations: 1000000
-  Total time: 0.108523 seconds
-  Time per hash: 0.000109 ms
-  Throughput: 9214637 hashes/second
+  Total time: 0.128716 seconds
+  Time per hash: 0.000129 ms
+  Throughput: 7769042 hashes/second
 
 
 ======================================================================
-Testing: cryptography.sha256_inlined (Inlined)
+Benchmark Complete
 ======================================================================
 
---- UNIQUE INPUT TESTS (Cache Misses) ---
-
-Test 1: Empty string + counter [cryptography.sha256_inlined (Inlined)] - UNIQUE INPUTS (no cache)
-  Base input length: 0 bytes
-  Iterations: 10000
+NOTES:
+- Unique input tests append a counter to force cache misses
+- Cached tests repeat the same input to measure cache performance
+- SHA-256 processes data in 512-bit (64-byte) blocks
+- The inlined version sacrifices readability for raw performance
