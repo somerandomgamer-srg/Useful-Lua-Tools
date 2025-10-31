@@ -2070,108 +2070,106 @@ end
 ---(P.S. Please don't try and read the actual code, it's a mess.)
 --[[
 ```lua
-function cryptography.sha256(s)
-  if type(s) ~= "string" then
-    error_msg("String", "s", s)
-  end
-
-  if cache_256[s] then
-    return cache_256[s]
-  end
-
-  if #cache_256 > 1000 then
-    cache_256 = {}
-  end
-
-  local function choose(x, y, z)
-    return ((x & y) ~ (((~x) & 0xFFFFFFFF) & z)) & 0xFFFFFFFF
-  end
-
-  local function maj(x, y, z)
-    return ((x & y) ~ (x & z) ~ (y & z)) & 0xFFFFFFFF
-  end
-
-  local function bsig0(x)
-    return (cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)) & 0xFFFFFFFF
-  end
-
-  local function bsig1(x)
-    return (cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)) & 0xFFFFFFFF
-  end
-
-  local function ssig0(x)
-    return (cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)) & 0xFFFFFFFF
-  end
-
-  local function ssig1(x)
-    return (cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)) & 0xFFFFFFFF
-  end
-
-  local function add32(a, b)
-    return (a + b) & 0xFFFFFFFF
-  end
-
-  local msg_len = #s
-  local bit_len = msg_len * 8
-
-  local pad_len = 64 - ((msg_len + 1 + 8) % 64)
-  local padded = s .. string.char(0x80) .. (pad_len < 64 and string.rep(string.char(0), pad_len) or "") .. string.char(
-    (bit_len >> 56) & 0xFF,
-    (bit_len >> 48) & 0xFF,
-    (bit_len >> 40) & 0xFF,
-    (bit_len >> 32) & 0xFF,
-    (bit_len >> 24) & 0xFF,
-    (bit_len >> 16) & 0xFF,
-    (bit_len >> 8) & 0xFF,
-    bit_len & 0xFF
-  )
-
-  local h = {}
-  for i = 1, 8 do
-    h[i] = sha256_values[i]
-  end
-
-  for chunk = 1, #padded, 64 do
-    local w = {}
-
-    for i = 0, 15 do
-      local offset = chunk + i * 4
-      w[i + 1] = padded:byte(offset) * 0x1000000 + padded:byte(offset + 1) * 0x10000 + padded:byte(offset + 2) * 0x100 + padded:byte(offset + 3)
-    end
-
-    for i = 17, 64 do
-      w[i] = add32(add32(add32(ssig1(w[i - 2]), w[i - 7]), ssig0(w[i - 15])), w[i - 16])
-    end
-
-    local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
-
-    for i = 1, 64 do
-      local t1 = add32(add32(add32(add32(h_, bsig1(e)), choose(e, f, g)), sha256Constants[i]), w[i])
-      local t2 = add32(bsig0(a), maj(a, b, c))
-      h_ = g
-      g = f
-      f = e
-      e = add32(d, t1)
-      d = c
-      c = b
-      b = a
-      a = add32(t1, t2)
-    end
-
-    h[1] = add32(h[1], a)
-    h[2] = add32(h[2], b)
-    h[3] = add32(h[3], c)
-    h[4] = add32(h[4], d)
-    h[5] = add32(h[5], e)
-    h[6] = add32(h[6], f)
-    h[7] = add32(h[7], g)
-    h[8] = add32(h[8], h_)
-  end
-
-  local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x", h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
-  cache256[s] = hashStr
-  return hashStr
+if type(s) ~= "string" then
+  error_msg("String", "s", s)
 end
+
+if cache_256[s] then
+  return cache_256[s]
+end
+
+if #cache_256 > 1000 then
+  cache_256 = {}
+end
+
+local function choose(x, y, z)
+  return ((x & y) ~ (((~x) & 0xFFFFFFFF) & z)) & 0xFFFFFFFF
+end
+
+local function maj(x, y, z)
+  return ((x & y) ~ (x & z) ~ (y & z)) & 0xFFFFFFFF
+end
+
+local function bsig0(x)
+  return (cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)) & 0xFFFFFFFF
+end
+
+local function bsig1(x)
+  return (cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)) & 0xFFFFFFFF
+end
+
+local function ssig0(x)
+  return (cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)) & 0xFFFFFFFF
+end
+
+local function ssig1(x)
+  return (cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)) & 0xFFFFFFFF
+end
+
+local function add32(a, b)
+  return (a + b) & 0xFFFFFFFF
+end
+
+local msg_len = #s
+local bit_len = msg_len * 8
+
+local pad_len = 64 - ((msg_len + 1 + 8) % 64)
+local padded = s .. string.char(0x80) .. (pad_len < 64 and string.rep(string.char(0), pad_len) or "") .. string.char(
+  (bit_len >> 56) & 0xFF,
+  (bit_len >> 48) & 0xFF,
+  (bit_len >> 40) & 0xFF,
+  (bit_len >> 32) & 0xFF,
+  (bit_len >> 24) & 0xFF,
+  (bit_len >> 16) & 0xFF,
+  (bit_len >> 8) & 0xFF,
+  bit_len & 0xFF
+)
+
+local h = {}
+for i = 1, 8 do
+  h[i] = sha256_values[i]
+end
+
+for chunk = 1, #padded, 64 do
+  local w = {}
+
+  for i = 0, 15 do
+    local offset = chunk + i * 4
+    w[i + 1] = padded:byte(offset) * 0x1000000 + padded:byte(offset + 1) * 0x10000 + padded:byte(offset + 2) * 0x100 + padded:byte(offset + 3)
+  end
+
+  for i = 17, 64 do
+    w[i] = add32(add32(add32(ssig1(w[i - 2]), w[i - 7]), ssig0(w[i - 15])), w[i - 16])
+  end
+
+  local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
+
+  for i = 1, 64 do
+    local t1 = add32(add32(add32(add32(h_, bsig1(e)), choose(e, f, g)), sha256Constants[i]), w[i])
+    local t2 = add32(bsig0(a), maj(a, b, c))
+    h_ = g
+    g = f
+    f = e
+    e = add32(d, t1)
+    d = c
+    c = b
+    b = a
+    a = add32(t1, t2)
+  end
+
+  h[1] = add32(h[1], a)
+  h[2] = add32(h[2], b)
+  h[3] = add32(h[3], c)
+  h[4] = add32(h[4], d)
+  h[5] = add32(h[5], e)
+  h[6] = add32(h[6], f)
+  h[7] = add32(h[7], g)
+  h[8] = add32(h[8], h_)
+end
+
+local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x", h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
+cache256[s] = hashStr
+return hashStr
 ```
 ]]
 ---@param s string
