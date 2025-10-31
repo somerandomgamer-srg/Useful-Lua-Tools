@@ -2063,63 +2063,80 @@ function cryptography.is_email(email)
   return validate.email(email)
 end
 
----***SRG Custom Function***
----
 ---Performs sha256 hashing on `s`.
----@param s string
----@return string
----@nodiscard
+---
+---The code below is to understand how the sha256 function works.
+---
+---(P.S. Please don't try and read the actual code, it's a mess.)
+--[[
+```lua
 function cryptography.sha256(s)
-  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(s) ~= "string" then
+    error_msg("String", "s", s)
+  end
 
-  -- if cache256[s] then return cache256[s] end
-  -- if #cache256 > 1000 then cache256 = {} end
+  if cache_256[s] then
+    return cache_256[s]
+  end
 
-  local function choose(x, y, z) return ((x & y) ~ (((~x) & 0xFFFFFFFF) & z)) & 0xFFFFFFFF end
+  if #cache_256 > 1000 then
+    cache_256 = {}
+  end
 
-  local function maj(x, y, z) return ((x & y) ~ (x & z) ~ (y & z)) & 0xFFFFFFFF end
+  local function choose(x, y, z)
+    return ((x & y) ~ (((~x) & 0xFFFFFFFF) & z)) & 0xFFFFFFFF
+  end
+
+  local function maj(x, y, z)
+    return ((x & y) ~ (x & z) ~ (y & z)) & 0xFFFFFFFF
+  end
 
   local function bsig0(x)
-    return (cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)) &
-        0xFFFFFFFF
+    return (cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)) & 0xFFFFFFFF
   end
 
   local function bsig1(x)
-    return (cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)) &
-        0xFFFFFFFF
+    return (cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)) & 0xFFFFFFFF
   end
 
-  local function ssig0(x) return (cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)) & 0xFFFFFFFF end
+  local function ssig0(x)
+    return (cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)) & 0xFFFFFFFF
+  end
 
-  local function ssig1(x) return (cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)) & 0xFFFFFFFF end
+  local function ssig1(x)
+    return (cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)) & 0xFFFFFFFF
+  end
 
-  local function add32(a, b) return (a + b) & 0xFFFFFFFF end
+  local function add32(a, b)
+    return (a + b) & 0xFFFFFFFF
+  end
 
-  local msgLen = #s
-  local bitLen = msgLen * 8
+  local msg_len = #s
+  local bit_len = msg_len * 8
 
-  local padLen = 64 - ((msgLen + 1 + 8) % 64)
-  local padded = s .. string.char(0x80) .. (padLen < 64 and string.rep(string.char(0), padLen) or "") .. string.char(
-    (bitLen >> 56) & 0xFF,
-    (bitLen >> 48) & 0xFF,
-    (bitLen >> 40) & 0xFF,
-    (bitLen >> 32) & 0xFF,
-    (bitLen >> 24) & 0xFF,
-    (bitLen >> 16) & 0xFF,
-    (bitLen >> 8) & 0xFF,
-    bitLen & 0xFF
+  local pad_len = 64 - ((msg_len + 1 + 8) % 64)
+  local padded = s .. string.char(0x80) .. (pad_len < 64 and string.rep(string.char(0), pad_len) or "") .. string.char(
+    (bit_len >> 56) & 0xFF,
+    (bit_len >> 48) & 0xFF,
+    (bit_len >> 40) & 0xFF,
+    (bit_len >> 32) & 0xFF,
+    (bit_len >> 24) & 0xFF,
+    (bit_len >> 16) & 0xFF,
+    (bit_len >> 8) & 0xFF,
+    bit_len & 0xFF
   )
 
   local h = {}
-  for i = 1, 8 do h[i] = sha256Values[i] end
+  for i = 1, 8 do
+    h[i] = sha256_values[i]
+  end
 
   for chunk = 1, #padded, 64 do
     local w = {}
 
     for i = 0, 15 do
       local offset = chunk + i * 4
-      w[i + 1] = padded:byte(offset) * 0x1000000 + padded:byte(offset + 1) * 0x10000 + padded:byte(offset + 2) * 0x100 +
-          padded:byte(offset + 3)
+      w[i + 1] = padded:byte(offset) * 0x1000000 + padded:byte(offset + 1) * 0x10000 + padded:byte(offset + 2) * 0x100 + padded:byte(offset + 3)
     end
 
     for i = 17, 64 do
@@ -2151,38 +2168,25 @@ function cryptography.sha256(s)
     h[8] = add32(h[8], h_)
   end
 
-  local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x",
-    h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
-  -- cache256[s] = hashStr
+  local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x", h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
+  cache256[s] = hashStr
   return hashStr
 end
-
----***INLINED VERSION - For performance testing only***
----
----Performs sha256 hashing on `s` with all functions inlined.
+```
+]]
 ---@param s string
 ---@return string
 ---@nodiscard
-function cryptography.sha256_inlined(s)
+function cryptography.sha256(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
-  -- if cache256[s] then return cache256[s] end
-  -- if #cache256 > 1000 then cache256 = {} end
+  if cache256[s] then return cache256[s] end
+  if #cache256 > 1000 then cache256 = {} end
 
-  local msgLen = #s
-  local bitLen = msgLen * 8
+  local bitLen = #s * 8
 
-  local padLen = 64 - ((msgLen + 1 + 8) % 64)
-  local padded = s .. string.char(0x80) .. (padLen < 64 and string.rep(string.char(0), padLen) or "") .. string.char(
-    (bitLen >> 56) & 0xFF,
-    (bitLen >> 48) & 0xFF,
-    (bitLen >> 40) & 0xFF,
-    (bitLen >> 32) & 0xFF,
-    (bitLen >> 24) & 0xFF,
-    (bitLen >> 16) & 0xFF,
-    (bitLen >> 8) & 0xFF,
-    bitLen & 0xFF
-  )
+  local padLen = 64 - ((#s + 1 + 8) % 64)
+  local padded = s .. string.char(0x80) .. (padLen < 64 and string.rep(string.char(0), padLen) or "") .. string.char((bitLen >> 56) & 0xFF, (bitLen >> 48) & 0xFF, (bitLen >> 40) & 0xFF, (bitLen >> 32) & 0xFF, (bitLen >> 24) & 0xFF, (bitLen >> 16) & 0xFF, (bitLen >> 8) & 0xFF, bitLen & 0xFF)
 
   local h = {}
   for i = 1, 8 do h[i] = sha256Values[i] end
@@ -2197,24 +2201,15 @@ function cryptography.sha256_inlined(s)
 
     for i = 17, 64 do
       local w2 = w[i - 2]
-      local w7 = w[i - 7]
       local w15 = w[i - 15]
-      local w16 = w[i - 16]
 
-      local ssig1Val = ((cryptography.ror(w2, 17) ~ cryptography.ror(w2, 19) ~ (w2 >> 10)) & 0xFFFFFFFF)
-      local ssig0Val = ((cryptography.ror(w15, 7) ~ cryptography.ror(w15, 18) ~ (w15 >> 3)) & 0xFFFFFFFF)
-
-      w[i] = (((ssig1Val + w7) & 0xFFFFFFFF + ssig0Val) & 0xFFFFFFFF + w16) & 0xFFFFFFFF
+      w[i] = (((((cryptography.ror(w2, 17) ~ cryptography.ror(w2, 19) ~ (w2 >> 10)) & 0xFFFFFFFF) + w[i - 7]) & 0xFFFFFFFF + ((cryptography.ror(w15, 7) ~ cryptography.ror(w15, 18) ~ (w15 >> 3)) & 0xFFFFFFFF)) & 0xFFFFFFFF + w[i - 16]) & 0xFFFFFFFF
     end
 
     local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
 
     for i = 1, 64 do
-      local bsig1_e = (cryptography.ror(e, 6) ~ cryptography.ror(e, 11) ~ cryptography.ror(e, 25)) & 0xFFFFFFFF
-
-      local t1 = ((((h_ + bsig1_e) & 0xFFFFFFFF + ((e & f) ~ (((~e) & 0xFFFFFFFF) & g)) & 0xFFFFFFFF) & 0xFFFFFFFF + sha256Constants[i]) & 0xFFFFFFFF + w[i]) & 0xFFFFFFFF
-
-      local t2 = (((cryptography.ror(a, 2) ~ cryptography.ror(a, 13) ~ cryptography.ror(a, 22)) & 0xFFFFFFFF) + ((a & b) ~ (a & c) ~ (b & c)) & 0xFFFFFFFF)
+      local t1 = ((((h_ + ((cryptography.ror(e, 6) ~ cryptography.ror(e, 11) ~ cryptography.ror(e, 25)) & 0xFFFFFFFF)) & 0xFFFFFFFF + ((e & f) ~ (((~e) & 0xFFFFFFFF) & g)) & 0xFFFFFFFF) & 0xFFFFFFFF + sha256Constants[i]) & 0xFFFFFFFF + w[i]) & 0xFFFFFFFF
 
       h_ = g
       g = f
@@ -2223,7 +2218,7 @@ function cryptography.sha256_inlined(s)
       d = c
       c = b
       b = a
-      a = (t1 + t2) & 0xFFFFFFFF
+      a = (t1 + (((cryptography.ror(a, 2) ~ cryptography.ror(a, 13) ~ cryptography.ror(a, 22)) & 0xFFFFFFFF) + ((a & b) ~ (a & c) ~ (b & c)) & 0xFFFFFFFF)) & 0xFFFFFFFF
     end
 
     h[1] = (h[1] + a) & 0xFFFFFFFF
@@ -2236,9 +2231,8 @@ function cryptography.sha256_inlined(s)
     h[8] = (h[8] + h_) & 0xFFFFFFFF
   end
 
-  local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x",
-    h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
-  -- cache256[s] = hashStr
+  local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x", h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
+  cache256[s] = hashStr
   return hashStr
 end
 
