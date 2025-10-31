@@ -1,8 +1,4 @@
-# SHA-256 Implementation in Pure Lua
-
-This project contains a cryptographically correct SHA-256 hash function implementation written in pure Lua 5.3+ without using LuaJIT, FFI, or C extensions.
-
-## 📊 Project Statistics
+## Project Statistics
 
 ### Overall
 - **Total Functions**: 195
@@ -10,7 +6,7 @@ This project contains a cryptographically correct SHA-256 hash function implemen
 - **Total Definitions**: 210 (functions + variables)
 - **Total Lines of Code**: 4,836
 - **File Size**: 126 KB
-- **Language**: Pure Lua 5.3+
+- **Language**: Lua 5.3+
 - **External Dependencies**: None (pure interpreted Lua)
 - **Total Libraries**: 17
 - **Global Functions**: 5
@@ -22,7 +18,7 @@ This project contains a cryptographically correct SHA-256 hash function implemen
 | Library | Function Count |
 |---------|----------------|
 | math | 44 |
-| **cryptography** | **31** (includes SHA-256) |
+| **cryptography** | **31** |
 | table | 27 |
 | string | 12 |
 | remote | 8 |
