@@ -2187,13 +2187,13 @@ function cryptography.sha256_inlined(s)
     end
 
     for i = 17, 64 do
-      local w_i_2 = w[i - 2]
-      local w_i_7 = w[i - 7]
-      local w_i_15 = w[i - 15]
-      local w_i_16 = w[i - 16]
+      local wi2 = w[i - 2]
+      local wi7 = w[i - 7]
+      local wi15 = w[i - 15]
+      local wi16 = w[i - 16]
       
-      local ssig1_val = ((cryptography.ror(w_i_2, 17) ~ cryptography.ror(w_i_2, 19) ~ (w_i_2 >> 10)) & 0xFFFFFFFF)
-      local ssig0_val = ((cryptography.ror(w_i_15, 7) ~ cryptography.ror(w_i_15, 18) ~ (w_i_15 >> 3)) & 0xFFFFFFFF)
+      local ssig1Val = ((cryptography.ror(w_i_2, 17) ~ cryptography.ror(w_i_2, 19) ~ (w_i_2 >> 10)) & 0xFFFFFFFF)
+      local ssig0Val = ((cryptography.ror(w_i_15, 7) ~ cryptography.ror(w_i_15, 18) ~ (w_i_15 >> 3)) & 0xFFFFFFFF)
       
       w[i] = (((ssig1_val + w_i_7) & 0xFFFFFFFF + ssig0_val) & 0xFFFFFFFF + w_i_16) & 0xFFFFFFFF
     end
