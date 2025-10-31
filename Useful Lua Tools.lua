@@ -2070,8 +2070,8 @@ end
 function cryptography.sha256(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
-  if cache256[s] then return cache256[s] end
-  if #cache256 > 1000 then cache256 = {} end
+  -- if cache256[s] then return cache256[s] end
+  -- if #cache256 > 1000 then cache256 = {} end
 
   local function choose(x, y, z) return ((x & y) ~ (((~x) & 0xFFFFFFFF) & z)) & 0xFFFFFFFF end
 
@@ -2144,7 +2144,7 @@ function cryptography.sha256(s)
 
   local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x", 
     h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
-  cache256[s] = hashStr
+  -- cache256[s] = hashStr
   return hashStr
 end
 
@@ -2157,8 +2157,8 @@ end
 function cryptography.sha256_inlined(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
 
-  if cache256[s] then return cache256[s] end
-  if #cache256 > 1000 then cache256 = {} end
+  -- if cache256[s] then return cache256[s] end
+  -- if #cache256 > 1000 then cache256 = {} end
 
   local msgLen = #s
   local bitLen = msgLen * 8
@@ -2233,7 +2233,7 @@ function cryptography.sha256_inlined(s)
 
   local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x", 
     h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
-  cache256[s] = hashStr
+  -- cache256[s] = hashStr
   return hashStr
 end
 
