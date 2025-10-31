@@ -15,31 +15,31 @@
 `binary`, `color`, `cryptography`, `datetime`, `file`, `http`, `input`, `json`, `math`, `queue`, `random`, `remote`, `stack`, `string`, `table`, `terminal`, `validate`
 
 ### Functions per Library
-| Library | Function Count |
-|:-------:|:--------------:|
-| math | 44 |
-| **cryptography** | **31** (includes SHA-256) |
-| table | 27 |
-| string | 12 |
-| remote | 8 |
-| file | 8 |
-| binary | 8 |
-| stack | 7 |
-| random | 7 |
-| queue | 7 |
-| http | 7 |
-| input | 6 |
-| color | 6 |
-| datetime | 5 |
-| validate | 3 |
-| terminal | 2 |
-| json | 2 |
+|      Library      | Function Count |
+|:-----------------:|:--------------:|
+|       math        |       44       |
+| **cryptography**  | **31** (includes SHA-256) |
+|       table       |       27       |
+|      string       |       12       |
+|      remote       |       8        |
+|       file        |       8        |
+|      binary       |       8        |
+|       stack       |       7        |
+|      random       |       7        |
+|       queue       |       7        |
+|       http        |       7        |
+|       input       |       6        |
+|       color       |       6        |
+|     datetime      |       5        |
+|     validate      |       3        |
+|     terminal      |       2        |
+|       json        |       2        |
 
 ### Variables per Library
-| Library | Variable Count |
-|:-------:|:--------------:|
-| system | 10 |
-| ult | 5 |
+|    Library    | Variable Count |
+|:-------------:|:--------------:|
+|    system     |       10       |
+|      ult      |       5        |
 
 ## 🎯 Use Cases for SHA-256
 
@@ -80,25 +80,25 @@ Our implementation achieves impressive performance in pure interpreted Lua:
 ### Cache Miss Performance (Unique Inputs)
 Computing fresh SHA-256 hashes for unique data:
 
-| Test Case | Input Size | Throughput |
-|:----------|:----------:|:----------:|
-| Empty string | 0 bytes | ~7,000 h/s |
-| Short string (abc) | 3 bytes | ~7,500 h/s |
-| Medium string | 44 bytes | ~7,500 h/s |
-| Long string | 100 bytes | ~3,500 h/s |
-| Exactly 1 block | 55 bytes | ~3,500 h/s |
-| Just over 1 block | 56 bytes | ~3,800 h/s |
+|       Test Case       | Input Size | Throughput |
+|:---------------------:|:----------:|:----------:|
+|     Empty string      |  0 bytes   | ~7,000 h/s |
+|  Short string (abc)   |  3 bytes   | ~7,500 h/s |
+|    Medium string      |  44 bytes  | ~7,500 h/s |
+|     Long string       | 100 bytes  | ~3,500 h/s |
+|   Exactly 1 block     |  55 bytes  | ~3,500 h/s |
+|  Just over 1 block    |  56 bytes  | ~3,800 h/s |
 
 **Note**: Performance drops ~50% when input crosses the 55→56 byte boundary, requiring 2 SHA-256 blocks instead of 1.
 
 ### Cache Hit Performance (Repeated Inputs)
 When hashing the same data multiple times (cache enabled):
 
-| Test Case | Input Size | Throughput |
-|:----------|:----------:|:----------:|
-| Cached empty string | 0 bytes | **~10.5 million h/s** |
-| Cached short string | 3 bytes | **~9.4 million h/s** |
-| Cached medium string | 44 bytes | **~7.7 million h/s** |
+|       Test Case       | Input Size |      Throughput      |
+|:---------------------:|:----------:|:--------------------:|
+|  Cached empty string  |  0 bytes   | **~10.5 million h/s** |
+|  Cached short string  |  3 bytes   | **~9.4 million h/s**  |
+| Cached medium string  |  44 bytes  | **~7.7 million h/s**  |
 
 **Cache Speedup**: ~1,400x faster for repeated hashes!
 
