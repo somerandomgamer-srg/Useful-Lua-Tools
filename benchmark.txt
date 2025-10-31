@@ -1,0 +1,120 @@
+=== SHA256 Performance Benchmark - Regular vs Inlined ===
+
+
+============================================================
+Testing: cryptography.sha256 (Regular)
+============================================================
+
+Test 1: Empty string [cryptography.sha256 (Regular)]
+  Input length: 0 bytes
+  Iterations: 10000
+  Total time: 1.214041000 seconds
+  Time per hash: 0.121404100 ms
+  Throughput: 8237 hashes/second
+
+Test 2: Short string (3 bytes) [cryptography.sha256 (Regular)]
+  Input length: 3 bytes
+  Iterations: 10000
+  Total time: 1.488704000 seconds
+  Time per hash: 0.148870400 ms
+  Throughput: 6717 hashes/second
+
+Test 3: Medium string (44 bytes) [cryptography.sha256 (Regular)]
+  Input length: 44 bytes
+  Iterations: 10000
+  Total time: 1.402252000 seconds
+  Time per hash: 0.140225200 ms
+  Throughput: 7131 hashes/second
+
+Test 4: Long string (100 bytes) [cryptography.sha256 (Regular)]
+  Input length: 100 bytes
+  Iterations: 5000
+  Total time: 1.229624000 seconds
+  Time per hash: 0.245924800 ms
+  Throughput: 4066 hashes/second
+
+Test 5: Very long string (570 bytes) [cryptography.sha256 (Regular)]
+  Input length: 570 bytes
+  Iterations: 2000
+  Total time: 2.534467000 seconds
+  Time per hash: 1.267233500 ms
+  Throughput: 789 hashes/second
+
+Test 6: Exactly 1 block (55 bytes) [cryptography.sha256 (Regular)]
+  Input length: 55 bytes
+  Iterations: 10000
+  Total time: 1.459599000 seconds
+  Time per hash: 0.145959900 ms
+  Throughput: 6851 hashes/second
+
+Test 7: Just over 1 block (56 bytes) [cryptography.sha256 (Regular)]
+  Input length: 56 bytes
+  Iterations: 10000
+  Total time: 2.923053000 seconds
+  Time per hash: 0.292305300 ms
+  Throughput: 3421 hashes/second
+
+
+============================================================
+Testing: cryptography.sha256_inlined (Inlined)
+============================================================
+
+Test 1: Empty string [cryptography.sha256_inlined (Inlined)]
+  Input length: 0 bytes
+  Iterations: 10000
+  Total time: 1.298004000 seconds
+  Time per hash: 0.129800400 ms
+  Throughput: 7704 hashes/second
+
+Test 2: Short string (3 bytes) [cryptography.sha256_inlined (Inlined)]
+  Input length: 3 bytes
+  Iterations: 10000
+  Total time: 1.247629000 seconds
+  Time per hash: 0.124762900 ms
+  Throughput: 8015 hashes/second
+
+Test 3: Medium string (44 bytes) [cryptography.sha256_inlined (Inlined)]
+  Input length: 44 bytes
+  Iterations: 10000
+  Total time: 1.065240000 seconds
+  Time per hash: 0.106524000 ms
+  Throughput: 9388 hashes/second
+
+Test 4: Long string (100 bytes) [cryptography.sha256_inlined (Inlined)]
+  Input length: 100 bytes
+  Iterations: 5000
+  Total time: 1.030803000 seconds
+  Time per hash: 0.206160600 ms
+  Throughput: 4851 hashes/second
+
+Test 5: Very long string (570 bytes) [cryptography.sha256_inlined (Inlined)]
+  Input length: 570 bytes
+  Iterations: 2000
+  Total time: 1.968435000 seconds
+  Time per hash: 0.984217500 ms
+  Throughput: 1016 hashes/second
+
+Test 6: Exactly 1 block (55 bytes) [cryptography.sha256_inlined (Inlined)]
+  Input length: 55 bytes
+  Iterations: 10000
+  Total time: 1.028326000 seconds
+  Time per hash: 0.102832600 ms
+  Throughput: 9725 hashes/second
+
+Test 7: Just over 1 block (56 bytes) [cryptography.sha256_inlined (Inlined)]
+  Input length: 56 bytes
+  Iterations: 10000
+  Total time: 2.325628000 seconds
+  Time per hash: 0.232562800 ms
+  Throughput: 4300 hashes/second
+
+
+============================================================
+Benchmark Complete
+============================================================
+
+Note: Performance varies based on input length and block boundaries.
+SHA-256 processes data in 512-bit (64-byte) blocks.
+
+The inlined version removes function call overhead by directly
+inlining all helper functions (choose, maj, bsig0, bsig1, etc.).
