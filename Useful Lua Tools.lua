@@ -17,14 +17,14 @@ local function errorMsg(expected, name, value, index)
 end
 
 ---Helper function for binary library
-local function bin_to_dec(bin)
+local function binToDec(bin)
   local dec = 0
   for i = 1, #bin do dec = dec * 2 + tonumber(bin:sub(i, i)) end
   return dec
 end
 
 ---Helper function for binary library
-local function dec_to_bin(dec)
+local function decToBin(dec)
   if dec == 0 then return "0" end
   local bin = ""
   while dec > 0 do
@@ -32,12 +32,6 @@ local function dec_to_bin(dec)
     dec = dec // 2
   end
   return bin
-end
-
----Helper function to convert decimal to binary with fixed width (pure Lua)
-local function dec_to_bin_padded(dec, width)
-  local bin = dec_to_bin(dec)
-  return string.rep("0", width - #bin) .. bin
 end
 
 ---Function for json.encode
@@ -623,6 +617,7 @@ constants256()
 local function toBase64Table(alphabet)
   local base64Chars = {}
   for i = 1, #alphabet do
+    local bin = decToBin( )
     base64Chars[dec_to_bin_padded(i - 1, 6)] = alphabet:sub(i, i)
   end
   return base64Chars
