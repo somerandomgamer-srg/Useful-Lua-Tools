@@ -34,7 +34,7 @@ local function decToBin(dec)
   return bin
 end
 
----Helper function to convert decimal to binary with fixed width (pure Lua, no LuaJIT)
+---Helper function to convert decimal to binary with fixed width
 local function decToBinPadded(dec, width)
   local bin = decToBin(dec)
   return string.rep("0", width - #bin) .. bin
