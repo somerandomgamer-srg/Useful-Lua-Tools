@@ -34,6 +34,12 @@ local function decToBin(dec)
   return bin
 end
 
+---Helper function to convert decimal to binary with fixed width (pure Lua, no LuaJIT)
+local function decToBinPadded(dec, width)
+  local bin = decToBin(dec)
+  return string.rep("0", width - #bin) .. bin
+end
+
 ---Function for json.encode
 local function jsonEncode(val)
   local valType = type(val)
@@ -617,24 +623,21 @@ constants256()
 local function toBase64Table(alphabet)
   local base64Chars = {}
   for i = 1, #alphabet do
-    local bin = decToBin( )
-    base64Chars[dec_to_bin_padded(i - 1, 6)] = alphabet:sub(i, i)
+    base64Chars[decToBinPadded(i - 1, 6)] = alphabet:sub(i, i)
   end
   return base64Chars
 end
 
 local function toBase58Table(alphabet)
   local base58Chars = {}
-  for i = 1, #alphabet do
-    base58Chars[i - 1] = alphabet:sub(i, i)
-  end
+  for i = 1, #alphabet do base58Chars[i - 1] = alphabet:sub(i, i) end
   return base58Chars
 end
 
 local function toBase32Table(alphabet)
   local base32Chars = {}
   for i = 1, #alphabet do
-    base32Chars[dec_to_bin_padded(i - 1, 5)] = alphabet:sub(i, i)
+    base32Chars[decToBinPadded(i - 1, 5)] = alphabet:sub(i, i)
   end
   return base32Chars
 end
@@ -1060,15 +1063,15 @@ function binary.subtract(...)
     if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
   end
 
-  local result = bin_to_dec(args[1])
-  for i = 2, #args do result = result - bin_to_dec(args[i]) end
+  local result = binToDec(args[1])
+  for i = 2, #args do result = result - binToDec(args[i]) end
 
   if result < 0 then
-    return "-" .. dec_to_bin(-result)
+    return "-" .. decToBin(-result)
   elseif result == 0 then
     return "0"
   else
-    return dec_to_bin(result)
+    return decToBin(result)
   end
 end
 
@@ -1087,10 +1090,10 @@ function binary.multiply(...)
     if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
   end
 
-  local result = bin_to_dec(args[1])
-  for i = 2, #args do result = result * bin_to_dec(args[i]) end
+  local result = binToDec(args[1])
+  for i = 2, #args do result = result * binToDec(args[i]) end
 
-  return dec_to_bin(result)
+  return decToBin(result)
 end
 
 ---***SRG Custom Function***
@@ -1108,15 +1111,15 @@ function binary.divide(...)
     if not num:match("^[01]+$") then error(string.format("Invalid binary number at argument %d: %s", i, num)) end
   end
 
-  local result = bin_to_dec(args[1])
+  local result = binToDec(args[1])
   for i = 2, #args do
-    local d = bin_to_dec(args[i])
+    local d = binToDec(args[i])
     if d == 0 then error("Division by zero") end
     result = result / d
   end
   result = math.floor(result)
 
-  return dec_to_bin(result)
+  return decToBin(result)
 end
 
 ---***SRG Custom Function***
@@ -1483,7 +1486,7 @@ function cryptography.text_to_binary(s, x)
   end
 
   local bin = ""
-  for i = 1, #s do bin = bin .. ("%0*b"):format(x, s:byte(i)) end
+  for i = 1, #s do bin = bin .. decToBinPadded(s:byte(i), x) end
   return string.trim(bin)
 end
 
