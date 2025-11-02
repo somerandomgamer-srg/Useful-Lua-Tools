@@ -23,6 +23,49 @@ Nothing much to say here.
 ```
 2. Start using the various functions in your application
 
+## Statistics
+
+### Overall
+- **Total Functions**: 195
+- **Total Variables**: 15
+- **Total Definitions**: 210 (functions + variables)
+- **Total Lines of Code**: 4,836
+- **File Size**: 126 KB
+- **Language**: Lua 5.3+
+- **External Dependencies**: None (pure interpreted Lua)
+- **Total Libraries**: 17
+- **Global Functions**: 5
+
+### Libraries Included
+`binary`, `color`, `cryptography`, `datetime`, `file`, `http`, `input`, `json`, `math`, `queue`, `random`, `remote`, `stack`, `string`, `table`, `terminal`, `validate`
+
+### Functions per Library
+|      Library      | Function Count |
+|:-----------------:|:--------------:|
+|       math        |       44       |
+|   cryptography    |       31       |
+|       table       |       27       |
+|      string       |       12       |
+|      remote       |       8        |
+|       file        |       8        |
+|      binary       |       8        |
+|       stack       |       7        |
+|      random       |       7        |
+|       queue       |       7        |
+|       http        |       7        |
+|       input       |       6        |
+|       color       |       6        |
+|     datetime      |       5        |
+|     validate      |       3        |
+|     terminal      |       2        |
+|       json        |       2        |
+
+### Variables per Library
+|    Library    | Variable Count |
+|:-------------:|:--------------:|
+|    system     |       10       |
+|      ult      |       5        |
+
 ## Contact
 For questions, suggestions, or contributions related to this template:
 
