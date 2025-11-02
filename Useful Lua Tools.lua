@@ -34,6 +34,12 @@ local function dec_to_bin(dec)
   return bin
 end
 
+---Helper function to convert decimal to binary with fixed width (pure Lua)
+local function dec_to_bin_padded(dec, width)
+  local bin = dec_to_bin(dec)
+  return string.rep("0", width - #bin) .. bin
+end
+
 ---Function for json.encode
 local function jsonEncode(val)
   local valType = type(val)
@@ -617,7 +623,7 @@ constants256()
 local function toBase64Table(alphabet)
   local base64Chars = {}
   for i = 1, #alphabet do
-    base64Chars[string.format("%06b", i - 1)] = alphabet:sub(i, i)
+    base64Chars[dec_to_bin_padded(i - 1, 6)] = alphabet:sub(i, i)
   end
   return base64Chars
 end
@@ -633,7 +639,7 @@ end
 local function toBase32Table(alphabet)
   local base32Chars = {}
   for i = 1, #alphabet do
-    base32Chars[string.format("%05b", i - 1)] = alphabet:sub(i, i)
+    base32Chars[dec_to_bin_padded(i - 1, 5)] = alphabet:sub(i, i)
   end
   return base32Chars
 end
