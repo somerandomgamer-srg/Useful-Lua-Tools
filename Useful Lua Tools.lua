@@ -1647,17 +1647,75 @@ function cryptography.base64_to_text(s, alphabet)
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
   end
 
-  local base64Reverse = table.keypair_reverse(toBase64Table(alphabet))
+  local lookup = {}
+  for i = 1, #alphabet do
+    lookup[alphabet:sub(i, i)] = i - 1
+  end
+
+  local paddingCount = 0
+  for i = #s, 1, -1 do
+    if s:sub(i, i) == "=" then
+      paddingCount = paddingCount + 1
+    else
+      break
+    end
+  end
+
+  if paddingCount > 2 then
+    error("Invalid base64 padding: too many padding characters")
+  end
+
+  for i = 1, #s - paddingCount do
+    if s:sub(i, i) == "=" then
+      error("Invalid base64 padding: padding character in non-terminal position")
+    end
+  end
+
+  local payloadLength = #s - paddingCount
+  if paddingCount == 1 and (payloadLength % 4 ~= 3 or payloadLength == 0) then
+    error("Invalid base64 padding: 1 padding character requires 3 payload characters mod 4")
+  elseif paddingCount == 2 and (payloadLength % 4 ~= 2 or payloadLength == 0) then
+    error("Invalid base64 padding: 2 padding characters require 2 payload characters mod 4")
+  end
 
   s = s:gsub("=", "")
 
-  local bin = ""
+  if #s % 4 == 1 then
+    error("Invalid base64 length: incomplete group")
+  end
 
-  for i = 1, #s do bin = bin .. base64Reverse[s:sub(i, i)] end
+  local decoded = {}
+  local i = 1
 
-  if #bin % 8 ~= 0 then bin = bin:sub(1, #bin - (#bin % 8)) end
+  while i <= #s do
+    local ch1 = s:sub(i, i)
+    local ch2 = i + 1 <= #s and s:sub(i + 1, i + 1) or nil
+    local ch3 = i + 2 <= #s and s:sub(i + 2, i + 2) or nil
+    local ch4 = i + 3 <= #s and s:sub(i + 3, i + 3) or nil
 
-  return cryptography.binary_to_text(bin)
+    local c1 = lookup[ch1]
+    if not c1 then error("Invalid base64 character: " .. ch1) end
+    local c2 = ch2 and lookup[ch2] or 0
+    if ch2 and not lookup[ch2] then error("Invalid base64 character: " .. ch2) end
+    local c3 = ch3 and lookup[ch3] or 0
+    if ch3 and not lookup[ch3] then error("Invalid base64 character: " .. ch3) end
+    local c4 = ch4 and lookup[ch4] or 0
+    if ch4 and not lookup[ch4] then error("Invalid base64 character: " .. ch4) end
+
+    local n = (c1 << 18) | (c2 << 12) | (c3 << 6) | c4
+
+    table.insert(decoded, string.char((n >> 16) & 0xFF))
+    if i + 2 <= #s then
+      table.insert(decoded, string.char((n >> 8) & 0xFF))
+    end
+    if i + 3 <= #s then
+      table.insert(decoded, string.char(n & 0xFF))
+    end
+
+    i = i + 4
+  end
+
+  return table.concat(decoded)
 end
 
 ---***SRG Custom Function***
@@ -1755,17 +1813,107 @@ function cryptography.base32_to_text(s, alphabet)
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
   end
 
-  local base32Reverse = table.keypair_reverse(toBase32Table(alphabet))
+  local lookup = {}
+  for i = 1, #alphabet do
+    lookup[alphabet:sub(i, i)] = i - 1
+  end
+
+  local paddingCount = 0
+  for i = #s, 1, -1 do
+    if s:sub(i, i) == "=" then
+      paddingCount = paddingCount + 1
+    else
+      break
+    end
+  end
+
+  if paddingCount > 6 then
+    error("Invalid base32 padding: too many padding characters")
+  end
+
+  for i = 1, #s - paddingCount do
+    if s:sub(i, i) == "=" then
+      error("Invalid base32 padding: padding character in non-terminal position")
+    end
+  end
+
+  local payloadLength = #s - paddingCount
+  if paddingCount > 0 then
+    local remainder = payloadLength % 8
+    if payloadLength == 0 then
+      error("Invalid base32 padding: padding without payload")
+    elseif paddingCount == 1 and remainder ~= 7 then
+      error("Invalid base32 padding: 1 padding character requires 7 payload characters mod 8")
+    elseif paddingCount == 3 and remainder ~= 5 then
+      error("Invalid base32 padding: 3 padding characters require 5 payload characters mod 8")
+    elseif paddingCount == 4 and remainder ~= 4 then
+      error("Invalid base32 padding: 4 padding characters require 4 payload characters mod 8")
+    elseif paddingCount == 6 and remainder ~= 2 then
+      error("Invalid base32 padding: 6 padding characters require 2 payload characters mod 8")
+    elseif paddingCount ~= 1 and paddingCount ~= 3 and paddingCount ~= 4 and paddingCount ~= 6 then
+      error("Invalid base32 padding: " .. paddingCount .. " padding characters not allowed")
+    end
+  end
 
   s = s:gsub("=", "")
 
-  local bin = ""
+  local remainder = #s % 8
+  if remainder == 1 or remainder == 3 or remainder == 6 then
+    error("Invalid base32 length: incomplete group")
+  end
 
-  for i = 1, #s do bin = bin .. base32Reverse[s:sub(i, i)] end
+  local decoded = {}
+  local i = 1
 
-  if #bin % 8 ~= 0 then bin = bin:sub(1, #bin - (#bin % 8)) end
+  while i <= #s do
+    local ch1 = s:sub(i, i)
+    local ch2 = i + 1 <= #s and s:sub(i + 1, i + 1) or nil
+    local ch3 = i + 2 <= #s and s:sub(i + 2, i + 2) or nil
+    local ch4 = i + 3 <= #s and s:sub(i + 3, i + 3) or nil
+    local ch5 = i + 4 <= #s and s:sub(i + 4, i + 4) or nil
+    local ch6 = i + 5 <= #s and s:sub(i + 5, i + 5) or nil
+    local ch7 = i + 6 <= #s and s:sub(i + 6, i + 6) or nil
+    local ch8 = i + 7 <= #s and s:sub(i + 7, i + 7) or nil
 
-  return cryptography.binary_to_text(bin)
+    local c1 = lookup[ch1]
+    if not c1 then error("Invalid base32 character: " .. ch1) end
+    local c2 = ch2 and lookup[ch2] or 0
+    if ch2 and not lookup[ch2] then error("Invalid base32 character: " .. ch2) end
+    local c3 = ch3 and lookup[ch3] or 0
+    if ch3 and not lookup[ch3] then error("Invalid base32 character: " .. ch3) end
+    local c4 = ch4 and lookup[ch4] or 0
+    if ch4 and not lookup[ch4] then error("Invalid base32 character: " .. ch4) end
+    local c5 = ch5 and lookup[ch5] or 0
+    if ch5 and not lookup[ch5] then error("Invalid base32 character: " .. ch5) end
+    local c6 = ch6 and lookup[ch6] or 0
+    if ch6 and not lookup[ch6] then error("Invalid base32 character: " .. ch6) end
+    local c7 = ch7 and lookup[ch7] or 0
+    if ch7 and not lookup[ch7] then error("Invalid base32 character: " .. ch7) end
+    local c8 = ch8 and lookup[ch8] or 0
+    if ch8 and not lookup[ch8] then error("Invalid base32 character: " .. ch8) end
+
+    table.insert(decoded, string.char(((c1 << 3) | (c2 >> 2)) & 0xFF))
+    
+    if i + 3 <= #s then
+      table.insert(decoded, string.char((((c2 & 0x03) << 6) | (c3 << 1) | (c4 >> 4)) & 0xFF))
+    end
+    
+    if i + 4 <= #s then
+      table.insert(decoded, string.char((((c4 & 0x0F) << 4) | (c5 >> 1)) & 0xFF))
+    end
+    
+    if i + 5 <= #s then
+      table.insert(decoded, string.char((((c5 & 0x01) << 7) | (c6 << 2) | (c7 >> 3)) & 0xFF))
+    end
+    
+    if i + 7 <= #s then
+      table.insert(decoded, string.char((((c7 & 0x07) << 5) | c8) & 0xFF))
+    end
+
+    i = i + 8
+  end
+
+  return table.concat(decoded)
 end
 
 ---***SRG Custom Function***
@@ -1792,20 +1940,79 @@ function cryptography.text_to_base58(s, alphabet)
 
   local base58Chars = toBase58Table(alphabet)
 
+  local function isZero(bignum)
+    for i = 1, #bignum do
+      if bignum[i] ~= 0 then return false end
+    end
+    return true
+  end
+
+  local function multiplyBySmall(bignum, n)
+    local carry = 0
+    for i = 1, #bignum do
+      local prod = bignum[i] * n + carry
+      bignum[i] = prod % 256
+      carry = prod // 256
+    end
+    while carry > 0 do
+      table.insert(bignum, carry % 256)
+      carry = carry // 256
+    end
+  end
+
+  local function addSmall(bignum, n)
+    local carry = n
+    for i = 1, #bignum do
+      local sum = bignum[i] + carry
+      bignum[i] = sum % 256
+      carry = sum // 256
+      if carry == 0 then break end
+    end
+    if carry > 0 then
+      table.insert(bignum, carry)
+    end
+  end
+
+  local function divModBySmall(bignum, n)
+    local remainder = 0
+    for i = #bignum, 1, -1 do
+      local current = remainder * 256 + bignum[i]
+      bignum[i] = current // n
+      remainder = current % n
+    end
+    while #bignum > 0 and bignum[#bignum] == 0 do
+      table.remove(bignum)
+    end
+    return remainder
+  end
+
+  local leadingZeros = 0
+  for i = 1, #s do
+    if s:byte(i) ~= 0 then break end
+    leadingZeros = leadingZeros + 1
+  end
+
+  local bignum = {}
+  for i = 1, #s do
+    multiplyBySmall(bignum, 256)
+    addSmall(bignum, s:byte(i))
+  end
+
   local encoded = {}
-
-  local num = 0
-  for i = 1, #s do num = num * 256 + s:byte(i) end
-
-  while num >= 58 do
-    local rem = num % 58
-    num = num // 58
+  while not isZero(bignum) do
+    local rem = divModBySmall(bignum, 58)
     table.insert(encoded, 1, base58Chars[rem])
   end
 
-  encoded = base58Chars[num] .. encoded
+  for i = 1, leadingZeros do
+    table.insert(encoded, 1, base58Chars[0])
+  end
 
-  return encoded
+  if #encoded == 0 and #s > 0 then
+    return base58Chars[0]
+  end
+
+  return table.concat(encoded)
 end
 
 ---***SRG Custom Function***
@@ -1832,23 +2039,82 @@ function cryptography.base58_to_text(s, alphabet)
 
   local base58Reverse = table.keypair_reverse(toBase58Table(alphabet))
 
-  local num = 0
+  local function isZero(bignum)
+    for i = 1, #bignum do
+      if bignum[i] ~= 0 then return false end
+    end
+    return true
+  end
+
+  local function multiplyBySmall(bignum, n)
+    local carry = 0
+    for i = 1, #bignum do
+      local prod = bignum[i] * n + carry
+      bignum[i] = prod % 256
+      carry = prod // 256
+    end
+    while carry > 0 do
+      table.insert(bignum, carry % 256)
+      carry = carry // 256
+    end
+  end
+
+  local function addSmall(bignum, n)
+    local carry = n
+    for i = 1, #bignum do
+      local sum = bignum[i] + carry
+      bignum[i] = sum % 256
+      carry = sum // 256
+      if carry == 0 then break end
+    end
+    if carry > 0 then
+      table.insert(bignum, carry)
+    end
+  end
+
+  local function divModBySmall(bignum, n)
+    local remainder = 0
+    for i = #bignum, 1, -1 do
+      local current = remainder * 256 + bignum[i]
+      bignum[i] = current // n
+      remainder = current % n
+    end
+    while #bignum > 0 and bignum[#bignum] == 0 do
+      table.remove(bignum)
+    end
+    return remainder
+  end
+
+  local leadingZeros = 0
+  local firstChar = alphabet:sub(1, 1)
+  for i = 1, #s do
+    if s:sub(i, i) ~= firstChar then break end
+    leadingZeros = leadingZeros + 1
+  end
+
+  local bignum = {}
   for i = 1, #s do
     local char = s:sub(i, i)
     if not base58Reverse[char] then error("Invalid base58 character: " .. char) end
-    num = num * 58 + base58Reverse[char]
-  end
-  local decoded = ""
-
-  while num >= 256 do
-    local rem = num % 256
-    num = num // 256
-    decoded = string.char(rem) .. decoded
+    multiplyBySmall(bignum, 58)
+    addSmall(bignum, base58Reverse[char])
   end
 
-  decoded = string.char(num) .. decoded
+  local decoded = {}
+  while not isZero(bignum) do
+    local rem = divModBySmall(bignum, 256)
+    table.insert(decoded, 1, string.char(rem))
+  end
 
-  return decoded
+  for i = 1, leadingZeros do
+    table.insert(decoded, 1, string.char(0))
+  end
+
+  if #decoded == 0 and #s > 0 then
+    return string.char(0)
+  end
+
+  return table.concat(decoded)
 end
 
 ---***SRG Custom Function***
