@@ -167,7 +167,7 @@
     - Now uses native bitwise operators (`&`, `|`, `<<`, `>>`, `~`) exclusively
 
 # V2.3.0
-- ## Date: Oct 27, 2025 - ???
+- ## Date: Oct 27, 2025 - November 1, 2025
   - ## Oct 27, 2025
     - Functions now accept additional arguments to pass to their `func` parameter.
       - `delay_stop`, `delay`, `benchmark`, and `execution_time`
@@ -177,3 +177,5 @@
     - Added 1 new library:
       - `terminal`: `terminal.clear()` and `terminal.style(text, ...)`
     - Adding caching for `cryptography.sha256`
+  - ## Nov 1, 2025
+    - Greatly improved `cryptography.sha256`. 

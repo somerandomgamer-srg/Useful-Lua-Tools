@@ -1604,21 +1604,24 @@ function cryptography.text_to_base64(s, alphabet)
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
   end
 
-  local base64Chars = toBase64Table(alphabet)
-
-  local bits = {}
   local encoded = ""
-  local bin = cryptography.text_to_binary(s)
-
-  for i = 1, #binary, 6 do
-    local chunk = bin:sub(i, i + 5)
-    while #chunk < 6 do chunk = chunk .. "0" end
-    table.insert(bits, chunk)
+  local i = 1
+  
+  while i <= #s do
+    local b1 = s:byte(i)
+    local b2 = i + 1 <= #s and s:byte(i + 1) or 0
+    local b3 = i + 2 <= #s and s:byte(i + 2) or 0
+    
+    local n = (b1 << 16) | (b2 << 8) | b3
+    
+    encoded = encoded .. alphabet:sub(((n >> 18) & 0x3F) + 1, ((n >> 18) & 0x3F) + 1)
+    encoded = encoded .. alphabet:sub(((n >> 12) & 0x3F) + 1, ((n >> 12) & 0x3F) + 1)
+    encoded = encoded .. (i + 1 <= #s and alphabet:sub(((n >> 6) & 0x3F) + 1, ((n >> 6) & 0x3F) + 1) or "=")
+    encoded = encoded .. (i + 2 <= #s and alphabet:sub((n & 0x3F) + 1, (n & 0x3F) + 1) or "=")
+    
+    i = i + 3
   end
-
-  for i = 1, #bits do encoded = encoded .. base64Chars[bits[i]] end
-
-  if #s % 3 ~= 0 then encoded = encoded .. ("="):rep(3 - (#s % 3)) end
+  
   return encoded
 end
 
@@ -1685,7 +1688,7 @@ function cryptography.text_to_base32(s, alphabet)
   local encoded = ""
   local bin = cryptography.text_to_binary(s)
 
-  for i = 1, #binary, 5 do
+  for i = 1, #bin, 5 do
     local chunk = bin:sub(i, i + 4)
     while #chunk < 5 do chunk = chunk .. "0" end
     table.insert(bits, chunk)

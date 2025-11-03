@@ -1,0 +1,18 @@
+modules = ["lua-5.2"]
+[agent]
+expertMode = true
+
+[nix]
+packages = ["lua5_4"]
+
+[workflows]
+runButton = "main"
+
+[[workflows.workflow]]
+name = "main"
+mode = "sequential"
+author = 38146567
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "lua main.lua"
