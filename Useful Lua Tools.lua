@@ -1682,21 +1682,30 @@ function cryptography.text_to_base32(s, alphabet)
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
   end
 
-  local base32Chars = toBase32Table(alphabet)
-
-  local bits = {}
   local encoded = ""
-  local bin = cryptography.text_to_binary(s)
-
-  for i = 1, #bin, 5 do
-    local chunk = bin:sub(i, i + 4)
-    while #chunk < 5 do chunk = chunk .. "0" end
-    table.insert(bits, chunk)
+  local i = 1
+  
+  while i <= #s do
+    local b1 = s:byte(i) or 0
+    local b2 = i + 1 <= #s and s:byte(i + 1) or 0
+    local b3 = i + 2 <= #s and s:byte(i + 2) or 0
+    local b4 = i + 3 <= #s and s:byte(i + 3) or 0
+    local b5 = i + 4 <= #s and s:byte(i + 4) or 0
+    
+    local n = (b1 << 32) | (b2 << 24) | (b3 << 16) | (b4 << 8) | b5
+    
+    encoded = encoded .. alphabet:sub(((n >> 35) & 0x1F) + 1, ((n >> 35) & 0x1F) + 1)
+    encoded = encoded .. alphabet:sub(((n >> 30) & 0x1F) + 1, ((n >> 30) & 0x1F) + 1)
+    encoded = encoded .. (i + 1 <= #s and alphabet:sub(((n >> 25) & 0x1F) + 1, ((n >> 25) & 0x1F) + 1) or "=")
+    encoded = encoded .. (i + 2 <= #s and alphabet:sub(((n >> 20) & 0x1F) + 1, ((n >> 20) & 0x1F) + 1) or "=")
+    encoded = encoded .. (i + 3 <= #s and alphabet:sub(((n >> 15) & 0x1F) + 1, ((n >> 15) & 0x1F) + 1) or "=")
+    encoded = encoded .. (i + 3 <= #s and alphabet:sub(((n >> 10) & 0x1F) + 1, ((n >> 10) & 0x1F) + 1) or "=")
+    encoded = encoded .. (i + 4 <= #s and alphabet:sub(((n >> 5) & 0x1F) + 1, ((n >> 5) & 0x1F) + 1) or "=")
+    encoded = encoded .. (i + 4 <= #s and alphabet:sub((n & 0x1F) + 1, (n & 0x1F) + 1) or "=")
+    
+    i = i + 5
   end
-
-  for i = 1, #bits do encoded = encoded .. base32Chars[bits[i]] end
-
-  if #s % 8 ~= 0 then encoded = encoded .. ("="):rep(8 - (#s % 8)) end
+  
   return encoded
 end
 
