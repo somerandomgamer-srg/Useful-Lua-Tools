@@ -1729,7 +1729,7 @@ function cryptography.text_to_base32(s, alphabet)
 
     i = i + 5
   end
-  
+
   return encoded
 end
 
@@ -1792,7 +1792,7 @@ function cryptography.text_to_base58(s, alphabet)
 
   local base58Chars = toBase58Table(alphabet)
 
-  local encoded = ""
+  local encoded = {}
 
   local num = 0
   for i = 1, #s do num = num * 256 + s:byte(i) end
@@ -1800,7 +1800,7 @@ function cryptography.text_to_base58(s, alphabet)
   while num >= 58 do
     local rem = num % 58
     num = num // 58
-    encoded = base58Chars[rem] .. encoded
+    table.insert(encoded, 1, base58Chars[rem])
   end
 
   encoded = base58Chars[num] .. encoded
