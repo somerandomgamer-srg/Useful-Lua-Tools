@@ -1685,23 +1685,49 @@ function cryptography.text_to_base32(s, alphabet)
   local encoded = ""
   local i = 1
   
+  -- Process 5-byte chunks (40 bits = 8 base32 chars)
   while i <= #s do
-    local b1 = s:byte(i) or 0
+    local b1 = s:byte(i)
     local b2 = i + 1 <= #s and s:byte(i + 1) or 0
     local b3 = i + 2 <= #s and s:byte(i + 2) or 0
     local b4 = i + 3 <= #s and s:byte(i + 3) or 0
     local b5 = i + 4 <= #s and s:byte(i + 4) or 0
     
-    local n = (b1 << 32) | (b2 << 24) | (b3 << 16) | (b4 << 8) | b5
+    local bytes_in_chunk = math.min(5, #s - i + 1)
     
-    encoded = encoded .. alphabet:sub(((n >> 35) & 0x1F) + 1, ((n >> 35) & 0x1F) + 1)
-    encoded = encoded .. alphabet:sub(((n >> 30) & 0x1F) + 1, ((n >> 30) & 0x1F) + 1)
-    encoded = encoded .. (i + 1 <= #s and alphabet:sub(((n >> 25) & 0x1F) + 1, ((n >> 25) & 0x1F) + 1) or "=")
-    encoded = encoded .. (i + 2 <= #s and alphabet:sub(((n >> 20) & 0x1F) + 1, ((n >> 20) & 0x1F) + 1) or "=")
-    encoded = encoded .. (i + 3 <= #s and alphabet:sub(((n >> 15) & 0x1F) + 1, ((n >> 15) & 0x1F) + 1) or "=")
-    encoded = encoded .. (i + 3 <= #s and alphabet:sub(((n >> 10) & 0x1F) + 1, ((n >> 10) & 0x1F) + 1) or "=")
-    encoded = encoded .. (i + 4 <= #s and alphabet:sub(((n >> 5) & 0x1F) + 1, ((n >> 5) & 0x1F) + 1) or "=")
-    encoded = encoded .. (i + 4 <= #s and alphabet:sub((n & 0x1F) + 1, (n & 0x1F) + 1) or "=")
+    -- Extract 5-bit groups from 40-bit block (MSB first)
+    encoded = encoded .. alphabet:sub((b1 >> 3) + 1, (b1 >> 3) + 1)
+    encoded = encoded .. alphabet:sub((((b1 & 0x07) << 2) | (b2 >> 6)) + 1, (((b1 & 0x07) << 2) | (b2 >> 6)) + 1)
+    
+    if bytes_in_chunk > 1 then
+      encoded = encoded .. alphabet:sub(((b2 >> 1) & 0x1F) + 1, ((b2 >> 1) & 0x1F) + 1)
+      encoded = encoded .. alphabet:sub((((b2 & 0x01) << 4) | (b3 >> 4)) + 1, (((b2 & 0x01) << 4) | (b3 >> 4)) + 1)
+    else
+      encoded = encoded .. ("======")
+      break
+    end
+    
+    if bytes_in_chunk > 2 then
+      encoded = encoded .. alphabet:sub((((b3 & 0x0F) << 1) | (b4 >> 7)) + 1, (((b3 & 0x0F) << 1) | (b4 >> 7)) + 1)
+    else
+      encoded = encoded .. ("====")
+      break
+    end
+    
+    if bytes_in_chunk > 3 then
+      encoded = encoded .. alphabet:sub(((b4 >> 2) & 0x1F) + 1, ((b4 >> 2) & 0x1F) + 1)
+      encoded = encoded .. alphabet:sub((((b4 & 0x03) << 3) | (b5 >> 5)) + 1, (((b4 & 0x03) << 3) | (b5 >> 5)) + 1)
+    else
+      encoded = encoded .. ("===")
+      break
+    end
+    
+    if bytes_in_chunk > 4 then
+      encoded = encoded .. alphabet:sub((b5 & 0x1F) + 1, (b5 & 0x1F) + 1)
+    else
+      encoded = encoded .. ("=")
+      break
+    end
     
     i = i + 5
   end
