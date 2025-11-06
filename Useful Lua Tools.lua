@@ -1657,48 +1657,40 @@ function bignum.pow(a, b, precision)
   if precision and type(precision) ~= "number" then errorMsg("Number", "precision", precision) end
   
   precision = precision or 10
-  
+
   if b == 0 then return { digits = "1", decimal = "", negative = false } end
-  
+
   if b < 0 then
     local posResult = bignum.pow(a, -b, precision)
     local one = bignum.new("1")
     return bignum.divide(one, posResult, precision)
   end
-  
+
   if math.is_whole(b) then
     local result = bignum.new("1")
     local hasDecimal = (a.decimal and a.decimal ~= "")
-    
+
     if hasDecimal then
-      for i = 1, b do
-        result = bignum.multiply(result, a, precision)
-      end
+      for i = 1, b do result = bignum.multiply(result, a, precision) end
     else
-      for i = 1, b do
-        result = bignum.multiply(result, a)
-      end
+      for i = 1, b do result = bignum.multiply(result, a) end
     end
     return result
   else
     local intPart = math.floor(b)
     local fracPart = b - intPart
-    
+
     local intResult = bignum.pow(a, intPart, precision)
-    
-    if fracPart == 0 then
-      return intResult
-    end
+
+    if fracPart == 0 then return intResult end
     
     local base = tonumber(bignum.to_string(a))
-    if not base then
-      error("Number too large for fractional exponent - please use whole number base for large numbers")
-    end
-    
+    if not base then error("Number too large for fractional exponent. Please use whole number base for large numbers") end
+
     local fracResult = base ^ fracPart
     local fracResultStr = string.format("%." .. precision .. "f", fracResult)
     local fracBigNum = bignum.new(fracResultStr)
-    
+
     return bignum.multiply(intResult, fracBigNum, precision)
   end
 end
