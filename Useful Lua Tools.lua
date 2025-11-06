@@ -1457,11 +1457,52 @@ end
 ---@param b table
 ---@return table
 ---@nodiscard
-function bignum.multiply(a, b)
+function bignum.multiply(a, b, precision)
   if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
   if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
+  if precision and type(precision) ~= "number" then errorMsg("Number", "precision", precision) end
   
-  if a.digits == "0" or b.digits == "0" then return { digits = "0", negative = false } end
+  precision = precision or 10
+  
+  local aHasDec = (a.decimal and a.decimal ~= "")
+  local bHasDec = (b.decimal and b.decimal ~= "")
+  
+  if aHasDec or bHasDec then
+    local aDecLen = (a.decimal and #a.decimal) or 0
+    local bDecLen = (b.decimal and #b.decimal) or 0
+    local totalDecLen = aDecLen + bDecLen
+    
+    local aFull = a.digits .. (a.decimal or "")
+    local bFull = b.digits .. (b.decimal or "")
+    
+    local aNum = bignum.new(aFull)
+    local bNum = bignum.new(bFull)
+    
+    local result = bignum.multiply(aNum, bNum)
+    
+    local resultStr = result.digits
+    if #resultStr <= totalDecLen then
+      resultStr = string.rep("0", totalDecLen - #resultStr + 1) .. resultStr
+    end
+    
+    local intPart = resultStr:sub(1, #resultStr - totalDecLen)
+    local decPart = resultStr:sub(#resultStr - totalDecLen + 1)
+    
+    if intPart == "" then intPart = "0" end
+    
+    if #decPart > precision then
+      decPart = decPart:sub(1, precision)
+    end
+    
+    decPart = decPart:gsub("0+$", "")
+    
+    local negative = (a.negative ~= b.negative)
+    if intPart == "0" and decPart == "" then negative = false end
+    
+    return { digits = intPart, decimal = decPart, negative = negative }
+  end
+  
+  if a.digits == "0" or b.digits == "0" then return { digits = "0", decimal = "", negative = false } end
   
   local d1, d2 = a.digits, b.digits
   local result = {}
@@ -1492,28 +1533,75 @@ function bignum.multiply(a, b)
   local negative = (a.negative ~= b.negative)
   if resultStr == "0" then negative = false end
   
-  return { digits = resultStr, negative = negative }
+  return { digits = resultStr, decimal = "", negative = negative }
 end
 
 ---***SRG Custom Function***
 ---
----Divides a by b (a / b).
+---Divides a by b (a / b). Supports decimals.
 ---@param a table
 ---@param b table
+---@param precision? number
 ---@return table
 ---@nodiscard
-function bignum.divide(a, b)
+function bignum.divide(a, b, precision)
   if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
   if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
+  if precision and type(precision) ~= "number" then errorMsg("Number", "precision", precision) end
+  
+  local forceDecimal = (precision ~= nil)
+  precision = precision or 10
+  
+  local aHasDec = (a.decimal and a.decimal ~= "")
+  local bHasDec = (b.decimal and b.decimal ~= "")
+  
+  if aHasDec or bHasDec or forceDecimal then
+    if b.digits == "0" and (not b.decimal or b.decimal == "") then
+      error("Division by zero")
+    end
+    
+    local aStr = a.digits .. (a.decimal or "")
+    local bStr = b.digits .. (b.decimal or "")
+    
+    local aDecLen = (a.decimal and #a.decimal) or 0
+    local bDecLen = (b.decimal and #b.decimal) or 0
+    
+    local extraZeros = precision + bDecLen - aDecLen
+    if extraZeros > 0 then
+      aStr = aStr .. string.rep("0", extraZeros)
+    end
+    
+    local aBig = bignum.new(aStr)
+    local bBig = bignum.new(bStr)
+    
+    local quotient = bignum.divide(aBig, bBig)
+    
+    local resultStr = quotient.digits
+    if #resultStr <= precision then
+      resultStr = string.rep("0", precision - #resultStr + 1) .. resultStr
+    end
+    
+    local intPart = resultStr:sub(1, #resultStr - precision)
+    local decPart = resultStr:sub(#resultStr - precision + 1)
+    
+    if intPart == "" then intPart = "0" end
+    
+    decPart = decPart:gsub("0+$", "")
+    
+    local negative = (a.negative ~= b.negative)
+    if intPart == "0" and decPart == "" then negative = false end
+    
+    return { digits = intPart, decimal = decPart, negative = negative }
+  end
   
   if b.digits == "0" then error("Division by zero") end
   
-  if a.digits == "0" then return { digits = "0", negative = false } end
+  if a.digits == "0" then return { digits = "0", decimal = "", negative = false } end
   
-  local absA = { digits = a.digits, negative = false }
-  local absB = { digits = b.digits, negative = false }
+  local absA = { digits = a.digits, decimal = "", negative = false }
+  local absB = { digits = b.digits, decimal = "", negative = false }
   
-  if bignum.compare(absA, absB) < 0 then return { digits = "0", negative = false } end
+  if bignum.compare(absA, absB) < 0 then return { digits = "0", decimal = "", negative = false } end
   
   local quotient = ""
   local current = bignum.new("0")
@@ -1536,7 +1624,7 @@ function bignum.divide(a, b)
   local negative = (a.negative ~= b.negative)
   if quotient == "0" then negative = false end
   
-  return { digits = quotient, negative = negative }
+  return { digits = quotient, decimal = "", negative = negative }
 end
 
 ---***SRG Custom Function***
@@ -1575,7 +1663,7 @@ function bignum.pow(a, b, precision)
   if b < 0 then
     local posResult = bignum.pow(a, -b, precision)
     local one = bignum.new("1")
-    return bignum.divide_decimal(one, posResult, precision)
+    return bignum.divide(one, posResult, precision)
   end
   
   if math.is_whole(b) then
@@ -1584,7 +1672,7 @@ function bignum.pow(a, b, precision)
     
     if hasDecimal then
       for i = 1, b do
-        result = bignum.multiply_decimal(result, a, precision)
+        result = bignum.multiply(result, a, precision)
       end
     else
       for i = 1, b do
@@ -1611,110 +1699,8 @@ function bignum.pow(a, b, precision)
     local fracResultStr = string.format("%." .. precision .. "f", fracResult)
     local fracBigNum = bignum.new(fracResultStr)
     
-    return bignum.multiply_decimal(intResult, fracBigNum, precision)
+    return bignum.multiply(intResult, fracBigNum, precision)
   end
-end
-
----***SRG Custom Function***
----
----Multiplies two big numbers with decimal support.
----@param a table
----@param b table
----@param precision? number
----@return table
----@nodiscard
-function bignum.multiply_decimal(a, b, precision)
-  if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
-  if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
-  if precision and type(precision) ~= "number" then errorMsg("Number", "precision", precision) end
-  
-  precision = precision or 10
-  
-  local aDecLen = (a.decimal and #a.decimal) or 0
-  local bDecLen = (b.decimal and #b.decimal) or 0
-  local totalDecLen = aDecLen + bDecLen
-  
-  local aFull = a.digits .. (a.decimal or "")
-  local bFull = b.digits .. (b.decimal or "")
-  
-  local aNum = bignum.new(aFull)
-  local bNum = bignum.new(bFull)
-  
-  local result = bignum.multiply(aNum, bNum)
-  
-  local resultStr = result.digits
-  if #resultStr <= totalDecLen then
-    resultStr = string.rep("0", totalDecLen - #resultStr + 1) .. resultStr
-  end
-  
-  local intPart = resultStr:sub(1, #resultStr - totalDecLen)
-  local decPart = resultStr:sub(#resultStr - totalDecLen + 1)
-  
-  if intPart == "" then intPart = "0" end
-  
-  if #decPart > precision then
-    decPart = decPart:sub(1, precision)
-  end
-  
-  decPart = decPart:gsub("0+$", "")
-  
-  local negative = (a.negative ~= b.negative)
-  if intPart == "0" and decPart == "" then negative = false end
-  
-  return { digits = intPart, decimal = decPart, negative = negative }
-end
-
----***SRG Custom Function***
----
----Divides two big numbers with decimal support.
----@param a table
----@param b table
----@param precision? number
----@return table
----@nodiscard
-function bignum.divide_decimal(a, b, precision)
-  if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
-  if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
-  if precision and type(precision) ~= "number" then errorMsg("Number", "precision", precision) end
-  
-  precision = precision or 10
-  
-  if b.digits == "0" and (not b.decimal or b.decimal == "") then
-    error("Division by zero")
-  end
-  
-  local aStr = a.digits .. (a.decimal or "")
-  local bStr = b.digits .. (b.decimal or "")
-  
-  local aDecLen = (a.decimal and #a.decimal) or 0
-  local bDecLen = (b.decimal and #b.decimal) or 0
-  
-  local extraZeros = precision + bDecLen - aDecLen
-  if extraZeros > 0 then
-    aStr = aStr .. string.rep("0", extraZeros)
-  end
-  
-  local aBig = bignum.new(aStr)
-  local bBig = bignum.new(bStr)
-  
-  local quotient = bignum.divide(aBig, bBig)
-  
-  local resultStr = quotient.digits
-  if #resultStr <= precision then
-    resultStr = string.rep("0", precision - #resultStr + 1) .. resultStr
-  end
-  
-  local intPart = resultStr:sub(1, #resultStr - precision)
-  local decPart = resultStr:sub(#resultStr - precision + 1)
-  
-  if intPart == "" then intPart = "0" end
-  
-  decPart = decPart:gsub("0+$", "")
-  
-  local negative = (a.negative ~= b.negative)
-  if intPart == "0" and decPart == "" then negative = false end
-  
-  return { digits = intPart, decimal = decPart, negative = negative }
 end
 
 ---***SRG Custom Function***
