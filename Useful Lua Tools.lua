@@ -1335,39 +1335,34 @@ end
 ---@return table
 ---@nodiscard
 function bignum.add(a, b)
-  if type(a) ~= "table" or type(a.digits) ~= "string" then
-    errorMsg("BigNum", "a", a)
-  end
-  if type(b) ~= "table" or type(b.digits) ~= "string" then
-    errorMsg("BigNum", "b", b)
-  end
-  
+  if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
+  if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
+
   if a.negative and not b.negative then
     local temp = { digits = a.digits, negative = false }
     return bignum.subtract(b, temp)
   end
+
   if not a.negative and b.negative then
     local temp = { digits = b.digits, negative = false }
     return bignum.subtract(a, temp)
   end
-  
+
   local d1, d2 = a.digits, b.digits
   local len = math.max(#d1, #d2)
   local result = ""
   local carry = 0
-  
+
   for i = 1, len do
     local digit1 = tonumber(d1:sub(-i, -i)) or 0
     local digit2 = tonumber(d2:sub(-i, -i)) or 0
     local sum = digit1 + digit2 + carry
     result = tostring(sum % 10) .. result
-    carry = math.floor(sum / 10)
+    carry = sum // 10
   end
-  
-  if carry > 0 then
-    result = tostring(carry) .. result
-  end
-  
+
+  if carry > 0 then result = tostring(carry) .. result end
+
   return { digits = result, negative = a.negative }
 end
 
@@ -1379,12 +1374,8 @@ end
 ---@return table
 ---@nodiscard
 function bignum.subtract(a, b)
-  if type(a) ~= "table" or type(a.digits) ~= "string" then
-    errorMsg("BigNum", "a", a)
-  end
-  if type(b) ~= "table" or type(b.digits) ~= "string" then
-    errorMsg("BigNum", "b", b)
-  end
+  if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
+  if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
   
   if a.negative and not b.negative then
     local temp = { digits = a.digits, negative = false }
@@ -1392,6 +1383,7 @@ function bignum.subtract(a, b)
     result.negative = true
     return result
   end
+
   if not a.negative and b.negative then
     local temp = { digits = b.digits, negative = false }
     return bignum.add(a, temp)
@@ -1407,30 +1399,30 @@ function bignum.subtract(a, b)
   
   local result = ""
   local borrow = 0
-  
+
   for i = 1, #d1 do
     local digit1 = tonumber(d1:sub(-i, -i)) or 0
     local digit2 = tonumber(d2:sub(-i, -i)) or 0
     local diff = digit1 - digit2 - borrow
-    
+
     if diff < 0 then
       diff = diff + 10
       borrow = 1
     else
       borrow = 0
     end
-    
+
     result = tostring(diff) .. result
   end
-  
+
   result = result:gsub("^0+", "")
   if result == "" then result = "0" end
-  
+
   local negative = a.negative
   if swap then negative = not negative end
-  
+
   if result == "0" then negative = false end
-  
+
   return { digits = result, negative = negative }
 end
 
@@ -1442,23 +1434,15 @@ end
 ---@return table
 ---@nodiscard
 function bignum.multiply(a, b)
-  if type(a) ~= "table" or type(a.digits) ~= "string" then
-    errorMsg("BigNum", "a", a)
-  end
-  if type(b) ~= "table" or type(b.digits) ~= "string" then
-    errorMsg("BigNum", "b", b)
-  end
+  if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
+  if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
   
-  if a.digits == "0" or b.digits == "0" then
-    return { digits = "0", negative = false }
-  end
+  if a.digits == "0" or b.digits == "0" then return { digits = "0", negative = false } end
   
   local d1, d2 = a.digits, b.digits
   local result = {}
   
-  for i = 1, #d1 + #d2 do
-    result[i] = 0
-  end
+  for i = 1, #d1 + #d2 do result[i] = 0 end
   
   for i = #d1, 1, -1 do
     for j = #d2, 1, -1 do
@@ -1476,9 +1460,7 @@ function bignum.multiply(a, b)
   end
   
   local resultStr = ""
-  for i = #result, 1, -1 do
-    resultStr = resultStr .. tostring(result[i])
-  end
+  for i = #result, 1, -1 do resultStr = resultStr .. tostring(result[i]) end
   
   resultStr = resultStr:gsub("^0+", "")
   if resultStr == "" then resultStr = "0" end
@@ -1491,33 +1473,23 @@ end
 
 ---***SRG Custom Function***
 ---
----Divides a by b (a / b). Returns quotient.
+---Divides a by b (a / b).
 ---@param a table
 ---@param b table
 ---@return table
 ---@nodiscard
 function bignum.divide(a, b)
-  if type(a) ~= "table" or type(a.digits) ~= "string" then
-    errorMsg("BigNum", "a", a)
-  end
-  if type(b) ~= "table" or type(b.digits) ~= "string" then
-    errorMsg("BigNum", "b", b)
-  end
+  if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
+  if type(b) ~= "table" or type(b.digits) ~= "string" thenerrorMsg("BigNum", "b", b) end
   
-  if b.digits == "0" then
-    error("Division by zero")
-  end
+  if b.digits == "0" then error("Division by zero") end
   
-  if a.digits == "0" then
-    return { digits = "0", negative = false }
-  end
+  if a.digits == "0" then return { digits = "0", negative = false } end
   
   local absA = { digits = a.digits, negative = false }
   local absB = { digits = b.digits, negative = false }
   
-  if bignum.compare(absA, absB) < 0 then
-    return { digits = "0", negative = false }
-  end
+  if bignum.compare(absA, absB) < 0 then return { digits = "0", negative = false } end
   
   local quotient = ""
   local current = bignum.new("0")
@@ -1545,18 +1517,14 @@ end
 
 ---***SRG Custom Function***
 ---
----Calculates a modulo b (a % b).
+---a % b.
 ---@param a table
 ---@param b table
 ---@return table
 ---@nodiscard
-function bignum.modulo(a, b)
-  if type(a) ~= "table" or type(a.digits) ~= "string" then
-    errorMsg("BigNum", "a", a)
-  end
-  if type(b) ~= "table" or type(b.digits) ~= "string" then
-    errorMsg("BigNum", "b", b)
-  end
+function bignum.mod(a, b)
+  if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
+  if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
   
   local quotient = bignum.divide(a, b)
   local product = bignum.multiply(quotient, b)
@@ -1565,34 +1533,22 @@ end
 
 ---***SRG Custom Function***
 ---
----Raises a to the power of b (a ^ b).
+---a ^ b
 ---@param a table
 ---@param b number
 ---@return table
 ---@nodiscard
-function bignum.power(a, b)
-  if type(a) ~= "table" or type(a.digits) ~= "string" then
-    errorMsg("BigNum", "a", a)
-  end
-  if type(b) ~= "number" then
-    errorMsg("Number", "b", b)
-  end
-  if b < 0 then
-    error("Negative exponents not supported")
-  end
-  if not math.is_whole(b) then
-    error("Exponent must be a whole number")
-  end
-  
-  if b == 0 then
-    return { digits = "1", negative = false }
-  end
-  
+function bignum.pow(a, b)
+  if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
+  if type(b) ~= "number" then errorMsg("Number", "b", b) end
+  if b < 0 then error("Negative exponents not supported") end
+  if not math.is_whole(b) then error("Exponent must be a whole number") end
+
+  if b == 0 then return { digits = "1", negative = false } end
+
   local result = bignum.new("1")
-  for i = 1, b do
-    result = bignum.multiply(result, a)
-  end
-  
+  for i = 1, b do result = bignum.multiply(result, a) end
+
   return result
 end
 
