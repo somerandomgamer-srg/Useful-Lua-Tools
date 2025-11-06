@@ -691,6 +691,9 @@ json = {}
 ---@class binarylib
 binary = {}
 
+---@class bignumlib
+bignum = {}
+
 ---@class validatelib
 validate = {}
 
@@ -1247,6 +1250,397 @@ function binary.bnot(bin)
   end
 
   return result
+end
+
+------------BigNum Library------------
+
+---***SRG Custom Function***
+---
+---Creates a new big number from a string or number.
+---@param value string|number
+---@return table
+---@nodiscard
+function bignum.new(value)
+  if type(value) ~= "string" and type(value) ~= "number" then
+    errorMsg("String or Number", "value", value)
+  end
+  
+  local str = tostring(value)
+  local negative = false
+  
+  if str:sub(1, 1) == "-" then
+    negative = true
+    str = str:sub(2)
+  end
+  
+  if not str:match("^%d+$") then
+    error("Invalid big number format: " .. tostring(value))
+  end
+  
+  str = str:gsub("^0+", "")
+  if str == "" then str = "0" end
+  
+  return { digits = str, negative = negative }
+end
+
+---***SRG Custom Function***
+---
+---Converts a big number to a string.
+---@param bn table
+---@return string
+---@nodiscard
+function bignum.to_string(bn)
+  if type(bn) ~= "table" or type(bn.digits) ~= "string" then
+    errorMsg("BigNum", "bn", bn)
+  end
+  
+  if bn.digits == "0" then return "0" end
+  return (bn.negative and "-" or "") .. bn.digits
+end
+
+---***SRG Custom Function***
+---
+---Compares two big numbers. Returns -1 if a < b, 0 if a == b, 1 if a > b.
+---@param a table
+---@param b table
+---@return number
+---@nodiscard
+function bignum.compare(a, b)
+  if type(a) ~= "table" or type(a.digits) ~= "string" then
+    errorMsg("BigNum", "a", a)
+  end
+  if type(b) ~= "table" or type(b.digits) ~= "string" then
+    errorMsg("BigNum", "b", b)
+  end
+  
+  if a.negative and not b.negative then return -1 end
+  if not a.negative and b.negative then return 1 end
+  
+  local mult = a.negative and -1 or 1
+  
+  if #a.digits < #b.digits then return -1 * mult end
+  if #a.digits > #b.digits then return 1 * mult end
+  
+  if a.digits < b.digits then return -1 * mult end
+  if a.digits > b.digits then return 1 * mult end
+  
+  return 0
+end
+
+---***SRG Custom Function***
+---
+---Adds two big numbers together.
+---@param a table
+---@param b table
+---@return table
+---@nodiscard
+function bignum.add(a, b)
+  if type(a) ~= "table" or type(a.digits) ~= "string" then
+    errorMsg("BigNum", "a", a)
+  end
+  if type(b) ~= "table" or type(b.digits) ~= "string" then
+    errorMsg("BigNum", "b", b)
+  end
+  
+  if a.negative and not b.negative then
+    local temp = { digits = a.digits, negative = false }
+    return bignum.subtract(b, temp)
+  end
+  if not a.negative and b.negative then
+    local temp = { digits = b.digits, negative = false }
+    return bignum.subtract(a, temp)
+  end
+  
+  local d1, d2 = a.digits, b.digits
+  local len = math.max(#d1, #d2)
+  local result = ""
+  local carry = 0
+  
+  for i = 1, len do
+    local digit1 = tonumber(d1:sub(-i, -i)) or 0
+    local digit2 = tonumber(d2:sub(-i, -i)) or 0
+    local sum = digit1 + digit2 + carry
+    result = tostring(sum % 10) .. result
+    carry = math.floor(sum / 10)
+  end
+  
+  if carry > 0 then
+    result = tostring(carry) .. result
+  end
+  
+  return { digits = result, negative = a.negative }
+end
+
+---***SRG Custom Function***
+---
+---Subtracts b from a (a - b).
+---@param a table
+---@param b table
+---@return table
+---@nodiscard
+function bignum.subtract(a, b)
+  if type(a) ~= "table" or type(a.digits) ~= "string" then
+    errorMsg("BigNum", "a", a)
+  end
+  if type(b) ~= "table" or type(b.digits) ~= "string" then
+    errorMsg("BigNum", "b", b)
+  end
+  
+  if a.negative and not b.negative then
+    local temp = { digits = a.digits, negative = false }
+    local result = bignum.add(temp, b)
+    result.negative = true
+    return result
+  end
+  if not a.negative and b.negative then
+    local temp = { digits = b.digits, negative = false }
+    return bignum.add(a, temp)
+  end
+  
+  local swap = false
+  local d1, d2 = a.digits, b.digits
+  
+  if #d1 < #d2 or (#d1 == #d2 and d1 < d2) then
+    d1, d2 = d2, d1
+    swap = true
+  end
+  
+  local result = ""
+  local borrow = 0
+  
+  for i = 1, #d1 do
+    local digit1 = tonumber(d1:sub(-i, -i)) or 0
+    local digit2 = tonumber(d2:sub(-i, -i)) or 0
+    local diff = digit1 - digit2 - borrow
+    
+    if diff < 0 then
+      diff = diff + 10
+      borrow = 1
+    else
+      borrow = 0
+    end
+    
+    result = tostring(diff) .. result
+  end
+  
+  result = result:gsub("^0+", "")
+  if result == "" then result = "0" end
+  
+  local negative = a.negative
+  if swap then negative = not negative end
+  
+  if result == "0" then negative = false end
+  
+  return { digits = result, negative = negative }
+end
+
+---***SRG Custom Function***
+---
+---Multiplies two big numbers together.
+---@param a table
+---@param b table
+---@return table
+---@nodiscard
+function bignum.multiply(a, b)
+  if type(a) ~= "table" or type(a.digits) ~= "string" then
+    errorMsg("BigNum", "a", a)
+  end
+  if type(b) ~= "table" or type(b.digits) ~= "string" then
+    errorMsg("BigNum", "b", b)
+  end
+  
+  if a.digits == "0" or b.digits == "0" then
+    return { digits = "0", negative = false }
+  end
+  
+  local d1, d2 = a.digits, b.digits
+  local result = {}
+  
+  for i = 1, #d1 + #d2 do
+    result[i] = 0
+  end
+  
+  for i = #d1, 1, -1 do
+    for j = #d2, 1, -1 do
+      local digit1 = tonumber(d1:sub(i, i))
+      local digit2 = tonumber(d2:sub(j, j))
+      local pos = #d1 - i + #d2 - j + 1
+      
+      result[pos] = result[pos] + digit1 * digit2
+      
+      if result[pos] >= 10 then
+        result[pos + 1] = result[pos + 1] + math.floor(result[pos] / 10)
+        result[pos] = result[pos] % 10
+      end
+    end
+  end
+  
+  local resultStr = ""
+  for i = #result, 1, -1 do
+    resultStr = resultStr .. tostring(result[i])
+  end
+  
+  resultStr = resultStr:gsub("^0+", "")
+  if resultStr == "" then resultStr = "0" end
+  
+  local negative = (a.negative ~= b.negative)
+  if resultStr == "0" then negative = false end
+  
+  return { digits = resultStr, negative = negative }
+end
+
+---***SRG Custom Function***
+---
+---Divides a by b (a / b). Returns quotient.
+---@param a table
+---@param b table
+---@return table
+---@nodiscard
+function bignum.divide(a, b)
+  if type(a) ~= "table" or type(a.digits) ~= "string" then
+    errorMsg("BigNum", "a", a)
+  end
+  if type(b) ~= "table" or type(b.digits) ~= "string" then
+    errorMsg("BigNum", "b", b)
+  end
+  
+  if b.digits == "0" then
+    error("Division by zero")
+  end
+  
+  if a.digits == "0" then
+    return { digits = "0", negative = false }
+  end
+  
+  local absA = { digits = a.digits, negative = false }
+  local absB = { digits = b.digits, negative = false }
+  
+  if bignum.compare(absA, absB) < 0 then
+    return { digits = "0", negative = false }
+  end
+  
+  local quotient = ""
+  local current = bignum.new("0")
+  
+  for i = 1, #a.digits do
+    current = bignum.new(current.digits .. a.digits:sub(i, i))
+    
+    local count = 0
+    while bignum.compare(current, absB) >= 0 do
+      current = bignum.subtract(current, absB)
+      count = count + 1
+    end
+    
+    quotient = quotient .. tostring(count)
+  end
+  
+  quotient = quotient:gsub("^0+", "")
+  if quotient == "" then quotient = "0" end
+  
+  local negative = (a.negative ~= b.negative)
+  if quotient == "0" then negative = false end
+  
+  return { digits = quotient, negative = negative }
+end
+
+---***SRG Custom Function***
+---
+---Calculates a modulo b (a % b).
+---@param a table
+---@param b table
+---@return table
+---@nodiscard
+function bignum.modulo(a, b)
+  if type(a) ~= "table" or type(a.digits) ~= "string" then
+    errorMsg("BigNum", "a", a)
+  end
+  if type(b) ~= "table" or type(b.digits) ~= "string" then
+    errorMsg("BigNum", "b", b)
+  end
+  
+  local quotient = bignum.divide(a, b)
+  local product = bignum.multiply(quotient, b)
+  return bignum.subtract(a, product)
+end
+
+---***SRG Custom Function***
+---
+---Raises a to the power of b (a ^ b).
+---@param a table
+---@param b number
+---@return table
+---@nodiscard
+function bignum.power(a, b)
+  if type(a) ~= "table" or type(a.digits) ~= "string" then
+    errorMsg("BigNum", "a", a)
+  end
+  if type(b) ~= "number" then
+    errorMsg("Number", "b", b)
+  end
+  if b < 0 then
+    error("Negative exponents not supported")
+  end
+  if not math.is_whole(b) then
+    error("Exponent must be a whole number")
+  end
+  
+  if b == 0 then
+    return { digits = "1", negative = false }
+  end
+  
+  local result = bignum.new("1")
+  for i = 1, b do
+    result = bignum.multiply(result, a)
+  end
+  
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Returns the absolute value of a big number.
+---@param a table
+---@return table
+---@nodiscard
+function bignum.abs(a)
+  if type(a) ~= "table" or type(a.digits) ~= "string" then
+    errorMsg("BigNum", "a", a)
+  end
+  
+  return { digits = a.digits, negative = false }
+end
+
+---***SRG Custom Function***
+---
+---Checks if two big numbers are equal.
+---@param a table
+---@param b table
+---@return boolean
+---@nodiscard
+function bignum.equals(a, b)
+  return bignum.compare(a, b) == 0
+end
+
+---***SRG Custom Function***
+---
+---Checks if a is less than b.
+---@param a table
+---@param b table
+---@return boolean
+---@nodiscard
+function bignum.less_than(a, b)
+  return bignum.compare(a, b) < 0
+end
+
+---***SRG Custom Function***
+---
+---Checks if a is greater than b.
+---@param a table
+---@param b table
+---@return boolean
+---@nodiscard
+function bignum.greater_than(a, b)
+  return bignum.compare(a, b) > 0
 end
 
 -------------Color Library------------
