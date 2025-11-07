@@ -2422,13 +2422,9 @@ function cryptography.text_to_base58(s, alphabet)
     table.insert(encoded, 1, base58Chars[rem])
   end
 
-  for i = 1, leadingZeros do
-    table.insert(encoded, 1, base58Chars[0])
-  end
+  for i = 1, leadingZeros do table.insert(encoded, 1, base58Chars[0]) end
 
-  if #encoded == 0 and #s > 0 then
-    return base58Chars[0]
-  end
+  if #encoded == 0 and #s > 0 then return base58Chars[0] end
 
   return table.concat(encoded)
 end
@@ -2484,13 +2480,9 @@ function cryptography.base58_to_text(s, alphabet)
     table.insert(decoded, 1, string.char(rem))
   end
 
-  for i = 1, leadingZeros do
-    table.insert(decoded, 1, string.char(0))
-  end
+  for i = 1, leadingZeros do table.insert(decoded, 1, string.char(0)) end
 
-  if #decoded == 0 and #s > 0 then
-    return string.char(0)
-  end
+  if #decoded == 0 and #s > 0 then return string.char(0) end
 
   return table.concat(decoded)
 end
