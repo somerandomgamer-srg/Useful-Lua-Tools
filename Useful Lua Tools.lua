@@ -2106,9 +2106,7 @@ function cryptography.base64_to_text(s, alphabet)
   end
 
   local lookup = {}
-  for i = 1, #alphabet do
-    lookup[alphabet:sub(i, i)] = i - 1
-  end
+  for i = 1, #alphabet do lookup[alphabet:sub(i, i)] = i - 1 end
 
   local paddingCount = 0
   for i = #s, 1, -1 do
@@ -2119,14 +2117,10 @@ function cryptography.base64_to_text(s, alphabet)
     end
   end
 
-  if paddingCount > 2 then
-    error("Invalid base64 padding: too many padding characters")
-  end
+  if paddingCount > 2 then error("Invalid base64 padding: too many padding characters") end
 
   for i = 1, #s - paddingCount do
-    if s:sub(i, i) == "=" then
-      error("Invalid base64 padding: padding character in non-terminal position")
-    end
+    if s:sub(i, i) == "=" then error("Invalid base64 padding: padding character in non-terminal position") end
   end
 
   local payloadLength = #s - paddingCount
@@ -2138,9 +2132,7 @@ function cryptography.base64_to_text(s, alphabet)
 
   s = s:gsub("=", "")
 
-  if #s % 4 == 1 then
-    error("Invalid base64 length: incomplete group")
-  end
+  if #s % 4 == 1 then error("Invalid base64 length: incomplete group") end
 
   local decoded = {}
   local i = 1
@@ -2153,22 +2145,22 @@ function cryptography.base64_to_text(s, alphabet)
 
     local c1 = lookup[ch1]
     if not c1 then error("Invalid base64 character: " .. ch1) end
+
     local c2 = ch2 and lookup[ch2] or 0
     if ch2 and not lookup[ch2] then error("Invalid base64 character: " .. ch2) end
+
     local c3 = ch3 and lookup[ch3] or 0
     if ch3 and not lookup[ch3] then error("Invalid base64 character: " .. ch3) end
+
     local c4 = ch4 and lookup[ch4] or 0
     if ch4 and not lookup[ch4] then error("Invalid base64 character: " .. ch4) end
 
     local n = (c1 << 18) | (c2 << 12) | (c3 << 6) | c4
 
     table.insert(decoded, string.char((n >> 16) & 0xFF))
-    if i + 2 <= #s then
-      table.insert(decoded, string.char((n >> 8) & 0xFF))
-    end
-    if i + 3 <= #s then
-      table.insert(decoded, string.char(n & 0xFF))
-    end
+    if i + 2 <= #s then table.insert(decoded, string.char((n >> 8) & 0xFF)) end
+
+    if i + 3 <= #s then table.insert(decoded, string.char(n & 0xFF)) end
 
     i = i + 4
   end
@@ -2272,9 +2264,7 @@ function cryptography.base32_to_text(s, alphabet)
   end
 
   local lookup = {}
-  for i = 1, #alphabet do
-    lookup[alphabet:sub(i, i)] = i - 1
-  end
+  for i = 1, #alphabet do lookup[alphabet:sub(i, i)] = i - 1 end
 
   local paddingCount = 0
   for i = #s, 1, -1 do
@@ -2285,14 +2275,10 @@ function cryptography.base32_to_text(s, alphabet)
     end
   end
 
-  if paddingCount > 6 then
-    error("Invalid base32 padding: too many padding characters")
-  end
+  if paddingCount > 6 then error("Invalid base32 padding: too many padding characters") end
 
   for i = 1, #s - paddingCount do
-    if s:sub(i, i) == "=" then
-      error("Invalid base32 padding: padding character in non-terminal position")
-    end
+    if s:sub(i, i) == "=" then error("Invalid base32 padding: padding character in non-terminal position") end
   end
 
   local payloadLength = #s - paddingCount
@@ -2316,9 +2302,7 @@ function cryptography.base32_to_text(s, alphabet)
   s = s:gsub("=", "")
 
   local remainder = #s % 8
-  if remainder == 1 or remainder == 3 or remainder == 6 then
-    error("Invalid base32 length: incomplete group")
-  end
+  if remainder == 1 or remainder == 3 or remainder == 6 then error("Invalid base32 length: incomplete group") end
 
   local decoded = {}
   local i = 1
@@ -2335,38 +2319,37 @@ function cryptography.base32_to_text(s, alphabet)
 
     local c1 = lookup[ch1]
     if not c1 then error("Invalid base32 character: " .. ch1) end
+    
     local c2 = ch2 and lookup[ch2] or 0
     if ch2 and not lookup[ch2] then error("Invalid base32 character: " .. ch2) end
+    
     local c3 = ch3 and lookup[ch3] or 0
     if ch3 and not lookup[ch3] then error("Invalid base32 character: " .. ch3) end
+    
     local c4 = ch4 and lookup[ch4] or 0
     if ch4 and not lookup[ch4] then error("Invalid base32 character: " .. ch4) end
+    
     local c5 = ch5 and lookup[ch5] or 0
     if ch5 and not lookup[ch5] then error("Invalid base32 character: " .. ch5) end
+    
     local c6 = ch6 and lookup[ch6] or 0
     if ch6 and not lookup[ch6] then error("Invalid base32 character: " .. ch6) end
+    
     local c7 = ch7 and lookup[ch7] or 0
     if ch7 and not lookup[ch7] then error("Invalid base32 character: " .. ch7) end
+    
     local c8 = ch8 and lookup[ch8] or 0
     if ch8 and not lookup[ch8] then error("Invalid base32 character: " .. ch8) end
 
     table.insert(decoded, string.char(((c1 << 3) | (c2 >> 2)) & 0xFF))
     
-    if i + 3 <= #s then
-      table.insert(decoded, string.char((((c2 & 0x03) << 6) | (c3 << 1) | (c4 >> 4)) & 0xFF))
-    end
+    if i + 3 <= #s then table.insert(decoded, string.char((((c2 & 0x03) << 6) | (c3 << 1) | (c4 >> 4)) & 0xFF)) end
     
-    if i + 4 <= #s then
-      table.insert(decoded, string.char((((c4 & 0x0F) << 4) | (c5 >> 1)) & 0xFF))
-    end
+    if i + 4 <= #s then table.insert(decoded, string.char((((c4 & 0x0F) << 4) | (c5 >> 1)) & 0xFF)) end
     
-    if i + 5 <= #s then
-      table.insert(decoded, string.char((((c5 & 0x01) << 7) | (c6 << 2) | (c7 >> 3)) & 0xFF))
-    end
+    if i + 5 <= #s then table.insert(decoded, string.char((((c5 & 0x01) << 7) | (c6 << 2) | (c7 >> 3)) & 0xFF)) end
     
-    if i + 7 <= #s then
-      table.insert(decoded, string.char((((c7 & 0x07) << 5) | c8) & 0xFF))
-    end
+    if i + 7 <= #s then table.insert(decoded, string.char((((c7 & 0x07) << 5) | c8) & 0xFF)) end
 
     i = i + 8
   end
