@@ -620,26 +620,10 @@ end
 values256()
 constants256()
 
-local function toBase64Table(alphabet)
-  local base64Chars = {}
-  for i = 1, #alphabet do
-    base64Chars[decToBinPadded(i - 1, 6)] = alphabet:sub(i, i)
-  end
-  return base64Chars
-end
-
 local function toBase58Table(alphabet)
   local base58Chars = {}
   for i = 1, #alphabet do base58Chars[i - 1] = alphabet:sub(i, i) end
   return base58Chars
-end
-
-local function toBase32Table(alphabet)
-  local base32Chars = {}
-  for i = 1, #alphabet do
-    base32Chars[decToBinPadded(i - 1, 5)] = alphabet:sub(i, i)
-  end
-  return base32Chars
 end
 
 local remotes = {}
@@ -2319,36 +2303,36 @@ function cryptography.base32_to_text(s, alphabet)
 
     local c1 = lookup[ch1]
     if not c1 then error("Invalid base32 character: " .. ch1) end
-    
+
     local c2 = ch2 and lookup[ch2] or 0
     if ch2 and not lookup[ch2] then error("Invalid base32 character: " .. ch2) end
-    
+
     local c3 = ch3 and lookup[ch3] or 0
     if ch3 and not lookup[ch3] then error("Invalid base32 character: " .. ch3) end
-    
+
     local c4 = ch4 and lookup[ch4] or 0
     if ch4 and not lookup[ch4] then error("Invalid base32 character: " .. ch4) end
-    
+
     local c5 = ch5 and lookup[ch5] or 0
     if ch5 and not lookup[ch5] then error("Invalid base32 character: " .. ch5) end
-    
+
     local c6 = ch6 and lookup[ch6] or 0
     if ch6 and not lookup[ch6] then error("Invalid base32 character: " .. ch6) end
-    
+
     local c7 = ch7 and lookup[ch7] or 0
     if ch7 and not lookup[ch7] then error("Invalid base32 character: " .. ch7) end
-    
+
     local c8 = ch8 and lookup[ch8] or 0
     if ch8 and not lookup[ch8] then error("Invalid base32 character: " .. ch8) end
 
     table.insert(decoded, string.char(((c1 << 3) | (c2 >> 2)) & 0xFF))
-    
+
     if i + 3 <= #s then table.insert(decoded, string.char((((c2 & 0x03) << 6) | (c3 << 1) | (c4 >> 4)) & 0xFF)) end
-    
+
     if i + 4 <= #s then table.insert(decoded, string.char((((c4 & 0x0F) << 4) | (c5 >> 1)) & 0xFF)) end
-    
+
     if i + 5 <= #s then table.insert(decoded, string.char((((c5 & 0x01) << 7) | (c6 << 2) | (c7 >> 3)) & 0xFF)) end
-    
+
     if i + 7 <= #s then table.insert(decoded, string.char((((c7 & 0x07) << 5) | c8) & 0xFF)) end
 
     i = i + 8
@@ -2389,7 +2373,7 @@ function cryptography.text_to_base58(s, alphabet)
 
   local num = bignum.new("0")
   local bn256 = bignum.new("256")
-  
+
   for i = 1, #s do
     num = bignum.multiply(num, bn256)
     num = bignum.add(num, bignum.new(tostring(s:byte(i))))
@@ -2398,7 +2382,7 @@ function cryptography.text_to_base58(s, alphabet)
   local encoded = {}
   local bn58 = bignum.new("58")
   local zero = bignum.new("0")
-  
+
   while not bignum.equals(num, zero) do
     local rem = tonumber(bignum.to_string(bignum.mod(num, bn58)))
     num = bignum.divide(num, bn58)
@@ -2445,7 +2429,7 @@ function cryptography.base58_to_text(s, alphabet)
 
   local num = bignum.new("0")
   local bn58 = bignum.new("58")
-  
+
   for i = 1, #s do
     local char = s:sub(i, i)
     if not base58Reverse[char] then error("Invalid base58 character: " .. char) end
@@ -2456,7 +2440,7 @@ function cryptography.base58_to_text(s, alphabet)
   local decoded = {}
   local bn256 = bignum.new("256")
   local zero = bignum.new("0")
-  
+
   while not bignum.equals(num, zero) do
     local rem = tonumber(bignum.to_string(bignum.mod(num, bn256)))
     num = bignum.divide(num, bn256)
