@@ -1261,65 +1261,52 @@ end
 ---@return table
 ---@nodiscard
 function bignum.new(value)
-  if type(value) ~= "string" and type(value) ~= "number" then
-    errorMsg("String or Number", "value", value)
-  end
-  
+  if type(value) ~= "string" and type(value) ~= "number" then errorMsg("String or Number", "value", value) end
+
   local str = tostring(value)
   local negative = false
   local decimal = ""
-  
+
   if str:sub(1, 1) == "-" then
     negative = true
     str = str:sub(2)
   end
-  
+
   if str:find("%.") then
     local parts = {}
-    for part in str:gmatch("[^.]+") do
-      table.insert(parts, part)
-    end
-    if #parts ~= 2 then
-      error("Invalid big number format: " .. tostring(value))
-    end
+    for part in str:gmatch("[^.]+") do table.insert(parts, part) end
+
+    if #parts ~= 2 then error("Invalid big number format: " .. tostring(value)) end
     str = parts[1]
     decimal = parts[2]
   end
-  
-  if not str:match("^%d+$") then
-    error("Invalid big number format: " .. tostring(value))
-  end
-  
-  if decimal ~= "" and not decimal:match("^%d+$") then
-    error("Invalid big number format: " .. tostring(value))
-  end
-  
+
+  if not str:match("^%d+$") then error("Invalid big number format: " .. tostring(value)) end
+
+  if decimal ~= "" and not decimal:match("^%d+$") then error("Invalid big number format: " .. tostring(value)) end
+
   str = str:gsub("^0+", "")
   if str == "" then str = "0" end
-  
+
   decimal = decimal:gsub("0+$", "")
-  
+
   return { digits = str, decimal = decimal, negative = negative }
 end
 
 ---***SRG Custom Function***
 ---
 ---Converts a big number to a string.
----@param bn table
+---@param num table
 ---@return string
 ---@nodiscard
-function bignum.to_string(bn)
-  if type(bn) ~= "table" or type(bn.digits) ~= "string" then
-    errorMsg("BigNum", "bn", bn)
-  end
-  
-  local result = bn.digits
-  if bn.decimal and bn.decimal ~= "" then
-    result = result .. "." .. bn.decimal
-  end
-  
+function bignum.to_string(num)
+  if type(num) ~= "table" or type(num.digits) ~= "string" then errorMsg("BigNum", "num", num) end
+
+  local result = num.digits
+  if num.decimal and num.decimal ~= "" then result = result .. "." .. num.decimal end
+
   if result == "0" or result == "0." then return "0" end
-  return (bn.negative and "-" or "") .. result
+  return (num.negative and "-" or "") .. result
 end
 
 ---***SRG Custom Function***
@@ -1330,30 +1317,26 @@ end
 ---@return number
 ---@nodiscard
 function bignum.compare(a, b)
-  if type(a) ~= "table" or type(a.digits) ~= "string" then
-    errorMsg("BigNum", "a", a)
-  end
-  if type(b) ~= "table" or type(b.digits) ~= "string" then
-    errorMsg("BigNum", "b", b)
-  end
-  
+  if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
+  if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
+
   if a.negative and not b.negative then return -1 end
   if not a.negative and b.negative then return 1 end
-  
+
   local mult = a.negative and -1 or 1
-  
-  if #a.digits < #b.digits then return -1 * mult end
-  if #a.digits > #b.digits then return 1 * mult end
-  
-  if a.digits < b.digits then return -1 * mult end
-  if a.digits > b.digits then return 1 * mult end
-  
+
+  if #a.digits < #b.digits then return -mult end
+  if #a.digits > #b.digits then return mult end
+
+  if a.digits < b.digits then return -mult end
+  if a.digits > b.digits then return mult end
+
   return 0
 end
 
 ---***SRG Custom Function***
 ---
----Adds two big numbers together.
+---a + b
 ---@param a table
 ---@param b table
 ---@return table
@@ -1392,7 +1375,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Subtracts b from a (a - b).
+---a - b
 ---@param a table
 ---@param b table
 ---@return table
@@ -1400,7 +1383,7 @@ end
 function bignum.subtract(a, b)
   if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
   if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
-  
+
   if a.negative and not b.negative then
     local temp = { digits = a.digits, negative = false }
     local result = bignum.add(temp, b)
@@ -1412,15 +1395,15 @@ function bignum.subtract(a, b)
     local temp = { digits = b.digits, negative = false }
     return bignum.add(a, temp)
   end
-  
+
   local swap = false
   local d1, d2 = a.digits, b.digits
-  
+
   if #d1 < #d2 or (#d1 == #d2 and d1 < d2) then
     d1, d2 = d2, d1
     swap = true
   end
-  
+
   local result = ""
   local borrow = 0
 
@@ -1452,7 +1435,7 @@ end
 
 ---***SRG Custom Function***
 ---
----Multiplies two big numbers together.
+---a * b
 ---@param a table
 ---@param b table
 ---@return table
@@ -1461,78 +1444,74 @@ function bignum.multiply(a, b, precision)
   if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
   if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
   if precision and type(precision) ~= "number" then errorMsg("Number", "precision", precision) end
-  
+
   precision = precision or 10
-  
+
   local aHasDec = (a.decimal and a.decimal ~= "")
   local bHasDec = (b.decimal and b.decimal ~= "")
-  
+
   if aHasDec or bHasDec then
     local aDecLen = (a.decimal and #a.decimal) or 0
     local bDecLen = (b.decimal and #b.decimal) or 0
     local totalDecLen = aDecLen + bDecLen
-    
+
     local aFull = a.digits .. (a.decimal or "")
     local bFull = b.digits .. (b.decimal or "")
-    
+
     local aNum = bignum.new(aFull)
     local bNum = bignum.new(bFull)
-    
+
     local result = bignum.multiply(aNum, bNum)
-    
+
     local resultStr = result.digits
-    if #resultStr <= totalDecLen then
-      resultStr = string.rep("0", totalDecLen - #resultStr + 1) .. resultStr
-    end
-    
+    if #resultStr <= totalDecLen then resultStr = string.rep("0", totalDecLen - #resultStr + 1) .. resultStr end
+
     local intPart = resultStr:sub(1, #resultStr - totalDecLen)
     local decPart = resultStr:sub(#resultStr - totalDecLen + 1)
-    
+
     if intPart == "" then intPart = "0" end
-    
-    if #decPart > precision then
-      decPart = decPart:sub(1, precision)
-    end
-    
+
+    if #decPart > precision then decPart = decPart:sub(1, precision) end
+
     decPart = decPart:gsub("0+$", "")
-    
+
     local negative = (a.negative ~= b.negative)
     if intPart == "0" and decPart == "" then negative = false end
-    
+
     return { digits = intPart, decimal = decPart, negative = negative }
   end
-  
+
   if a.digits == "0" or b.digits == "0" then return { digits = "0", decimal = "", negative = false } end
-  
+
   local d1, d2 = a.digits, b.digits
   local result = {}
-  
+
   for i = 1, #d1 + #d2 do result[i] = 0 end
-  
+
   for i = #d1, 1, -1 do
     for j = #d2, 1, -1 do
       local digit1 = tonumber(d1:sub(i, i))
       local digit2 = tonumber(d2:sub(j, j))
       local pos = #d1 - i + #d2 - j + 1
-      
+
       result[pos] = result[pos] + digit1 * digit2
-      
+
       if result[pos] >= 10 then
-        result[pos + 1] = result[pos + 1] + math.floor(result[pos] / 10)
+        result[pos + 1] = result[pos + 1] + result[pos] // 10
         result[pos] = result[pos] % 10
       end
     end
   end
-  
+
   local resultStr = ""
   for i = #result, 1, -1 do resultStr = resultStr .. tostring(result[i]) end
-  
+
   resultStr = resultStr:gsub("^0+", "")
   if resultStr == "" then resultStr = "0" end
-  
+
   local negative = (a.negative ~= b.negative)
   if resultStr == "0" then negative = false end
-  
+
   return { digits = resultStr, decimal = "", negative = negative }
 end
 
@@ -1548,88 +1527,82 @@ function bignum.divide(a, b, precision)
   if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
   if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
   if precision and type(precision) ~= "number" then errorMsg("Number", "precision", precision) end
-  
+
   local forceDecimal = (precision ~= nil)
   precision = precision or 10
-  
+
   local aHasDec = (a.decimal and a.decimal ~= "")
   local bHasDec = (b.decimal and b.decimal ~= "")
-  
+
   if aHasDec or bHasDec or forceDecimal then
-    if b.digits == "0" and (not b.decimal or b.decimal == "") then
-      error("Division by zero")
-    end
-    
+    if b.digits == "0" and (not b.decimal or b.decimal == "") then error("Division by zero") end
+
     local aStr = a.digits .. (a.decimal or "")
     local bStr = b.digits .. (b.decimal or "")
-    
+
     local aDecLen = (a.decimal and #a.decimal) or 0
     local bDecLen = (b.decimal and #b.decimal) or 0
-    
+
     local extraZeros = precision + bDecLen - aDecLen
-    if extraZeros > 0 then
-      aStr = aStr .. string.rep("0", extraZeros)
-    end
-    
+    if extraZeros > 0 then aStr = aStr .. string.rep("0", extraZeros) end
+
     local aBig = bignum.new(aStr)
     local bBig = bignum.new(bStr)
-    
+
     local quotient = bignum.divide(aBig, bBig)
-    
+
     local resultStr = quotient.digits
-    if #resultStr <= precision then
-      resultStr = string.rep("0", precision - #resultStr + 1) .. resultStr
-    end
-    
+    if #resultStr <= precision then resultStr = string.rep("0", precision - #resultStr + 1) .. resultStr end
+
     local intPart = resultStr:sub(1, #resultStr - precision)
     local decPart = resultStr:sub(#resultStr - precision + 1)
-    
+
     if intPart == "" then intPart = "0" end
-    
+
     decPart = decPart:gsub("0+$", "")
-    
+
     local negative = (a.negative ~= b.negative)
     if intPart == "0" and decPart == "" then negative = false end
-    
+
     return { digits = intPart, decimal = decPart, negative = negative }
   end
-  
+
   if b.digits == "0" then error("Division by zero") end
-  
+
   if a.digits == "0" then return { digits = "0", decimal = "", negative = false } end
-  
+
   local absA = { digits = a.digits, decimal = "", negative = false }
   local absB = { digits = b.digits, decimal = "", negative = false }
-  
+
   if bignum.compare(absA, absB) < 0 then return { digits = "0", decimal = "", negative = false } end
-  
+
   local quotient = ""
   local current = bignum.new("0")
-  
+
   for i = 1, #a.digits do
     current = bignum.new(current.digits .. a.digits:sub(i, i))
-    
+
     local count = 0
     while bignum.compare(current, absB) >= 0 do
       current = bignum.subtract(current, absB)
       count = count + 1
     end
-    
+
     quotient = quotient .. tostring(count)
   end
-  
+
   quotient = quotient:gsub("^0+", "")
   if quotient == "" then quotient = "0" end
-  
+
   local negative = (a.negative ~= b.negative)
   if quotient == "0" then negative = false end
-  
+
   return { digits = quotient, decimal = "", negative = negative }
 end
 
 ---***SRG Custom Function***
 ---
----a % b.
+---a % b
 ---@param a table
 ---@param b table
 ---@return table
@@ -1637,7 +1610,7 @@ end
 function bignum.mod(a, b)
   if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
   if type(b) ~= "table" or type(b.digits) ~= "string" then errorMsg("BigNum", "b", b) end
-  
+
   local quotient = bignum.divide(a, b)
   local product = bignum.multiply(quotient, b)
   return bignum.subtract(a, product)
@@ -1645,7 +1618,7 @@ end
 
 ---***SRG Custom Function***
 ---
----a ^ b. Supports negative and decimal exponents.
+---a ^ b
 ---@param a table
 ---@param b number
 ---@param precision? number
@@ -1655,7 +1628,7 @@ function bignum.pow(a, b, precision)
   if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
   if type(b) ~= "number" then errorMsg("Number", "b", b) end
   if precision and type(precision) ~= "number" then errorMsg("Number", "precision", precision) end
-  
+
   precision = precision or 10
 
   if b == 0 then return { digits = "1", decimal = "", negative = false } end
@@ -1683,7 +1656,7 @@ function bignum.pow(a, b, precision)
     local intResult = bignum.pow(a, intPart, precision)
 
     if fracPart == 0 then return intResult end
-    
+
     local base = tonumber(bignum.to_string(a))
     if not base then error("Number too large for fractional exponent. Please use whole number base for large numbers") end
 
@@ -1697,50 +1670,42 @@ end
 
 ---***SRG Custom Function***
 ---
----Returns the absolute value of a big number.
+---math.abs(a)
 ---@param a table
 ---@return table
 ---@nodiscard
 function bignum.abs(a)
-  if type(a) ~= "table" or type(a.digits) ~= "string" then
-    errorMsg("BigNum", "a", a)
-  end
-  
+  if type(a) ~= "table" or type(a.digits) ~= "string" then errorMsg("BigNum", "a", a) end
+
   return { digits = a.digits, decimal = a.decimal or "", negative = false }
 end
 
 ---***SRG Custom Function***
 ---
----Checks if two big numbers are equal.
+---a == b
 ---@param a table
 ---@param b table
 ---@return boolean
 ---@nodiscard
-function bignum.equals(a, b)
-  return bignum.compare(a, b) == 0
-end
+function bignum.equals(a, b) return bignum.compare(a, b) == 0 end
 
 ---***SRG Custom Function***
 ---
----Checks if a is less than b.
+---a < b
 ---@param a table
 ---@param b table
 ---@return boolean
 ---@nodiscard
-function bignum.less_than(a, b)
-  return bignum.compare(a, b) < 0
-end
+function bignum.less_than(a, b) return bignum.compare(a, b) < 0 end
 
 ---***SRG Custom Function***
 ---
----Checks if a is greater than b.
+---a > b
 ---@param a table
 ---@param b table
 ---@return boolean
 ---@nodiscard
-function bignum.greater_than(a, b)
-  return bignum.compare(a, b) > 0
-end
+function bignum.greater_than(a, b) return bignum.compare(a, b) > 0 end
 
 -------------Color Library------------
 

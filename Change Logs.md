@@ -180,4 +180,5 @@
   - ## Nov 1, 2025
     - Greatly improved `cryptography.sha256`.
   - ## Nov 3, 2025
-    - Improved base64, base58, and base32 encoding
+    - Improved base64, base58, and base32 encoding/decoding
+    - 
