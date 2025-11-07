@@ -62,7 +62,7 @@ local encoded2 = cryptography.text_to_base58(text2)
 local decoded2 = cryptography.base58_to_text(encoded2)
 print("Original: (empty)")
 print("Encoded: " .. encoded2)
-print("Decoded: (empty)")
+print("Decoded: " .. decoded2)
 print("Match: " .. tostring(text2 == decoded2))
 print()
 
