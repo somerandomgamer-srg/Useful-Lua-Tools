@@ -181,4 +181,6 @@
     - Greatly improved `cryptography.sha256`.
   - ## Nov 3, 2025
     - Improved base64, base58, and base32 encoding/decoding
-    - 
+  - ## Nov 7, 2025
+    - Added 1 new library:
+      - `bignum`: `bignum.new(value)`, `bignum.to_string(num)`, `bignum.compare(a, b)`, `bignum.add(a, b)`, `bignum.subtract(a, b)`, `bignum.multiply(a, b, precision)`, `bignum.divide(a, b, precision)`, `bignum.mod(a, b)`, `bignum.pow(a, b, precision)`, `bignum.abs(a)`, `bignum.equals(a, b)`, `bignum.less_than(a, b)`, and `bignum.greater_than(a, b)`

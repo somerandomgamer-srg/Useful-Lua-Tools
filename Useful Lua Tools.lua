@@ -2398,67 +2398,27 @@ function cryptography.text_to_base58(s, alphabet)
 
   local base58Chars = toBase58Table(alphabet)
 
-  local function isZero(bignum)
-    for i = 1, #bignum do
-      if bignum[i] ~= 0 then return false end
-    end
-    return true
-  end
-
-  local function multiplyBySmall(bignum, n)
-    local carry = 0
-    for i = 1, #bignum do
-      local prod = bignum[i] * n + carry
-      bignum[i] = prod % 256
-      carry = prod // 256
-    end
-    while carry > 0 do
-      table.insert(bignum, carry % 256)
-      carry = carry // 256
-    end
-  end
-
-  local function addSmall(bignum, n)
-    local carry = n
-    for i = 1, #bignum do
-      local sum = bignum[i] + carry
-      bignum[i] = sum % 256
-      carry = sum // 256
-      if carry == 0 then break end
-    end
-    if carry > 0 then
-      table.insert(bignum, carry)
-    end
-  end
-
-  local function divModBySmall(bignum, n)
-    local remainder = 0
-    for i = #bignum, 1, -1 do
-      local current = remainder * 256 + bignum[i]
-      bignum[i] = current // n
-      remainder = current % n
-    end
-    while #bignum > 0 and bignum[#bignum] == 0 do
-      table.remove(bignum)
-    end
-    return remainder
-  end
-
   local leadingZeros = 0
   for i = 1, #s do
     if s:byte(i) ~= 0 then break end
     leadingZeros = leadingZeros + 1
   end
 
-  local bignum = {}
+  local num = bignum.new("0")
+  local bn256 = bignum.new("256")
+  
   for i = 1, #s do
-    multiplyBySmall(bignum, 256)
-    addSmall(bignum, s:byte(i))
+    num = bignum.multiply(num, bn256)
+    num = bignum.add(num, bignum.new(tostring(s:byte(i))))
   end
 
   local encoded = {}
-  while not isZero(bignum) do
-    local rem = divModBySmall(bignum, 58)
+  local bn58 = bignum.new("58")
+  local zero = bignum.new("0")
+  
+  while not bignum.equals(num, zero) do
+    local rem = tonumber(bignum.to_string(bignum.mod(num, bn58)))
+    num = bignum.divide(num, bn58)
     table.insert(encoded, 1, base58Chars[rem])
   end
 
@@ -2497,52 +2457,6 @@ function cryptography.base58_to_text(s, alphabet)
 
   local base58Reverse = table.keypair_reverse(toBase58Table(alphabet))
 
-  local function isZero(bignum)
-    for i = 1, #bignum do
-      if bignum[i] ~= 0 then return false end
-    end
-    return true
-  end
-
-  local function multiplyBySmall(bignum, n)
-    local carry = 0
-    for i = 1, #bignum do
-      local prod = bignum[i] * n + carry
-      bignum[i] = prod % 256
-      carry = prod // 256
-    end
-    while carry > 0 do
-      table.insert(bignum, carry % 256)
-      carry = carry // 256
-    end
-  end
-
-  local function addSmall(bignum, n)
-    local carry = n
-    for i = 1, #bignum do
-      local sum = bignum[i] + carry
-      bignum[i] = sum % 256
-      carry = sum // 256
-      if carry == 0 then break end
-    end
-    if carry > 0 then
-      table.insert(bignum, carry)
-    end
-  end
-
-  local function divModBySmall(bignum, n)
-    local remainder = 0
-    for i = #bignum, 1, -1 do
-      local current = remainder * 256 + bignum[i]
-      bignum[i] = current // n
-      remainder = current % n
-    end
-    while #bignum > 0 and bignum[#bignum] == 0 do
-      table.remove(bignum)
-    end
-    return remainder
-  end
-
   local leadingZeros = 0
   local firstChar = alphabet:sub(1, 1)
   for i = 1, #s do
@@ -2550,17 +2464,23 @@ function cryptography.base58_to_text(s, alphabet)
     leadingZeros = leadingZeros + 1
   end
 
-  local bignum = {}
+  local num = bignum.new("0")
+  local bn58 = bignum.new("58")
+  
   for i = 1, #s do
     local char = s:sub(i, i)
     if not base58Reverse[char] then error("Invalid base58 character: " .. char) end
-    multiplyBySmall(bignum, 58)
-    addSmall(bignum, base58Reverse[char])
+    num = bignum.multiply(num, bn58)
+    num = bignum.add(num, bignum.new(tostring(base58Reverse[char])))
   end
 
   local decoded = {}
-  while not isZero(bignum) do
-    local rem = divModBySmall(bignum, 256)
+  local bn256 = bignum.new("256")
+  local zero = bignum.new("0")
+  
+  while not bignum.equals(num, zero) do
+    local rem = tonumber(bignum.to_string(bignum.mod(num, bn256)))
+    num = bignum.divide(num, bn256)
     table.insert(decoded, 1, string.char(rem))
   end
 
