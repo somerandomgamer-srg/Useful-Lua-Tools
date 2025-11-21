@@ -3460,6 +3460,22 @@ function remote.clear() remotes = {} end
 
 ---------Math Library Extension---------
 
+---***SRG Custom Variable***
+---
+---The value of *e* (Euler's number)
+---@nodiscard
+math.e = 2.718281828459045
+
+---***SRG Custom Variable***
+---
+---The value of τ (tau)
+---@nodiscard
+math.tau = math.pi * 2
+
+---***SRG Custom Variable***
+---
+
+
 ---***SRG Custom Function***
 ---
 ---Calculates the average from a list of numbers
@@ -5009,6 +5025,109 @@ function table.values(t)
 
   local result = {}
   for _, v in ipairs(t) do table.insert(result, v) end
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Generates a table with `n` numbers starting from `start` and incrementing by `step`.
+---@param n number
+---@param start? number
+---@param step? number
+---@return table
+---@nodiscard
+function table.range(n, start, step)
+  if type(n) ~= "number" then errorMsg("Number", "n", n) end
+
+  if start then
+    if type(start) ~= "number" then errorMsg("Number", "start", start) end
+  else
+    start = 1
+  end
+
+  if step then
+    if type(step) ~= "number" then errorMsg("Number", "step", step) end
+  else
+    step = 1
+  end
+
+  if n < 1 then error("'n' must be greater than 0") end
+  if not math.is_whole(n) then error("'n' must be a whole number") end
+  if step == 0 then error("'step' cannot be 0") end
+
+  local t = { start }
+  for i = 2, n do
+    start = start + step
+    table.insert(t, start)
+  end
+
+  return t
+end
+
+---***SRG Custom Function***
+---
+---Takes only the first `n` elements from `t`.
+---@param t table
+---@param n number
+---@return table
+---@nodiscard
+function table.take(t, n)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if type(n) ~= "number" then errorMsg("Number", "n", n) end
+
+  if n < 1 then error("'n' must be greater than 0") end
+  if not math.is_whole(n) then error("'n' must be a whole number") end
+
+  if #t < n then error("'n' cannot be greater than the length of 't'") end
+  if n == #t then return t end
+
+  local result = {}
+
+  for i = 1, n do table.insert(result, t[i]) end
+
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Skips the first `n` elements in `t` and returns the rest.
+---@param t table
+---@param n number
+---@return table
+---@nodiscard
+function table.drop(t, n)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if type(n) ~= "number" then errorMsg("Number", "n", n) end
+
+  if n < 1 then error("'n' must be greater than 0") end
+  if not math.is_whole(n) then error("'n' must be a whole number") end
+
+  if #t < n then error("'n' cannot be greater than the length of 't'") end
+  if n == #t then return t end
+
+  local result = {}
+
+  for i = n + 1, #t do table.insert(result, t[i]) end
+
+  return result
+end
+
+---***SRG Custom Function***
+---
+---Chunks `t` into smaller tables of size `n`.
+---@param t table
+---@param n number
+---@return table
+---@nodiscard
+function table.chunk(t, n)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if type(n) ~= "number" then errorMsg("Number", "n", n) end
+  if n < 1 then error("'n' must be greater than 0") end
+  if not math.is_whole(n) then error("'n' must be a whole number") end
+  if #t < n then error("'n' cannot be greater than the length of 't'") end
+
+  local result = {}
+  for i = 1, #t, n do table.insert(result, table.take(table.drop(t, i - 1), n)) end
   return result
 end
 

@@ -6,10 +6,10 @@
 
 # Summary
 
-- ## **Total Functions**: 190
+- ## **Total Functions**: 194
   - **Total `math` Functions**: 41
   - **Total `cryptography` Functions**: 31
-  - **Total `table` Functions**: 27
+  - **Total `table` Functions**: 31
   - **Total `string` Functions**: 12
   - **Total `remote` Functions**: 8
   - **Total `file` Functions**: 8
@@ -30,7 +30,7 @@
   - **Total `ult` Variables**: 5
   - **Total `system` Variables**: 10
 
-- ## **Total Functions and Variables**: 205
+- ## **Total Functions and Variables**: 209
 
 ## 1. ULT Library Variables
 
@@ -688,6 +688,39 @@
   - `t`: `table` (R)
 - **Returns**: `table`
 - **Description**: Returns a table containing each value in `t`.
+
+### 5.25 `table.range(n, start, step)`
+- **Type**: `function`
+- **Arguments**: 
+  - `n`: `number` (R)
+  - `start`: `number` (O)
+  - `step`: `number` (O)
+- **Returns**: `table`
+- **Description**: Generates a table with `n` numbers starting from `start` (defaults to 1) and incrementing by `step` (defaults to 1).
+
+### 5.26 `table.take(t, n)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+  - `n`: `number` (R)
+- **Returns**: `table`
+- **Description**: Takes only the first `n` elements from `t`.
+
+### 5.27 `table.drop(t, n)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+  - `n`: `number` (R)
+- **Returns**: `table`
+- **Description**: Skips the first `n` elements in `t` and returns the rest.
+
+### 5.28 `table.chunk(t, n)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+  - `n`: `number` (R)
+- **Returns**: `table`
+- **Description**: Splits `t` into chunks of size `n`. Returns a table of tables.
 
 ## 6. Input Library Functions
 

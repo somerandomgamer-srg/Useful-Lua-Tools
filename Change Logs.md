@@ -184,3 +184,6 @@
   - ## Nov 7, 2025
     - Added 1 new library:
       - `bignum`: `bignum.new(value)`, `bignum.to_string(num)`, `bignum.compare(a, b)`, `bignum.add(a, b)`, `bignum.subtract(a, b)`, `bignum.multiply(a, b, precision)`, `bignum.divide(a, b, precision)`, `bignum.mod(a, b)`, `bignum.pow(a, b, precision)`, `bignum.abs(a)`, `bignum.equals(a, b)`, `bignum.less_than(a, b)`, and `bignum.greater_than(a, b)`
+  - ## Nov 10, 2025
+    - Added 4 new `table` functions:
+      - `table.range(n, start, step)`, `table.take(t, n)`, `table.drop(t, n)`, and `table.chunk(t, n)`
