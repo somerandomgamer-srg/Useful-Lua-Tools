@@ -6,14 +6,16 @@
 
 # Summary
 
-- ## **Total Functions**: 194
+- ## **Total Functions**: 209
   - **Total `math` Functions**: 41
   - **Total `cryptography` Functions**: 31
   - **Total `table` Functions**: 31
   - **Total `string` Functions**: 12
+  - **Total `bignum` Functions**: 13
   - **Total `remote` Functions**: 8
   - **Total `file` Functions**: 8
   - **Total `binary` Functions**: 8
+  - **Total `terminal` Functions**: 2
   - **Total `stack` Functions**: 7
   - **Total `random` Functions**: 7
   - **Total `queue` Functions**: 7
@@ -30,7 +32,7 @@
   - **Total `ult` Variables**: 5
   - **Total `system` Variables**: 10
 
-- ## **Total Functions and Variables**: 209
+- ## **Total Functions and Variables**: 224
 
 ## 1. ULT Library Variables
 
@@ -1545,16 +1547,138 @@
 - **Returns**: `string`
 - **Description**: Unescapes a percent-encoded URL string, converting %XX sequences back to their original characters. Complements `http.escape()` for decoding URL-encoded data.
 
-## 19. Global Functions
+## 19. BigNum Library Functions
 
-### 19.1 `wait(x)`
+### 19.1 `bignum.new(value)`
+- **Type**: `function`
+- **Arguments**: 
+  - `value`: `string` or `number` (R)
+- **Returns**: `table`
+- **Description**: Creates a new big number from a string or number for arbitrary-precision arithmetic.
+
+### 19.2 `bignum.to_string(num)`
+- **Type**: `function`
+- **Arguments**: 
+  - `num`: `table` (R)
+- **Returns**: `string`
+- **Description**: Converts a big number back to its string representation.
+
+### 19.3 `bignum.compare(a, b)`
+- **Type**: `function`
+- **Arguments**: 
+  - `a`: `table` (R)
+  - `b`: `table` (R)
+- **Returns**: `number`
+- **Description**: Compares two big numbers. Returns -1 if a < b, 0 if a == b, 1 if a > b.
+
+### 19.4 `bignum.add(a, b)`
+- **Type**: `function`
+- **Arguments**: 
+  - `a`: `table` (R)
+  - `b`: `table` (R)
+- **Returns**: `table`
+- **Description**: Adds two big numbers together.
+
+### 19.5 `bignum.subtract(a, b)`
+- **Type**: `function`
+- **Arguments**: 
+  - `a`: `table` (R)
+  - `b`: `table` (R)
+- **Returns**: `table`
+- **Description**: Subtracts big number `b` from big number `a`.
+
+### 19.6 `bignum.multiply(a, b, precision)`
+- **Type**: `function`
+- **Arguments**: 
+  - `a`: `table` (R)
+  - `b`: `table` (R)
+  - `precision`: `number` (O)
+- **Returns**: `table`
+- **Description**: Multiplies two big numbers together with optional precision control.
+
+### 19.7 `bignum.divide(a, b, precision)`
+- **Type**: `function`
+- **Arguments**: 
+  - `a`: `table` (R)
+  - `b`: `table` (R)
+  - `precision`: `number` (O)
+- **Returns**: `table`
+- **Description**: Divides big number `a` by big number `b` with optional precision control.
+
+### 19.8 `bignum.mod(a, b)`
+- **Type**: `function`
+- **Arguments**: 
+  - `a`: `table` (R)
+  - `b`: `table` (R)
+- **Returns**: `table`
+- **Description**: Calculates the modulo (remainder) of `a` divided by `b`.
+
+### 19.9 `bignum.pow(a, b, precision)`
+- **Type**: `function`
+- **Arguments**: 
+  - `a`: `table` (R)
+  - `b`: `table` (R)
+  - `precision`: `number` (O)
+- **Returns**: `table`
+- **Description**: Raises big number `a` to the power of big number `b` with optional precision control.
+
+### 19.10 `bignum.abs(a)`
+- **Type**: `function`
+- **Arguments**: 
+  - `a`: `table` (R)
+- **Returns**: `table`
+- **Description**: Returns the absolute value of a big number.
+
+### 19.11 `bignum.equals(a, b)`
+- **Type**: `function`
+- **Arguments**: 
+  - `a`: `table` (R)
+  - `b`: `table` (R)
+- **Returns**: `boolean`
+- **Description**: Checks if two big numbers are equal.
+
+### 19.12 `bignum.less_than(a, b)`
+- **Type**: `function`
+- **Arguments**: 
+  - `a`: `table` (R)
+  - `b`: `table` (R)
+- **Returns**: `boolean`
+- **Description**: Checks if big number `a` is less than big number `b`.
+
+### 19.13 `bignum.greater_than(a, b)`
+- **Type**: `function`
+- **Arguments**: 
+  - `a`: `table` (R)
+  - `b`: `table` (R)
+- **Returns**: `boolean`
+- **Description**: Checks if big number `a` is greater than big number `b`.
+
+## 20. Terminal Library Functions
+
+### 20.1 `terminal.clear()`
+- **Type**: `function`
+- **Arguments**: None
+- **Returns**: `nothing`
+- **Description**: Clears the terminal screen. Works on Windows, macOS, and Linux.
+
+### 20.2 `terminal.style(text, ...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `text`: `string` (R)
+  - `...`: `terminal_styles` (R)
+- **Returns**: `string`
+- **Description**: Applies styling and colors to text. Available styles include bold (b), italic (i), underline (u), strikethrough (s), text colors (tbk, tr, tg, ty, tbl, tm, tc, tw), background colors (bbk, br, bg, by, bbl, bm, bc, bw), and overline (o).
+
+## 21. Global Functions
+
+### 21.1 `wait(x)`
 - **Type**: `function`
 - **Arguments**: 
   - `x`: `number` (R)
 - **Returns**: `nothing`
 - **Description**: Yields the code for `x` seconds. (Similar to python's wait function).
 
-### 19.2 `benchmark(func, iterations)`
+### 21.2 `benchmark(func, iterations)`
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
@@ -1563,14 +1687,14 @@
 - **Description**: Runs `func` `iterations` times. Returns Total Execution Time, Average Execution Time Per Run, The Last Result (if return is added in the code).
 - **NOTE: If `iterations` is not given, the code will run 10 times**
 
-### 19.3 `execution_time(func)`
+### 21.3 `execution_time(func)`
 - **Type**: `function`
 - **Arguments**: 
   - `func`: `function` (R)
 - **Returns**: `number`, `any`
 - **Description**: Runs `func` and returns the time it takes to run `func`.
 
-### 19.4 `delay(t, func)`
+### 21.4 `delay(t, func)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `number` (R)
@@ -1578,24 +1702,25 @@
 - **Returns**: `nothing`
 - **Description**: Yields `t` seconds before running `func` without stopping other code.
 
-### 19.5 `delay_stop(t, func)`
+### 21.5 `delay_stop(t, func)`
 - **Type**: `function`
 - **Arguments**: 
   - `t`: `number` (R)
   - `func`: `function` (R)
 - **Returns**: `nothing`
 - **Description**: Yields `t` seconds before running `func` while stopping other code.
-## 20. Deprecated Functions
+
+## 22. Deprecated Functions
 
 The following functions are deprecated and may be removed in future versions. Please use the suggested alternatives.
 
-### 20.1 `cryptography.is_ip(ip, v6)` **(D)**
+### 22.1 `cryptography.is_ip(ip, v6)` **(D)**
 - **Deprecated in**: Version 2.1.0
 - **Replacement**: `validate.ip(ip, v6)`
 - **Description**: Validates whether `ip` is a valid IP address. If `v6` is true, validates for IPv6; otherwise validates for IPv4.
 - **Migration**: Replace `cryptography.is_ip(ip, v6)` with `validate.ip(ip, v6)`
 
-### 20.2 `cryptography.is_email(email)` **(D)**
+### 22.2 `cryptography.is_email(email)` **(D)**
 - **Deprecated in**: Version 2.1.0
 - **Replacement**: `validate.email(email)`
 - **Description**: Validates whether `email` is a valid email address.
