@@ -11,7 +11,7 @@ local function execQueryInternal(query, variables)
     variables = variables or {}
 
     -- Escape a string for shell safety (prevent command injection)
-    local function shell_escape(str)
+    local function shellEscape(str)
         -- Replace single quotes with '\''
         return "'" .. string.gsub(tostring(str), "'", "'\"'\"'") .. "'"
     end
@@ -25,7 +25,7 @@ local function execQueryInternal(query, variables)
         processed_query = processed_query:gsub(":" .. key, ":'var_" .. key .. "'")
         -- Store the variable for psql -v parameter
         table.insert(psql_vars, "-v")
-        table.insert(psql_vars, "var_" .. key .. "=" .. shell_escape(value))
+        table.insert(psql_vars, "var_" .. key .. "=" .. shellEscape(value))
     end
 
     -- Create a unique temporary file for the query
@@ -77,13 +77,13 @@ end
 ---@return string result Query result or error message
 ---
 ---Example:
----  local ok, result = database.execute_query("SELECT version();")
+---  local ok, result = database.executeQuery("SELECT version();")
 ---  if ok then
 ---    print("Database version:", result)
 ---  else
 ---    print("Query failed:", result)
 ---  end
-function database.execute_query(query)
+function database.executeQuery(query)
     return execQueryInternal(query)
 end
 
@@ -94,13 +94,13 @@ end
 ---@return string|nil error Error message if initialization failed
 ---
 ---Example:
----  local ok, err = database.initialize_schema()
+---  local ok, err = database.initializeSchema()
 ---  if ok then
 ---    print("Database schema initialized successfully")
 ---  else
 ---    print("Schema initialization failed:", err)
 ---  end
-function database.initialize_schema()
+function database.initializeSchema()
     -- First, enable pgcrypto extension
     local extension_sql = "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
     local ext_ok, ext_result = execQueryInternal(extension_sql)
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS high_scores (
     end
 
     -- Handle users table migration
-    local migration_success, migration_error = database.migrate_users_table()
+    local migration_success, migration_error = database.migrateUsersTable()
     if not migration_success then
         return false, migration_error
     end
@@ -174,13 +174,13 @@ end
 ---@return string|nil error Error message if migration failed
 ---
 ---Example:
----  local ok, err = database.migrate_users_table()
+---  local ok, err = database.migrateUsersTable()
 ---  if ok then
 ---    print("Users table migration successful")
 ---  else
 ---    print("Migration failed:", err)
 ---  end
-function database.migrate_users_table()
+function database.migrateUsersTable()
     -- Check if users table exists and what columns it has
     local check_table_sql = [[
 SELECT column_name
@@ -329,13 +329,13 @@ end
 ---@return string result Query result on success (usually empty string), error message on failure
 ---
 ---Example:
----  local ok, err = database.add_high_score("player1", 150)
+---  local ok, err = database.addHighScore("player1", 150)
 ---  if ok then
 ---    print("High score added!")
 ---  else
 ---    print("Failed to add score:", err)
 ---  end
-function database.add_high_score(username, score)
+function database.addHighScore(username, score)
     -- Validate inputs
     if not username or username == "" then
         return false, "Username cannot be empty"
@@ -365,13 +365,13 @@ end
 ---@return string|nil error Error message if lookup failed
 ---
 ---Example:
----  local score, err = database.get_high_score("player1")
+---  local score, err = database.getHighScore("player1")
 ---  if err then
 ---    print("Error:", err)
 ---  else
 ---    print("Player1's high score:", score)
 ---  end
-function database.get_high_score(username)
+function database.getHighScore(username)
     if not username or username == "" then
         return 0, "Username cannot be empty"
     end
@@ -395,7 +395,7 @@ end
 ---@return string|nil error Error message if query failed
 ---
 ---Example:
----  local scores, err = database.get_all_high_scores()
+---  local scores, err = database.getAllHighScores()
 ---  if err then
 ---    print("Error:", err)
 ---  else
@@ -403,7 +403,7 @@ end
 ---      print(i, entry.username, entry.score)
 ---    end
 ---  end
-function database.get_all_high_scores()
+function database.getAllHighScores()
     local query = "SELECT username, high_score FROM high_scores ORDER BY high_score DESC LIMIT 10;"
     local ok, result = execQueryInternal(query)
 
@@ -428,7 +428,7 @@ end
 ---@return string|nil error Error message if query failed
 ---
 ---Example:
----  local players, err = database.get_games_played_leaderboard()
+---  local players, err = database.getGamesPlayedLeaderboard()
 ---  if err then
 ---    print("Error:", err)
 ---  else
@@ -436,7 +436,7 @@ end
 ---      print(i, player.username, "Games:", player.games_played, "High Score:", player.high_score)
 ---    end
 ---  end
-function database.get_games_played_leaderboard()
+function database.getGamesPlayedLeaderboard()
     local query = "SELECT username, games_played, high_score FROM users ORDER BY games_played DESC LIMIT 10;"
     local ok, result = execQueryInternal(query)
 
@@ -467,13 +467,13 @@ end
 ---@return string result Query result on success (usually empty string), error message on failure
 ---
 ---Example:
----  local ok, err = database.create_user("newplayer", "mypassword", false)
+---  local ok, err = database.createUser("newplayer", "mypassword", false)
 ---  if ok then
 ---    print("User created successfully!")
 ---  else
 ---    print("Failed to create user:", err)
 ---  end
-function database.create_user(username, password, is_admin)
+function database.createUser(username, password, isAdmin)
     -- Validate inputs
     if not username or username == "" then
         return false, "Username cannot be empty"
@@ -488,18 +488,18 @@ function database.create_user(username, password, is_admin)
         return false, "Password too short (minimum 6 characters)"
     end
 
-    is_admin = is_admin or false
+    isAdmin = isAdmin or false
 
     -- Use a more robust query that handles potential column variations
     local query = [[
 INSERT INTO users (username, password_hash, is_admin, high_score, games_played)
-VALUES (:username, crypt(:password, gen_salt('bf')), :is_admin, 0, 0);
+VALUES (:username, crypt(:password, gen_salt('bf')), :isAdmin, 0, 0);
 ]]
 
     local variables = {
         username = username,
         password = password,
-        is_admin = is_admin
+        isAdmin = isAdmin
     }
 
     return execQueryInternal(query, variables)
@@ -512,7 +512,7 @@ end
 ---@return string|nil error Error message only for database/connection errors (nil for wrong credentials)
 ---
 ---Example:
----  local ok, err = database.authenticate_user("player1", "mypassword")
+---  local ok, err = database.authenticateUser("player1", "mypassword")
 ---  if ok then
 ---    print("Login successful!")
 ---  elseif err then
@@ -520,7 +520,7 @@ end
 ---  else
 ---    print("Invalid username or password") -- This is normal, not an error
 ---  end
-function database.authenticate_user(username, password)
+function database.authenticateUser(username, password)
     if not username or username == "" then
         return false, "Username cannot be empty"
     end
@@ -556,26 +556,26 @@ end
 ---@return string result Query result on success (usually empty string), error message on failure
 ---
 ---Example:
----  local ok, err = database.update_user_score("player1", 200)
+---  local ok, err = database.updateUserScore("player1", 200)
 ---  if ok then
 ---    print("Score updated and games played incremented!")
 ---  else
 ---    print("Failed to update score:", err)
 ---  end
-function database.update_user_score(username, new_score, games_played)
+function database.updateUserScore(username, newScore, gamesPlayed)
     if not username or username == "" then
         return false, "Username cannot be empty"
     end
-    if not new_score or new_score < 0 then
+    if not newScore or newScore < 0 then
         return false, "Score must be a non-negative number"
     end
-    if not games_played or games_played < 0 then
-        return false, "games_played must be a non-negative number"
+    if not gamesPlayed or gamesPlayed < 0 then
+        return false, "gamesPlayed must be a non-negative number"
     end
 
     local query = [[
 UPDATE users
-SET high_score = GREATEST(high_score, :new_score),
+SET high_score = GREATEST(high_score, :newScore),
     games_played = games_played + 1,
     updated_at = CURRENT_TIMESTAMP
 WHERE username = :username;
@@ -583,7 +583,7 @@ WHERE username = :username;
 
     local variables = {
         username = username,
-        new_score = new_score
+        newScore = newScore
     }
 
     return execQueryInternal(query, variables)
@@ -640,7 +640,7 @@ end
 ---@return string|nil error Error message only for database/connection errors (nil when user simply doesn't exist)
 ---
 ---Example:
----  local exists, err = database.user_exists("player1")
+---  local exists, err = database.userExists("player1")
 ---  if err then
 ---    print("Database error:", err)
 ---  elseif exists then
@@ -671,7 +671,7 @@ end
 ---@return string|nil error Error message if connection failed
 ---
 ---Example:
----  local ok, err = database.test_connection()
+---  local ok, err = database.testConnection()
 ---  if ok then
 ---    print("Database connection is working!")
 ---  else
@@ -959,36 +959,36 @@ end
 ---@return string result Query result on success (usually empty string), error message on failure
 ---
 ---Example:
----  local ok, err = database.reset_user_password("player1", "newpassword123")
+---  local ok, err = database.resetUserPassword("player1", "newpassword123")
 ---  if ok then
 ---    print("User password reset successfully")
 ---  else
 ---    print("Failed to reset password:", err)
 ---  end
-function database.reset_user_password(username, new_password)
+function database.resetUserPassword(username, newPassword)
     if not username or username == "" then
         return false, "Username cannot be empty"
     end
     if username == "SRG" then
        return false, "Cannot reset SRG's password" 
     end
-    if not new_password or new_password == "" then
+    if not newPassword or newPassword == "" then
         return false, "New password cannot be empty"
     end
-    if #new_password < 6 then
+    if #newPassword < 6 then
         return false, "New password too short (minimum 6 characters)"
     end
 
     local query = [[
 UPDATE users
-SET password_hash = crypt(:new_password, gen_salt('bf')),
+SET password_hash = crypt(:newPassword, gen_salt('bf')),
     updated_at = CURRENT_TIMESTAMP
 WHERE username = :username;
 ]]
 
     local variables = {
         username = username,
-        new_password = new_password
+        newPassword = newPassword
     }
 
     return execQueryInternal(query, variables)
@@ -1001,13 +1001,13 @@ end
 ---@return string result Query result on success (usually empty string), error message on failure
 ---
 ---Example:
----  local ok, err = database.clear_all_high_scores()
+---  local ok, err = database.clearAllHighScores()
 ---  if ok then
 ---    print("WARNING: All high scores have been permanently deleted!")
 ---  else
 ---    print("Failed to clear high scores:", err)
 ---  end
-function database.clear_all_high_scores()
+function database.clearAllHighScores()
     local query = "TRUNCATE TABLE high_scores RESTART IDENTITY;"
     return execQueryInternal(query)
 end
@@ -1019,7 +1019,7 @@ end
 ---@return string|nil error Error message if query failed
 ---
 ---Example:
----  local users, err = database.get_recent_users(5)
+---  local users, err = database.getRecentUsers(5)
 ---  if err then
 ---    print("Error:", err)
 ---  else
