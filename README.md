@@ -1,4 +1,4 @@
-# Useful Lua Tools (Version 2.2.0)
+# Useful Lua Tools (Version 2.3.0)
 ## (A message from the creator)
 ### About Me
 Hello, I am SRG (short for `Some Random Gamer`).
@@ -7,12 +7,14 @@ Hello, I am SRG (short for `Some Random Gamer`).
   - Code with Lua
   - Code with Luau, a sub-version of Lua that was specifically made for Roblox
   - Make datastores with SQL
-- I originally got into coding because of my friend Michialok.
+- I originally got into coding because of my online friend Michialok.
 - I started coding in Roblox and self-taught myself most of the things I know.
-- I have taken 5 Computer Science classes.
-- I've taken 4 different Engineering classes.
-- I can barely code with Python.
-- I'm planning to learn Javascript.
+- I have completed 5 Computer Science classes.
+- I have completed 4 different Engineering classes.
+- I can partially code with Python. (Willing to learn more).
+- I am planning to learn Javascript.
+- I am currently learning Java.
+- I am currently learning Java.
 
 ## Usage
 Nothing much to say here.
@@ -26,45 +28,47 @@ Nothing much to say here.
 ## Statistics
 
 ### Overall
-- **Total Functions**: 195
-- **Total Variables**: 15
-- **Total Definitions**: 210 (functions + variables)
-- **Total Lines of Code**: 4,836
-- **File Size**: 126 KB
+- **Total Functions**: 212
+- **Total Variables**: 17
+- **Total Functions/Variables**: 229
+- **Total Lines of Code**: 5,594
+- **File Size**: 149 KB
 - **Language**: Lua 5.3+
 - **External Dependencies**: None (pure interpreted Lua)
-- **Total Libraries**: 17
+- **Total Libraries**: 20
 - **Global Functions**: 5
 
 ### Libraries Included
-`binary`, `color`, `cryptography`, `datetime`, `file`, `http`, `input`, `json`, `math`, `queue`, `random`, `remote`, `stack`, `string`, `table`, `terminal`, `validate`
+`bignum`, `binary`, `color`, `cryptography`, `datetime`, `file`, `http`, `input`, `json`, `math`, `queue`, `random`, `remote`, `stack`, `string`, `system`, `table`, `terminal`, `ult`, `validate`
 
 ### Functions per Library
 |      Library      | Function Count |
 |:-----------------:|:--------------:|
 |       math        |       44       |
 |   cryptography    |       31       |
-|       table       |       27       |
+|       table       |       31       |
+|      bignum       |       13       |
 |      string       |       12       |
-|      remote       |       8        |
-|       file        |       8        |
 |      binary       |       8        |
-|       stack       |       7        |
-|      random       |       7        |
-|       queue       |       7        |
+|       file        |       8        |
+|      remote       |       8        |
 |       http        |       7        |
-|       input       |       6        |
+|       queue       |       7        |
+|      random       |       7        |
+|       stack       |       7        |
 |       color       |       6        |
+|       input       |       6        |
 |     datetime      |       5        |
 |     validate      |       3        |
-|     terminal      |       2        |
 |       json        |       2        |
+|     terminal      |       2        |
 
 ### Variables per Library
 |    Library    | Variable Count |
 |:-------------:|:--------------:|
 |    system     |       10       |
 |      ult      |       5        |
+|     math      |       2        |
 
 ## Contact
 For questions, suggestions, or contributions related to this template:

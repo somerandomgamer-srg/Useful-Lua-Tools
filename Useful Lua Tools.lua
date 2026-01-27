@@ -3472,10 +3472,6 @@ math.e = 2.718281828459045
 ---@nodiscard
 math.tau = math.pi * 2
 
----***SRG Custom Variable***
----
-
-
 ---***SRG Custom Function***
 ---
 ---Calculates the average from a list of numbers

@@ -167,7 +167,7 @@
     - Now uses native bitwise operators (`&`, `|`, `<<`, `>>`, `~`) exclusively
 
 # V2.3.0
-- ## Date: Oct 27, 2025 - November 3, 2025
+- ## Date: Oct 27, 2025 - Jan 26, 2026
   - ## Oct 27, 2025
     - Functions now accept additional arguments to pass to their `func` parameter.
       - `delay_stop`, `delay`, `benchmark`, and `execution_time`
@@ -187,3 +187,5 @@
   - ## Nov 10, 2025
     - Added 4 new `table` functions:
       - `table.range(n, start, step)`, `table.take(t, n)`, `table.drop(t, n)`, and `table.chunk(t, n)`
+  - ## Jan 26, 2026
+    - I forgot to release this version.

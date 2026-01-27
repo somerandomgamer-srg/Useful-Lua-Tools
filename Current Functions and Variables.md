@@ -2,37 +2,42 @@
 - ## **R**: Required parameter
 - ## **O**: Optional parameter
 - ## **...**: Multiple arguments
-- ## **D**: Deprecated (function still works but will be removed in future versions)
+- ## **D**: Deprecated (function still works but may be removed in future versions)
 
 # Summary
 
-- ## **Total Functions**: 209
-  - **Total `math` Functions**: 41
-  - **Total `cryptography` Functions**: 31
-  - **Total `table` Functions**: 31
-  - **Total `string` Functions**: 12
-  - **Total `bignum` Functions**: 13
-  - **Total `remote` Functions**: 8
-  - **Total `file` Functions**: 8
-  - **Total `binary` Functions**: 8
-  - **Total `terminal` Functions**: 2
-  - **Total `stack` Functions**: 7
-  - **Total `random` Functions**: 7
-  - **Total `queue` Functions**: 7
-  - **Total `http` Functions**: 7
-  - **Total `color` Functions**: 6
-  - **Total `input` Functions**: 6
-  - **Total `datetime` Functions**: 5
-  - **Total `validate` Functions**: 3
-  - **Total `json` Functions**: 2
+- ## **Total Functions**: 212
+|      Library      | Function Count |
+|:-----------------:|:--------------:|
+|       math        |       44       |
+|   cryptography    |       31       |
+|       table       |       31       |
+|      bignum       |       13       |
+|      string       |       12       |
+|      binary       |       8        |
+|       file        |       8        |
+|      remote       |       8        |
+|       http        |       7        |
+|       queue       |       7        |
+|      random       |       7        |
+|       stack       |       7        |
+|       color       |       6        |
+|       input       |       6        |
+|     datetime      |       5        |
+|     validate      |       3        |
+|       json        |       2        |
+|     terminal      |       2        |
 
-  - **Total Global Functions**: 5
+- **Total Global Functions**: 5
 
-- ## **Total Variables**: 15
-  - **Total `ult` Variables**: 5
-  - **Total `system` Variables**: 10
+- ## **Total Variables**: 17
+|    Library    | Variable Count |
+|:-------------:|:--------------:|
+|    system     |       10       |
+|      ult      |       5        |
+|     math      |       2        |
 
-- ## **Total Functions and Variables**: 224
+- ## **Total Functions and Variables**: 229
 
 ## 1. ULT Library Variables
 
