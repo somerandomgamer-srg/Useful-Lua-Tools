@@ -637,7 +637,7 @@ end
 
 local function prettyMain(t, indent, seen)
   seen = seen or {}
-  if seen[t] then return string.rep(" ", indent) .. "<circular reference>" end
+  if seen[t] then return string.rep(" ", indent) .. "<circular reference>\n" end
   seen[t] = true
 
   local s = ""
@@ -651,24 +651,25 @@ local function prettyMain(t, indent, seen)
   for i = 1, arrayLen do
     local value = t[i]
     if type(value) == "table" then
-      s = s .. spaces .. "{\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "},\n"
+      s = s .. spaces .. "{\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "}\n"
     else
-      s = s .. spaces .. prettyFormat(value) .. ",\n"
+      s = s .. spaces .. prettyFormat(value) .. "\n"
     end
   end
 
   for key, value in pairs(t) do
     local skip = type(key) == "number" and key >= 1 and key <= arrayLen and math.floor(key) == key
     if not skip then
-      local keyStr = type(key) == "string" and key or "[" .. tostring(key) .. "]"
+      local keyStr = type(key) == "string" and ("[" .. '"' .. key .. '"' .. "]") or ("[" .. tostring(key) .. "]")
       if type(value) == "table" then
-        s = s .. spaces .. keyStr .. " = {\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "},\n"
+        s = s .. spaces .. keyStr .. " = {\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "}\n"
       else
-        s = s .. spaces .. keyStr .. " = " .. prettyFormat(value) .. ",\n"
+        s = s .. spaces .. keyStr .. " = " .. prettyFormat(value) .. "\n"
       end
     end
   end
 
+  seen[t] = nil
   return s
 end
 

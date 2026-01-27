@@ -1715,6 +1715,13 @@
 - **Returns**: `nothing`
 - **Description**: Yields `t` seconds before running `func` while stopping other code.
 
+### 21.6 `pretty(t)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+- **Returns**: `string`
+- **Description**: Converts a table to a human-readable string with proper indentation. Automatically handles both array elements and key-value pairs in mixed tables. Detects circular references (displays `<circular reference>` instead of crashing). Strings are properly quoted and special characters are escaped.
+
 ## 22. Deprecated Functions
 
 The following functions are deprecated and may be removed in future versions. Please use the suggested alternatives.
