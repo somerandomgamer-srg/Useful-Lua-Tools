@@ -411,6 +411,7 @@ local function countRecursive(t, prefix, separator)
   return amount, keyTable
 end
 
+---Main function for string.levenshtein
 local function levenshteinMain(s1, s2, len1, len2)
   if len1 == 0 then return len2 end
   if len2 == 0 then return len1 end
@@ -624,6 +625,51 @@ local function toBase58Table(alphabet)
   local base58Chars = {}
   for i = 1, #alphabet do base58Chars[i - 1] = alphabet:sub(i, i) end
   return base58Chars
+end
+
+local function prettyFormat(value)
+  if type(value) == "string" then
+    return '"' .. value:gsub('\\', '\\\\'):gsub('"', '\\"'):gsub('\n', '\\n'):gsub('\r', '\\r'):gsub('\t', '\\t') .. '"'
+  else
+    return tostring(value)
+  end
+end
+
+local function prettyMain(t, indent, seen)
+  seen = seen or {}
+  if seen[t] then return string.rep(" ", indent) .. "<circular reference>" end
+  seen[t] = true
+
+  local s = ""
+  local spaces = string.rep(" ", indent)
+
+  local arrayLen = 0
+  while t[arrayLen + 1] ~= nil do
+    arrayLen = arrayLen + 1
+  end
+
+  for i = 1, arrayLen do
+    local value = t[i]
+    if type(value) == "table" then
+      s = s .. spaces .. "{\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "},\n"
+    else
+      s = s .. spaces .. prettyFormat(value) .. ",\n"
+    end
+  end
+
+  for key, value in pairs(t) do
+    local skip = type(key) == "number" and key >= 1 and key <= arrayLen and math.floor(key) == key
+    if not skip then
+      local keyStr = type(key) == "string" and key or "[" .. tostring(key) .. "]"
+      if type(value) == "table" then
+        s = s .. spaces .. keyStr .. " = {\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "},\n"
+      else
+        s = s .. spaces .. keyStr .. " = " .. prettyFormat(value) .. ",\n"
+      end
+    end
+  end
+
+  return s
 end
 
 local remotes = {}
@@ -5591,4 +5637,17 @@ function delay_stop(t, func, ...)
 
   wait(t)
   return pcall(func, ...)
+end
+
+---***SRG Custom Function***
+---
+---Converts the given table (`t`) to a human-readable string.
+---Automatically handles both array and key-value parts of mixed tables.
+---Detects circular references and quotes strings properly.
+---@param t table
+---@return string
+function pretty(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  return "{\n" .. prettyMain(t, 2, {}) .. "}"
 end

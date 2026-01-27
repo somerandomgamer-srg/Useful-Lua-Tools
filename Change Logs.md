@@ -189,3 +189,9 @@
       - `table.range(n, start, step)`, `table.take(t, n)`, `table.drop(t, n)`, and `table.chunk(t, n)`
   - ## Jan 26, 2026
     - I forgot to release this version.
+# V2.4.0
+- ## Date: January 27, 2026 - ? ?, 2026
+  - ## Jan 27, 2026
+    - Added 2 new global functions:
+      - `pretty` and `prettykv`
+    - 
