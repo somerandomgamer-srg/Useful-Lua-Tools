@@ -193,5 +193,5 @@
 - ## Date: January 27, 2026 - ? ?, 2026
   - ## Jan 27, 2026
     - Added 2 new global functions:
-      - `pretty` and `prettykv`
+      - `pretty`
     - 

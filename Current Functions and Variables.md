@@ -6,7 +6,7 @@
 
 # Summary
 
-- ## **Total Functions**: 212
+- ## **Total Functions**: 213
 |      Library      | Function Count |
 |:-----------------:|:--------------:|
 |       math        |       44       |
@@ -28,7 +28,7 @@
 |       json        |       2        |
 |     terminal      |       2        |
 
-- **Total Global Functions**: 5
+- **Total Global Functions**: 6
 
 - ## **Total Variables**: 17
 |    Library    | Variable Count |
@@ -37,7 +37,7 @@
 |      ult      |       5        |
 |     math      |       2        |
 
-- ## **Total Functions and Variables**: 229
+- ## **Total Functions and Variables**: 230
 
 ## 1. ULT Library Variables
 

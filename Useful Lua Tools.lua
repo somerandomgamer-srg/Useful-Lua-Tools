@@ -5643,8 +5643,6 @@ end
 ---***SRG Custom Function***
 ---
 ---Converts the given table (`t`) to a human-readable string.
----Automatically handles both array and key-value parts of mixed tables.
----Detects circular references and quotes strings properly.
 ---@param t table
 ---@return string
 function pretty(t)

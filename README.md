@@ -28,15 +28,15 @@ Nothing much to say here.
 ## Statistics
 
 ### Overall
-- **Total Functions**: 212
+- **Total Functions**: 213
 - **Total Variables**: 17
-- **Total Functions/Variables**: 229
+- **Total Functions/Variables**: 230
 - **Total Lines of Code**: 5,594
 - **File Size**: 149 KB
 - **Language**: Lua 5.3+
 - **External Dependencies**: None (pure interpreted Lua)
 - **Total Libraries**: 20
-- **Global Functions**: 5
+- **Global Functions**: 6
 
 ### Libraries Included
 `bignum`, `binary`, `color`, `cryptography`, `datetime`, `file`, `http`, `input`, `json`, `math`, `queue`, `random`, `remote`, `stack`, `string`, `system`, `table`, `terminal`, `ult`, `validate`
