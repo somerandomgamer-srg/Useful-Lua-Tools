@@ -2771,19 +2771,19 @@ local function maj(x, y, z)
 end
 
 local function bsig0(x)
-  return (((x >> 2) | (x << 30)) ~ ((x >> 13) | (x << 19)) ~ ((x >> 22) | (x << 10))) & 0xFFFFFFFF
+  return (cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)) & 0xFFFFFFFF
 end
 
 local function bsig1(x)
-  return (((x >> 6) | (x << 26)) ~ ((x >> 11) | (x << 21)) ~ ((x >> 25) | (x << 7))) & 0xFFFFFFFF
+  return (cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)) & 0xFFFFFFFF
 end
 
 local function ssig0(x)
-  return (((x >> 7) | (x << 25)) ~ ((x >> 18) | (x << 14)) ~ (x >> 3)) & 0xFFFFFFFF
+  return (cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)) & 0xFFFFFFFF
 end
 
 local function ssig1(x)
-  return (((x >> 17) | (x << 15)) ~ ((x >> 19) | (x << 13)) ~ (x >> 10)) & 0xFFFFFFFF
+  return (cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)) & 0xFFFFFFFF
 end
 
 local function add32(a, b)
@@ -2866,7 +2866,7 @@ function cryptography.hash(s)
       local w2 = w[i - 2]
       local w15 = w[i - 15]
 
-      w[i] = ((((((((w2 >> 17) | (w2 << 15)) ~ ((w2 >> 19) | (w2 << 13)) ~ (w2 >> 10)) & 0xFFFFFFFF) + w[i - 7]) & 0xFFFFFFFF + ((((w15 >> 7) | (w15 << 25)) ~ ((w15 >> 18) | (w15 << 14)) ~ (w15 >> 3)) & 0xFFFFFFFF)) & 0xFFFFFFFF + w[i - 16]) & 0xFFFFFFFF
+      w[i] = ((((((((w2 >> 17) | (w2 << 15)) ~ ((w2 >> 19) | (w2 << 13)) ~ (w2 >> 10)) & 0xFFFFFFFF) + w[i - 7]) & 0xFFFFFFFF + ((((w15 >> 7) | (w15 << 25)) ~ ((w15 >> 18) | (w15 << 14)) ~ (w15 >> 3)) & 0xFFFFFFFF)) & 0xFFFFFFFF + w[i - 16]) & 0xFFFFFFFF)
     end
 
     local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
@@ -2894,8 +2894,7 @@ function cryptography.hash(s)
     h[8] = (h[8] + h_) & 0xFFFFFFFF
   end
 
-  local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x", h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
-  return hashStr
+  return string.format("%08x%08x%08x%08x%08x%08x%08x%08x", h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
 end
 
 ---------Input Library---------
