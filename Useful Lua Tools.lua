@@ -2794,16 +2794,7 @@ local msg_len = #s
 local bit_len = msg_len * 8
 
 local pad_len = 64 - ((msg_len + 1 + 8) % 64)
-local padded = s .. string.char(0x80) .. (pad_len < 64 and string.rep(string.char(0), pad_len) or "") .. string.char(
-  (bit_len >> 56) & 0xFF,
-  (bit_len >> 48) & 0xFF,
-  (bit_len >> 40) & 0xFF,
-  (bit_len >> 32) & 0xFF,
-  (bit_len >> 24) & 0xFF,
-  (bit_len >> 16) & 0xFF,
-  (bit_len >> 8) & 0xFF,
-  bit_len & 0xFF
-)
+local padded = s .. string.char(0x80) .. (pad_len < 64 and string.rep(string.char(0), pad_len) or "") .. string.pack(">I8", bit_len)
 
 local h = {}
 for i = 1, 8 do
