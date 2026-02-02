@@ -2794,19 +2794,18 @@ local msg_len = #s
 local bit_len = msg_len * 8
 
 local pad_len = 64 - ((msg_len + 1 + 8) % 64)
-local padded = s .. string.char(0x80) .. (pad_len < 64 and string.rep(string.char(0), pad_len) or "") .. string.pack(">I8", bit_len)
+local padded = s .. string.char(0x80) .. (pad_len < 64 and string.rep(string.char(0), pad_len) or "") .. string.pack(">I8", bitLen)
 
 local h = {}
 for i = 1, 8 do
   h[i] = hash_values[i]
 end
 
-for chunk = 1, #padded, 64 do
-  local w = {}
+local w = {}
 
+for chunk = 1, #padded, 64 do
   for i = 0, 15 do
-    local offset = chunk + i * 4
-    w[i + 1] = padded:byte(offset) * 0x1000000 + padded:byte(offset + 1) * 0x10000 + padded:byte(offset + 2) * 0x100 + padded:byte(offset + 3)
+    w[i + 1] = string.unpack(">I4", padded, chunk + i * 4)
   end
 
   for i = 17, 64 do
@@ -2856,12 +2855,11 @@ function cryptography.hash(s)
   local h = {}
   for i = 1, 8 do h[i] = hashValues[i] end
 
-  for chunk = 1, #padded, 64 do
-    local w = {}
+  local w = {}
 
+  for chunk = 1, #padded, 64 do
     for i = 0, 15 do
-      local offset = chunk + i * 4
-      w[i + 1] = padded:byte(offset) * 0x1000000 + padded:byte(offset + 1) * 0x10000 + padded:byte(offset + 2) * 0x100 + padded:byte(offset + 3)
+      w[i + 1] = string.unpack(">I4", padded, chunk + i * 4)
     end
 
     for i = 17, 64 do
