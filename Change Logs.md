@@ -192,6 +192,7 @@
 # V2.4.0
 - ## Date: January 27, 2026 - ? ?, 2026
   - ## Jan 27, 2026
-    - Added 2 new global functions:
-      - `pretty`
-    - 
+    - Added 1 new global function:
+      - `pretty(t)`
+  - ## Feb 2, 2026
+    - Changed `cryptography.sha256` to `cryptography.hash`

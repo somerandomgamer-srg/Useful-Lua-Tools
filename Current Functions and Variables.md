@@ -1720,7 +1720,7 @@
 - **Arguments**: 
   - `t`: `table` (R)
 - **Returns**: `string`
-- **Description**: Converts a table to a human-readable string with proper indentation. Automatically handles both array elements and key-value pairs in mixed tables. Detects circular references (displays `<circular reference>` instead of crashing). Strings are properly quoted and special characters are escaped.
+- **Description**: Converts a table to a human-readable string with proper indentation. Automatically handles both array elements and key-value pairs in mixed tables.
 
 ## 22. Deprecated Functions
 

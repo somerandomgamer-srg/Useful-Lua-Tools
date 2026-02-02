@@ -550,8 +550,6 @@ local morseCodeTable = {
   ["?"] = "..--.."
 }
 
-local cache256 = {}
-
 ---@alias terminal_styles
 ---| "b" --Bold
 ---| "i" --Italic
@@ -599,27 +597,27 @@ local terminalStyles = {
   ["o"] = 53,   --Overline
 }
 
-local sha256Values = {}
-local sha256Constants = {}
+local hashValues = {}
+local hashConstants = {}
 
-local function values256()
+local function valuesHash()
   for i, prime in ipairs({ 2, 3, 5, 7, 11, 13, 17, 19 }) do
     local rt = math.sqrt(prime)
     local constant = math.floor((rt - math.floor(rt)) * 2 ^ 32)
-    sha256Values[i] = constant
+    hashValues[i] = constant
   end
 end
 
-local function constants256()
+local function constantsHash()
   for i, prime in ipairs({ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311 }) do
     local rt = prime ^ (1 / 3)
     local constant = math.floor((rt - math.floor(rt)) * 2 ^ 32)
-    sha256Constants[i] = constant
+    hashConstants[i] = constant
   end
 end
 
-values256()
-constants256()
+valuesHash()
+constantsHash()
 
 local function toBase58Table(alphabet)
   local base58Chars = {}
@@ -2753,23 +2751,15 @@ function cryptography.is_email(email)
   return validate.email(email)
 end
 
----Performs sha256 hashing on `s`.
+---Performs a hashing algorithm on `s`.
 ---
----The code below is to understand how the sha256 function works.
+---The code below is to understand how the hash function works.
 ---
 ---(P.S. Please don't try and read the actual code, it's a mess.)
 --[[
 ```lua
 if type(s) ~= "string" then
   error_msg("String", "s", s)
-end
-
-if cache_256[s] then
-  return cache_256[s]
-end
-
-if #cache_256 > 1000 then
-  cache_256 = {}
 end
 
 local function choose(x, y, z)
@@ -2817,7 +2807,7 @@ local padded = s .. string.char(0x80) .. (pad_len < 64 and string.rep(string.cha
 
 local h = {}
 for i = 1, 8 do
-  h[i] = sha256_values[i]
+  h[i] = hash_values[i]
 end
 
 for chunk = 1, #padded, 64 do
@@ -2835,7 +2825,7 @@ for chunk = 1, #padded, 64 do
   local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
 
   for i = 1, 64 do
-    local t1 = add32(add32(add32(add32(h_, bsig1(e)), choose(e, f, g)), sha256Constants[i]), w[i])
+    local t1 = add32(add32(add32(add32(h_, bsig1(e)), choose(e, f, g)), hashConstants[i]), w[i])
     local t2 = add32(bsig0(a), maj(a, b, c))
     h_ = g
     g = f
@@ -2858,26 +2848,22 @@ for chunk = 1, #padded, 64 do
 end
 
 local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x", h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
-cache256[s] = hashStr
 return hashStr
 ```
 ]]
 ---@param s string
 ---@return string
 ---@nodiscard
-function cryptography.sha256(s)
+function cryptography.hash(s)
   if type(s) ~= "string" then errorMsg("String", "s", s) end
-
-  if cache256[s] then return cache256[s] end
-  if #cache256 > 1000 then cache256 = {} end
 
   local bitLen = #s * 8
 
   local padLen = 64 - ((#s + 1 + 8) % 64)
-  local padded = s .. string.char(0x80) .. (padLen < 64 and string.rep(string.char(0), padLen) or "") .. string.char((bitLen >> 56) & 0xFF, (bitLen >> 48) & 0xFF, (bitLen >> 40) & 0xFF, (bitLen >> 32) & 0xFF, (bitLen >> 24) & 0xFF, (bitLen >> 16) & 0xFF, (bitLen >> 8) & 0xFF, bitLen & 0xFF)
+  local padded = s .. string.char(0x80) .. (padLen < 64 and string.rep(string.char(0), padLen) or "") .. string.pack(">I8", bitLen)
 
   local h = {}
-  for i = 1, 8 do h[i] = sha256Values[i] end
+  for i = 1, 8 do h[i] = hashValues[i] end
 
   for chunk = 1, #padded, 64 do
     local w = {}
@@ -2897,7 +2883,7 @@ function cryptography.sha256(s)
     local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
 
     for i = 1, 64 do
-      local t1 = ((((h_ + ((cryptography.ror(e, 6) ~ cryptography.ror(e, 11) ~ cryptography.ror(e, 25)) & 0xFFFFFFFF)) & 0xFFFFFFFF + ((e & f) ~ (((~e) & 0xFFFFFFFF) & g)) & 0xFFFFFFFF) & 0xFFFFFFFF + sha256Constants[i]) & 0xFFFFFFFF + w[i]) & 0xFFFFFFFF
+      local t1 = ((((h_ + ((cryptography.ror(e, 6) ~ cryptography.ror(e, 11) ~ cryptography.ror(e, 25)) & 0xFFFFFFFF)) & 0xFFFFFFFF + ((e & f) ~ (((~e) & 0xFFFFFFFF) & g)) & 0xFFFFFFFF) & 0xFFFFFFFF + hashConstants[i]) & 0xFFFFFFFF + w[i]) & 0xFFFFFFFF
 
       h_ = g
       g = f
@@ -2920,7 +2906,6 @@ function cryptography.sha256(s)
   end
 
   local hashStr = string.format("%08x%08x%08x%08x%08x%08x%08x%08x", h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8])
-  cache256[s] = hashStr
   return hashStr
 end
 
@@ -5643,6 +5628,8 @@ end
 ---***SRG Custom Function***
 ---
 ---Converts the given table (`t`) to a human-readable string.
+---
+---Automatically handles both array elements and key-value pairs in mixed tables.
 ---@param t table
 ---@return string
 function pretty(t)
