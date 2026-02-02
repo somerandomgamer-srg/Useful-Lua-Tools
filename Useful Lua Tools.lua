@@ -2771,19 +2771,19 @@ local function maj(x, y, z)
 end
 
 local function bsig0(x)
-  return (cryptography.ror(x, 2) ~ cryptography.ror(x, 13) ~ cryptography.ror(x, 22)) & 0xFFFFFFFF
+  return (((x >> 2) | (x << 30)) ~ ((x >> 13) | (x << 19)) ~ ((x >> 22) | (x << 10))) & 0xFFFFFFFF
 end
 
 local function bsig1(x)
-  return (cryptography.ror(x, 6) ~ cryptography.ror(x, 11) ~ cryptography.ror(x, 25)) & 0xFFFFFFFF
+  return (((x >> 6) | (x << 26)) ~ ((x >> 11) | (x << 21)) ~ ((x >> 25) | (x << 7))) & 0xFFFFFFFF
 end
 
 local function ssig0(x)
-  return (cryptography.ror(x, 7) ~ cryptography.ror(x, 18) ~ (x >> 3)) & 0xFFFFFFFF
+  return (((x >> 7) | (x << 25)) ~ ((x >> 18) | (x << 14)) ~ (x >> 3)) & 0xFFFFFFFF
 end
 
 local function ssig1(x)
-  return (cryptography.ror(x, 17) ~ cryptography.ror(x, 19) ~ (x >> 10)) & 0xFFFFFFFF
+  return (((x >> 17) | (x << 15)) ~ ((x >> 19) | (x << 13)) ~ (x >> 10)) & 0xFFFFFFFF
 end
 
 local function add32(a, b)
@@ -2866,13 +2866,13 @@ function cryptography.hash(s)
       local w2 = w[i - 2]
       local w15 = w[i - 15]
 
-      w[i] = (((((cryptography.ror(w2, 17) ~ cryptography.ror(w2, 19) ~ (w2 >> 10)) & 0xFFFFFFFF) + w[i - 7]) & 0xFFFFFFFF + ((cryptography.ror(w15, 7) ~ cryptography.ror(w15, 18) ~ (w15 >> 3)) & 0xFFFFFFFF)) & 0xFFFFFFFF + w[i - 16]) & 0xFFFFFFFF
+      w[i] = ((((((((w2 >> 17) | (w2 << 15)) ~ ((w2 >> 19) | (w2 << 13)) ~ (w2 >> 10)) & 0xFFFFFFFF) + w[i - 7]) & 0xFFFFFFFF + ((((w15 >> 7) | (w15 << 25)) ~ ((w15 >> 18) | (w15 << 14)) ~ (w15 >> 3)) & 0xFFFFFFFF)) & 0xFFFFFFFF + w[i - 16]) & 0xFFFFFFFF
     end
 
     local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
 
     for i = 1, 64 do
-      local t1 = ((((h_ + ((cryptography.ror(e, 6) ~ cryptography.ror(e, 11) ~ cryptography.ror(e, 25)) & 0xFFFFFFFF)) & 0xFFFFFFFF + ((e & f) ~ (((~e) & 0xFFFFFFFF) & g)) & 0xFFFFFFFF) & 0xFFFFFFFF + hashConstants[i]) & 0xFFFFFFFF + w[i]) & 0xFFFFFFFF
+      local t1 = ((((h_ + ((((e >> 6) | (e << 26)) ~ ((e >> 11) | (e << 21)) ~ ((e >> 25) | (e << 7))) & 0xFFFFFFFF)) & 0xFFFFFFFF + ((e & f) ~ (((~e) & 0xFFFFFFFF) & g)) & 0xFFFFFFFF) & 0xFFFFFFFF + hashConstants[i]) & 0xFFFFFFFF + w[i]) & 0xFFFFFFFF
 
       h_ = g
       g = f
@@ -2881,7 +2881,7 @@ function cryptography.hash(s)
       d = c
       c = b
       b = a
-      a = (t1 + (((cryptography.ror(a, 2) ~ cryptography.ror(a, 13) ~ cryptography.ror(a, 22)) & 0xFFFFFFFF) + ((a & b) ~ (a & c) ~ (b & c)) & 0xFFFFFFFF)) & 0xFFFFFFFF
+      a = (t1 + (((((a >> 2) | (a << 30)) ~ ((a >> 13) | (a << 19)) ~ ((a >> 22) | (a << 10))) & 0xFFFFFFFF) + ((a & b) ~ (a & c) ~ (b & c)) & 0xFFFFFFFF)) & 0xFFFFFFFF
     end
 
     h[1] = (h[1] + a) & 0xFFFFFFFF
