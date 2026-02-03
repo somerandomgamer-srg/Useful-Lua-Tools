@@ -650,9 +650,9 @@ local function prettyMain(t, indent, seen)
   for i = 1, arrayLen do
     local value = t[i]
     if type(value) == "table" then
-      s = s .. spaces .. "{\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "}\n"
+      s = s .. spaces .. "{\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "},\n"
     else
-      s = s .. spaces .. prettyFormat(value) .. "\n"
+      s = s .. spaces .. prettyFormat(value) .. ",\n"
     end
   end
 
@@ -661,9 +661,9 @@ local function prettyMain(t, indent, seen)
     if not skip then
       local keyStr = type(key) == "string" and ("[" .. '"' .. key .. '"' .. "]") or ("[" .. tostring(key) .. "]")
       if type(value) == "table" then
-        s = s .. spaces .. keyStr .. " = {\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "}\n"
+        s = s .. spaces .. keyStr .. " = {\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "},\n"
       else
-        s = s .. spaces .. keyStr .. " = " .. prettyFormat(value) .. "\n"
+        s = s .. spaces .. keyStr .. " = " .. prettyFormat(value) .. ",\n"
       end
     end
   end
@@ -5626,3 +5626,6 @@ function pretty(t)
 
   return "{\n" .. prettyMain(t, 2, {}) .. "}"
 end
+
+print(pretty(hashConstants))
+print(pretty(hashValues))
