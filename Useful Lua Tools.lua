@@ -599,6 +599,7 @@ local terminalStyles = {
 
 local hashValues = {}
 local hashConstants = {}
+local hashW = {}
 
 local function valuesHash()
   for i, prime in ipairs({ 2, 3, 5, 7, 11, 13, 17, 19 }) do
@@ -2855,7 +2856,7 @@ function cryptography.hash(s)
   local h = {}
   for i = 1, 8 do h[i] = hashValues[i] end
 
-  local w = {}
+  local w = hashW
 
   for chunk = 1, #padded, 64 do
     for i = 0, 15 do
@@ -2866,13 +2867,20 @@ function cryptography.hash(s)
       local w2 = w[i - 2]
       local w15 = w[i - 15]
 
-      w[i] = ((((((((w2 >> 17) | (w2 << 15)) ~ ((w2 >> 19) | (w2 << 13)) ~ (w2 >> 10)) & 0xFFFFFFFF) + w[i - 7]) & 0xFFFFFFFF + ((((w15 >> 7) | (w15 << 25)) ~ ((w15 >> 18) | (w15 << 14)) ~ (w15 >> 3)) & 0xFFFFFFFF)) & 0xFFFFFFFF + w[i - 16]) & 0xFFFFFFFF)
+      local s1 = ((w2 >> 17) | (w2 << 15)) ~ ((w2 >> 19) | (w2 << 13)) ~ (w2 >> 10)
+      local s0 = ((w15 >> 7) | (w15 << 25)) ~ ((w15 >> 18) | (w15 << 14)) ~ (w15 >> 3)
+      w[i] = (s1 + w[i - 7] + s0 + w[i - 16]) & 0xFFFFFFFF
     end
 
     local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
 
     for i = 1, 64 do
-      local t1 = ((((h_ + ((((e >> 6) | (e << 26)) ~ ((e >> 11) | (e << 21)) ~ ((e >> 25) | (e << 7))) & 0xFFFFFFFF)) & 0xFFFFFFFF + ((e & f) ~ (((~e) & 0xFFFFFFFF) & g)) & 0xFFFFFFFF) & 0xFFFFFFFF + hashConstants[i]) & 0xFFFFFFFF + w[i]) & 0xFFFFFFFF
+      local S1 = ((e >> 6) | (e << 26)) ~ ((e >> 11) | (e << 21)) ~ ((e >> 25) | (e << 7))
+      local ch = (e & f) ~ ((~e) & g)
+      local t1 = (h_ + S1 + ch + hashConstants[i] + w[i]) & 0xFFFFFFFF
+
+      local S0 = ((a >> 2) | (a << 30)) ~ ((a >> 13) | (a << 19)) ~ ((a >> 22) | (a << 10))
+      local maj = (a & b) ~ (a & c) ~ (b & c)
 
       h_ = g
       g = f
@@ -2881,7 +2889,7 @@ function cryptography.hash(s)
       d = c
       c = b
       b = a
-      a = (t1 + (((((a >> 2) | (a << 30)) ~ ((a >> 13) | (a << 19)) ~ ((a >> 22) | (a << 10))) & 0xFFFFFFFF) + ((a & b) ~ (a & c) ~ (b & c)) & 0xFFFFFFFF)) & 0xFFFFFFFF
+      a = (t1 + S0 + maj) & 0xFFFFFFFF
     end
 
     h[1] = (h[1] + a) & 0xFFFFFFFF
