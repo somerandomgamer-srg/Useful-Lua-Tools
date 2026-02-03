@@ -2864,32 +2864,15 @@ function cryptography.hash(s)
     end
 
     for i = 17, 64 do
-      local w2 = w[i - 2]
-      local w15 = w[i - 15]
-
-      local s1 = ((w2 >> 17) | (w2 << 15)) ~ ((w2 >> 19) | (w2 << 13)) ~ (w2 >> 10)
-      local s0 = ((w15 >> 7) | (w15 << 25)) ~ ((w15 >> 18) | (w15 << 14)) ~ (w15 >> 3)
-      w[i] = (s1 + w[i - 7] + s0 + w[i - 16]) & 0xFFFFFFFF
+      local w2, w15 = w[i - 2], w[i - 15]
+      w[i] = ((((w2 >> 17) | (w2 << 15)) ~ ((w2 >> 19) | (w2 << 13)) ~ (w2 >> 10)) + w[i - 7] + (((w15 >> 7) | (w15 << 25)) ~ ((w15 >> 18) | (w15 << 14)) ~ (w15 >> 3)) + w[i - 16]) & 0xFFFFFFFF
     end
 
     local a, b, c, d, e, f, g, h_ = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
 
     for i = 1, 64 do
-      local S1 = ((e >> 6) | (e << 26)) ~ ((e >> 11) | (e << 21)) ~ ((e >> 25) | (e << 7))
-      local ch = (e & f) ~ ((~e) & g)
-      local t1 = (h_ + S1 + ch + hashConstants[i] + w[i]) & 0xFFFFFFFF
-
-      local S0 = ((a >> 2) | (a << 30)) ~ ((a >> 13) | (a << 19)) ~ ((a >> 22) | (a << 10))
-      local maj = (a & b) ~ (a & c) ~ (b & c)
-
-      h_ = g
-      g = f
-      f = e
-      e = (d + t1) & 0xFFFFFFFF
-      d = c
-      c = b
-      b = a
-      a = (t1 + S0 + maj) & 0xFFFFFFFF
+      local t1 = (h_ + (((e >> 6) | (e << 26)) ~ ((e >> 11) | (e << 21)) ~ ((e >> 25) | (e << 7))) + ((e & f) ~ ((~e) & g)) + hashConstants[i] + w[i]) & 0xFFFFFFFF
+      h_, g, f, e, d, c, b, a = g, f, e, (d + t1) & 0xFFFFFFFF, c, b, a, (t1 + (((a >> 2) | (a << 30)) ~ ((a >> 13) | (a << 19)) ~ ((a >> 22) | (a << 10))) + ((a & b) ~ (a & c) ~ (b & c))) & 0xFFFFFFFF
     end
 
     h[1] = (h[1] + a) & 0xFFFFFFFF
