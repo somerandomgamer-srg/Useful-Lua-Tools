@@ -1,41 +1,5 @@
 require("Useful Lua Tools")
 
-local function benchmark(name, func, iterations)
-  iterations = iterations or 1000
-  
-  collectgarbage("collect")
-  local startMem = collectgarbage("count")
-  local startTime = os.clock()
-  
-  for i = 1, iterations do
-    func()
-  end
-  
-  local endTime = os.clock()
-  local endMem = collectgarbage("count")
-  
-  local elapsed = endTime - startTime
-  local avgTime = elapsed / iterations
-  local memDelta = endMem - startMem
-  
-  print(string.format("=== %s ===", name))
-  print(string.format("  Iterations:     %d", iterations))
-  print(string.format("  Total time:     %.4f seconds", elapsed))
-  print(string.format("  Avg per call:   %.6f seconds (%.2f µs)", avgTime, avgTime * 1000000))
-  print(string.format("  Ops/second:     %.2f", iterations / elapsed))
-  print(string.format("  Memory delta:   %.2f KB", memDelta))
-  print()
-  
-  return {
-    name = name,
-    iterations = iterations,
-    totalTime = elapsed,
-    avgTime = avgTime,
-    opsPerSecond = iterations / elapsed,
-    memoryDelta = memDelta
-  }
-end
-
 print("╔════════════════════════════════════════════════════════════╗")
 print("║       Hash Function Benchmark (SHA-256 Inspired)          ║")
 print("╚════════════════════════════════════════════════════════════╝")
@@ -51,39 +15,29 @@ print(string.format("  Medium: %d bytes", #mediumStr))
 print(string.format("  Long:   %d bytes", #longStr))
 print()
 
+local function runBenchmark(name, iterations, input)
+  local total, avg, result = benchmark(cryptography.hash, iterations, input)
+  print(string.format("=== %s ===", name))
+  print(string.format("  Iterations:     %d", iterations))
+  print(string.format("  Total time:     %.4f seconds", total))
+  print(string.format("  Avg per call:   %.6f seconds (%.2f µs)", avg, avg * 1000000))
+  print(string.format("  Ops/second:     %.2f", iterations / total))
+  print()
+  return { name = name, opsPerSecond = iterations / total }
+end
+
 local results = {}
-
-results[1] = benchmark("Short String (13 bytes)", function()
-  cryptography.hash(shortStr)
-end, 5000)
-
-results[2] = benchmark("Medium String (450 bytes)", function()
-  cryptography.hash(mediumStr)
-end, 2000)
-
-results[3] = benchmark("Long String (10KB)", function()
-  cryptography.hash(longStr)
-end, 500)
-
-results[4] = benchmark("Empty String", function()
-  cryptography.hash("")
-end, 5000)
-
-results[5] = benchmark("Binary Data (256 bytes)", function()
-  local binary = ""
-  for i = 0, 255 do
-    binary = binary .. string.char(i)
-  end
-  cryptography.hash(binary)
-end, 1000)
+results[1] = runBenchmark("Short String (13 bytes)", 5000, shortStr)
+results[2] = runBenchmark("Medium String (450 bytes)", 2000, mediumStr)
+results[3] = runBenchmark("Long String (10KB)", 500, longStr)
+results[4] = runBenchmark("Empty String", 5000, "")
 
 print("╔════════════════════════════════════════════════════════════╗")
 print("║                      Summary                               ║")
 print("╚════════════════════════════════════════════════════════════╝")
 print()
 
-local fastest = results[1]
-local slowest = results[1]
+local fastest, slowest = results[1], results[1]
 for _, r in ipairs(results) do
   if r.opsPerSecond > fastest.opsPerSecond then fastest = r end
   if r.opsPerSecond < slowest.opsPerSecond then slowest = r end
