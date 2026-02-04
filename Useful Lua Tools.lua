@@ -597,28 +597,11 @@ local terminalStyles = {
   ["o"] = 53,   --Overline
 }
 
-local hashValues = {}
-local hashConstants = {}
+local hashValues = { 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 }
+
+local hashConstants = { 1116352408, 1899447441, 3049323471, 3921009573, 961987163, 1508970993, 2453635748, 2870763221, 3624381080, 310598401, 607225278, 1426881987, 1925078388, 2162078206, 2614888103, 3248222580, 3835390401, 4022224774, 264347078, 604807628, 770255983, 1249150122, 1555081692, 1996064986, 2554220882, 2821834349, 2952996808, 3210313671, 3336571891, 3584528711, 113926993, 338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700, 1986661051, 2177026350, 2456956037, 2730485921, 2820302411, 3259730800, 3345764771, 3516065817, 3600352804, 4094571909, 275423344, 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218, 1537002063, 1747873779, 1955562222, 2024104815, 2227730452, 2361852424, 2428436474, 2756734187, 3204031479, 3329325298 }
+
 local hashW = {}
-
-local function valuesHash()
-  for i, prime in ipairs({ 2, 3, 5, 7, 11, 13, 17, 19 }) do
-    local rt = math.sqrt(prime)
-    local constant = math.floor((rt - math.floor(rt)) * 2 ^ 32)
-    hashValues[i] = constant
-  end
-end
-
-local function constantsHash()
-  for i, prime in ipairs({ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311 }) do
-    local rt = prime ^ (1 / 3)
-    local constant = math.floor((rt - math.floor(rt)) * 2 ^ 32)
-    hashConstants[i] = constant
-  end
-end
-
-valuesHash()
-constantsHash()
 
 local function toBase58Table(alphabet)
   local base58Chars = {}
@@ -650,9 +633,9 @@ local function prettyMain(t, indent, seen)
   for i = 1, arrayLen do
     local value = t[i]
     if type(value) == "table" then
-      s = s .. spaces .. "{\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "},\n"
+      s = s .. spaces .. "{\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "}\n"
     else
-      s = s .. spaces .. prettyFormat(value) .. ",\n"
+      s = s .. spaces .. prettyFormat(value) .. "\n"
     end
   end
 
@@ -661,9 +644,9 @@ local function prettyMain(t, indent, seen)
     if not skip then
       local keyStr = type(key) == "string" and ("[" .. '"' .. key .. '"' .. "]") or ("[" .. tostring(key) .. "]")
       if type(value) == "table" then
-        s = s .. spaces .. keyStr .. " = {\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "},\n"
+        s = s .. spaces .. keyStr .. " = {\n" .. prettyMain(value, indent + 2, seen) .. spaces .. "}\n"
       else
-        s = s .. spaces .. keyStr .. " = " .. prettyFormat(value) .. ",\n"
+        s = s .. spaces .. keyStr .. " = " .. prettyFormat(value) .. "\n"
       end
     end
   end
@@ -2859,9 +2842,7 @@ function cryptography.hash(s)
   local w = hashW
 
   for chunk = 1, #padded, 64 do
-    for i = 0, 15 do
-      w[i + 1] = string.unpack(">I4", padded, chunk + i * 4)
-    end
+    for i = 0, 15 do w[i + 1] = string.unpack(">I4", padded, chunk + i * 4) end
 
     for i = 17, 64 do
       local w2 = w[i - 2]
@@ -5626,6 +5607,3 @@ function pretty(t)
 
   return "{\n" .. prettyMain(t, 2, {}) .. "}"
 end
-
-print(pretty(hashConstants))
-print(pretty(hashValues))

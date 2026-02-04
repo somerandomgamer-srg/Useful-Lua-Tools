@@ -110,3 +110,32 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 9. **Breaking Changes**: Future updates may include breaking changes that could affect existing implementations.
 
 10. **User Responsibility**: Users are responsible for testing and validating the functions for their specific use cases before implementing them in production environments.
+
+Test Data Sizes:
+  Short:  13 bytes
+  Medium: 450 bytes
+  Long:   10000 bytes
+
+=== Short String (13 bytes) ===
+  Iterations:     5000
+  Total time:     0.0969 seconds
+  Avg per call:   0.000019 seconds (19.38 µs)
+  Ops/second:     51597.99
+
+=== Medium String (450 bytes) ===
+  Iterations:     2000
+  Total time:     0.2421 seconds
+  Avg per call:   0.000121 seconds (121.07 µs)
+  Ops/second:     8259.96
+
+=== Long String (10KB) ===
+  Iterations:     500
+  Total time:     1.2129 seconds
+  Avg per call:   0.002426 seconds (2425.71 µs)
+  Ops/second:     412.25
+
+=== Empty String ===
+  Iterations:     5000
+  Total time:     0.0901 seconds
+  Avg per call:   0.000018 seconds (18.02 µs)
+  Ops/second:     55485.89

@@ -1,7 +1,7 @@
 require("Useful Lua Tools")
 
 print("╔════════════════════════════════════════════════════════════╗")
-print("║       Hash Function Benchmark (SHA-256 Inspired)          ║")
+print("║       Hash Function Benchmark (SHA-256 Inspired)           ║")
 print("╚════════════════════════════════════════════════════════════╝")
 print()
 
@@ -16,7 +16,7 @@ print(string.format("  Long:   %d bytes", #longStr))
 print()
 
 local function runBenchmark(name, iterations, input)
-  local total, avg, result = benchmark(cryptography.hash, iterations, input)
+  local total, avg, _ = benchmark(cryptography.hash, iterations, input)
   print(string.format("=== %s ===", name))
   print(string.format("  Iterations:     %d", iterations))
   print(string.format("  Total time:     %.4f seconds", total))
