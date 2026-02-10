@@ -3,7 +3,7 @@ modules = ["lua-5.2"]
 expertMode = true
 
 [nix]
-packages = ["lua5_4"]
+packages = ["lua5_4", "texinfoInteractive"]
 
 [workflows]
 runButton = "Project"

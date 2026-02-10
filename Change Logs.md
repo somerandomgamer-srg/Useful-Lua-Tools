@@ -43,18 +43,42 @@
     - Added 2 new `random` library functions: `random.number(min, max, decimals)` and `random.choice(t, amount)`
   - ## Sep 10, 2025
     - Added 3 new `random` library functions: `random.hex(len)`, `random.boolean()`, and `random.string(len, charset)`
-    - Added new library `remote` library with 3 functions: `remote.exists()`, `remote.remove()`, and `remote.count()`
-    - Added 1 new `table` library function: `table.index(t, value)`
+    - Added 1 new library
+      - `remote`:
+        - `remote.exists()`
+        - `remote.remove()`
+        - `remote.count()`
+    - Added 1 new `table` function:
+      - `table.index(t, value)`
 
 # V1.4.0
 - ## Date: Sep 18, 2025 - Sep 19, 2025
   - ## Sep 18, 2025
     - Added 3 new libraries
-      - Stack: `stack.new(name)`, `stack.add(name, value)`, `stack.take(name)`, `stack.exists(name)`, `stack.size(name)`, `stack.empty(name)`, `stack.is_empty(name)`
-      - Queue: `queue.new(name)`, `queue.add(name, value)`, `queue.take(name)`, `queue.exists(name)`, `queue.size(name)`, `queue.empty(name)`, `queue.is_empty(name)`
-      - Datetime: `datetime.time(return_table)`
+      - Stack:
+        - `stack.new(name)`
+        - `stack.add(name, value)`
+        - `stack.take(name)`
+        - `stack.exists(name)`
+        - `stack.size(name)`
+        - `stack.empty(name)`
+        - `stack.is_empty(name)`
+      - Queue:
+        - `queue.new(name)`
+        - `queue.add(name, value)`
+        - `queue.take(name)`
+        - `queue.exists(name)`
+        - `queue.size(name)`
+        - `queue.empty(name)`
+        - `queue.is_empty(name)`
+      - Datetime:
+        - `datetime.time(return_table)`
   - ## Sep 19, 2025
-    - Added 4 new `datetime` library functions: `datetime.diff(t1, t2, return_table)`, `datetime.sum(t1, t2, return_table)`, `datetime.to_table(num)`, `datetime.to_number(t)`
+    - Added 4 new `datetime` library functions:
+      - `datetime.diff(t1, t2, return_table)`
+      - `datetime.sum(t1, t2, return_table)`
+      - `datetime.to_table(num)`
+      - `datetime.to_number(t)`
     - Removed `is_type()` due to it being redundant and providing no benefit over lua's built-in `type()` function.
     - Moved the legend and summary in `Current Functions and Variables.md` to the top
 
@@ -67,7 +91,10 @@
 # V1.5.0
 - ## Date: Sep 23, 2025 - Sep 25, 2025
   - ## Sep 23, 2025
-    - Added 3 new `table` library functions: `table.lock()`, `table.unlock()`, and `table.is_locked`
+    - Added 3 new `table` library functions:
+      - `table.lock()`
+      - `table.unlock()`
+      - `table.is_locked`
   - ## Sep 24, 2025
     - Updated some functions to accept multiple arguments. Effected functions include:
       - `table.contains(t, value)` --> `table.contains(value, ...)`
@@ -96,13 +123,16 @@
       - `string.ends_with(s, letter)` --> `string.ends_with(s, ...)`
       - `remote.call(name)` --> `remote.call(...)`
       - `remote.remove(name)` --> `remote.remove(...)`
-    - Added 1 new `table` library function: `table.combine(...)`
+    - Added 1 new `table` library function:
+      - `table.combine(...)`
     - Removed the redundant `math.midpoint(x, y)` as it is essentially a rename of `math.median(...)`
 
 # V1.5.1
 - ## Date: Sep 29, 2025
 - ## Description: Crytography Library Changes
-  - Added 2 new `cryptography` functions: `cryptography.text_to_base58(s, alphabet)` and `cryptography.base58_to_text(s, alphabet)`
+  - Added 2 new `cryptography` functions:
+    - `cryptography.text_to_base58(s, alphabet)`
+    - `cryptography.base58_to_text(s, alphabet)`
   - The Base64 and Base32 functions now accept a custom alphabet.
     - `cryptography.text_to_base64(s)` --> `cryptography.text_to_base64(s, alphabet)`
     - `cryptography.base64_to_text(s)` --> `cryptography.base64_to_text(s, alphabet)`
@@ -112,29 +142,57 @@
 # V1.5.2
 - ## Date: Sep 30, 2025
 - ## Description: Table Serialization Functions
-  - Added 2 new `table` library functions: `table.to_string(t, sep)` and `table.from_string(str, sep)`
-    - `table.to_string()`: Serializes a table to a string representation with customizable separator
-    - `table.from_string()`: Deserializes a stringified table back to a table structure
+  - Added 2 new `table` library functions:
+    - `table.to_string(t, sep)`
+    - `table.from_string(str, sep)`
 
 # V1.5.3
 - ## Date: Oct 2, 2025
-  - Added 1 new `string` library function: `string.levenshtein(s1, s2)`
-  - Added 1 new `cryptography` library function: `cryptography.luhn(s)`
+  - Added 1 new `string` library function:
+    - `string.levenshtein(s1, s2)`
+  - Added 1 new `cryptography` library function:
+    - `cryptography.luhn(s)`
 
 # V2.0.0!
 - ## Date: Oct 8, 2025 - Oct 10, 2025
   - ## Oct 8, 2025
     - Added 1 new library
-      - `file`: `file.new(name, content)`, `file.read(name)`, `file.rewrite(name, content)`, `file.append(name, content)`, `file.exists(name)`, `file.size(name)`, `file.lines(name)`, and `file.delete(name)`
+      - `file`:
+        - `file.new(name, content)`
+        - `file.read(name)`
+        - `file.rewrite(name, content)`
+        - `file.append(name, content)`
+        - `file.exists(name)`
+        - `file.size(name)`
+        - `file.lines(name)`
+        - `file.delete(name)`
   - ## Oct 9, 2025
-    - Added 2 new `cryptography` library function: `cryptography.is_ip(ip, v6)` and `cryptography.is_email(email)`
-    - Added 6 new `table` library functions: `table.map(t, func)`, `table.filter(t, func)`, `table.unique(t)`, `table.zip(...)`, `table.keys(t)`, and `table.values(t)`
-    - Added 2 new `math` library functions: `math.nroot(x, n)` and `math.clamp(x, min, max)`
+    - Added 2 new `cryptography` library function:
+      - `cryptography.is_ip(ip, v6)`
+      - `cryptography.is_email(email)`
+    - Added 6 new `table` library functions:
+      - `table.map(t, func)`
+      - `table.filter(t, func)`
+      - `table.unique(t)`
+      - `table.zip(...)`
+      - `table.keys(t)`
+      - `table.values(t)`
+    - Added 2 new `math` library functions:
+      - `math.nroot(x, n)`
+      - `math.clamp(x, min, max)`
     - Added 2 new libraries:
-      - `json`: `json.encode(t)` and `json.decode(s)`
-      - `http`: `http.post(url, data)`, `http.get(url)`, `http.delete(url)`, `http.put(url, data)`, and `http.patch(url, data)`
+      - `json`:
+        - `json.encode(t)`
+        - `json.decode(s)`
+      - `http`:
+        - `http.post(url, data)`
+        - `http.get(url)`
+        - `http.delete(url)`
+        - `http.put(url, data)`
+        - `http.patch(url, data)`
     - ## Oct 10, 2025
-      - Added 1 new `system` library variable: `system.mac_address`
+      - Added 1 new `system` library variable:
+        - `system.mac_address`
       - Fixed several bugs:
         - `string.levenshtein`: Fixed off-by-one error in character comparison where substring indices were incorrectly offset by 1.
         - `cryptography.text_to_ascii`: Fixed invalid string indexing where string was accessed using bracket notation instead of substring method.
@@ -146,9 +204,18 @@
   - ## Oct 16, 2025
     - Started deprecating functions instead of just simply removing them.
     - Added 1 new library
-      - `binary`: `binary.add(...)`, `binary.subtract(...)`, `binary.multiply(...)`, `binary.divide(...)`, `binary.band(...)`, `binary.bor(...)`, `binary.bxor(...)`, and `binary.bnot(bin)`
+      - `binary`:
+        - `binary.add(...)`
+        - `binary.subtract(...)`
+        - `binary.multiply(...)`
+        - `binary.divide(...)`
+        - `binary.band(...)`
+        - `binary.bor(...)`
+        - `binary.bxor(...)`
+        - `binary.bnot(bin)`
     - Moved `cryptography.is_email(email)` and `cryptography.is_ip(ip, v6)` to the new `validate` library.
-    - Added 1 new `string` library function: `string.wrap(s, length)`
+    - Added 1 new `string` library function:
+      - `string.wrap(s, length)`
   - ## Oct 17, 2025
     - Added `cmds.sh` for developer use. Example commands include: getting file-size of the ULT file and counting total functions and variables
 
@@ -158,7 +225,8 @@
   - Added 1 new `cryptography` library function:
     - `cryptography.sha256(s)`
   - Added 2 new `http` library functions:
-    - `http.escape()`, and `http.unescape()`
+    - `http.escape()`
+    - `http.unescape()`
   - Added 1 new `validate` library function:
     - `validate.url(url)`
   - **BREAKING CHANGE**: Migrated to Lua 5.3+ only (removed Lua 5.2 support)
@@ -170,29 +238,76 @@
 - ## Date: Oct 27, 2025 - Jan 26, 2026
   - ## Oct 27, 2025
     - Functions now accept additional arguments to pass to their `func` parameter.
-      - `delay_stop`, `delay`, `benchmark`, and `execution_time`
+      - Affected functions:
+        - `delay_stop`,
+        - `delay`,
+        - `benchmark`,
+        - `execution_time`
     - Added 3 new `math` library functions:
-      - `math.map(x, min1, max1, min2, max2)`, `math.distance2d(x1, y1, x2, y2)`, and `math.distance3d(x1, y1, z1, x2, y2, z2)`,
+      - `math.map(x, min1, max1, min2, max2)`,
+      - `math.distance2d(x1, y1, x2, y2)`,
+      - `math.distance3d(x1, y1, z1, x2, y2, z2)`,
   - ## Oct 29, 2025
     - Added 1 new library:
-      - `terminal`: `terminal.clear()` and `terminal.style(text, ...)`
-    - Adding caching for `cryptography.sha256`
+      - `terminal`:
+        - `terminal.clear()`
+        - `terminal.style(text, ...)`
   - ## Nov 1, 2025
     - Greatly improved `cryptography.sha256`.
   - ## Nov 3, 2025
     - Improved base64, base58, and base32 encoding/decoding
   - ## Nov 7, 2025
     - Added 1 new library:
-      - `bignum`: `bignum.new(value)`, `bignum.to_string(num)`, `bignum.compare(a, b)`, `bignum.add(a, b)`, `bignum.subtract(a, b)`, `bignum.multiply(a, b, precision)`, `bignum.divide(a, b, precision)`, `bignum.mod(a, b)`, `bignum.pow(a, b, precision)`, `bignum.abs(a)`, `bignum.equals(a, b)`, `bignum.less_than(a, b)`, and `bignum.greater_than(a, b)`
+      - `bignum`:
+        - `bignum.new(value)`
+        - `bignum.to_string(num)`
+        - `bignum.compare(a, b)`
+        - `bignum.add(a, b)`
+        - `bignum.subtract(a, b)`
+        - `bignum.multiply(a, b, precision)`
+        - `bignum.divide(a, b, precision)`
+        - `bignum.mod(a, b)`
+        - `bignum.pow(a, b, precision)`
+        - `bignum.abs(a)`
+        - `bignum.equals(a, b)`
+        - `bignum.less_than(a, b)`
+        - `bignum.greater_than(a, b)`
   - ## Nov 10, 2025
     - Added 4 new `table` functions:
-      - `table.range(n, start, step)`, `table.take(t, n)`, `table.drop(t, n)`, and `table.chunk(t, n)`
+      - `table.range(n, start, step)`
+      - `table.take(t, n)`
+      - `table.drop(t, n)`
+      - `table.chunk(t, n)`
   - ## Jan 26, 2026
     - I forgot to release this version.
+
 # V2.4.0
 - ## Date: January 27, 2026 - ? ?, 2026
   - ## Jan 27, 2026
     - Added 1 new global function:
       - `pretty(t)`
   - ## Feb 2, 2026
-    - Changed `cryptography.sha256` to `cryptography.hash`
+    - Changed `cryptography.sha256(s)` to `cryptography.hash(s)`
+    - Made `cryptography.hash(s)` faster
+  - ## Feb 4, 2026
+    - Added 2 new `ult` variables:
+      - `ult.libraries` and `ult.license`
+  - ## Feb 9, 2026
+    - Added 2 new `system` variables:
+      - `system.hostname`
+      - `system.username`
+    - Added 6 new `system` functions:
+      - `system.uptime()`
+      - `system.mem_free()`
+      - `system.mem_used()`
+      - `system.mem_total()`
+      - `system.cpu_hz()`
+      - `system.cpu_usage()`
+    - Added 1 new `http` function:
+      - `http.open(url)`
+  - ## Feb 10, 2026
+    - Added 1 new global function:
+      - `warn(s)`
+    - Added 1 new `table` function:
+      - `table.reduce(t, func, initial)`
+    - Reformatted the entire change logs markdown file.

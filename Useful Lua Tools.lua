@@ -435,12 +435,7 @@ local function getOS()
     if uname == "Darwin" then
       return "MacOS"
     elseif uname == "Linux" then
-      local chromeOSCheck = io.popen("test -d /opt/google/chrome && echo 'chromeos' || echo 'linux'"):read()
-      if chromeOSCheck == "chromeos" then
-        return "ChromeOS"
-      else
-        return "Linux"
-      end
+      return "Linux"
     end
   end
   return nil
@@ -461,7 +456,7 @@ local function getNumCores()
     return tonumber(io.popen('powershell -Command "$env:NUMBER_OF_PROCESSORS"'):read()) or nil
   elseif system.is_mac then
     return tonumber(io.popen("sysctl -n hw.logicalcpu"):read()) or nil
-  elseif system.is_linux or system.is_chrome then
+  elseif system.is_linux then
     return tonumber(io.popen("nproc"):read()) or nil
   end
 end
@@ -470,7 +465,7 @@ end
 local function getArchitecture()
   if system.is_windows then
     return io.popen('powershell -Command "$Env:PROCESSOR_ARCHITECTURE"'):read() or nil
-  elseif system.is_mac or system.is_chrome or system.is_linux then
+  elseif system.is_mac or system.is_linux then
     return io.popen("uname -m"):read() or nil
   end
 end
@@ -487,13 +482,23 @@ local function getMac()
         nil
   elseif system.is_linux then
     return io.popen("ip link | awk '/ether/ {print $2}' | head -n 1"):read() or nil
-  elseif system.is_chrome then
-    print(
-      "Cannot get Mac Address on ChromeOS. ChromeOS doesn't have a command to get Mac Address due to security reasons")
-    return nil
   end
 end
 
+---Function for system.hostname
+local function getHostName()
+  return io.popen("hostname"):read() or nil
+end
+
+---Function for system.username
+local function getUsername()
+  if system.is_windows then
+    local hs = io.popen("whoami"):read()
+    return string.sub(hs, string.find(hs, "\\")) or nil
+  elseif system.is_linux_based then
+    return io.popen("whoami"):read() or nil
+  end
+end
 
 local morseCodeTable = {
   ["a"] = ".-",
@@ -755,6 +760,50 @@ ult.release_date = "10/23/2025"
 ---@nodiscard
 ult.build = ("ult-%s-%s-%s"):format(ult.version, ult.release_date, ult.min_lua_ver)
 
+---***SRG Custom Variable***
+---
+---The libraries included in Useful Lua Tools
+---@nodiscard
+ult.libraries = {
+  bignum, binary, color, cryptography, datetime, file, http, input, json, queue, random, remote, stack, system, terminal, ult, validate
+}
+
+---***SRG Custom Variable***
+---
+---The license of Useful Lua Tools
+---@nodiscard
+ult.license = [[
+Copyright 2026 Some Random Gamer (SRG)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+DISCLAIMERS:
+
+1. No Support Obligation: SRG is under no obligation to provide support, updates, or maintenance for this toolkit.
+
+2. No Liability for Data Loss: SRG is not responsible for any data loss or corruption that may occur from using this toolkit.
+
+3. Performance Considerations: The functions provided may not be optimized for all use cases or performance requirements.
+
+4. Security Disclaimer: While efforts have been made to implement secure functions, this toolkit should not be used for critical security applications without thorough review and testing.
+
+5. Compatibility: The toolkit may not be compatible with all Lua versions or implementations. Users should verify compatibility with their specific environment.
+
+6. Resource Usage: Some functions may consume significant computational resources depending on input size and complexity. Users should test performance with their specific use cases.
+
+7. Documentation Accuracy: While efforts are made to maintain accurate documentation, there may be discrepancies between documentation and actual functionality.
+
+8. Third-Party Dependencies: Any issues arising from the use of third-party dependencies or libraries are not the responsibility of SRG.
+
+9. Breaking Changes: Future updates may include breaking changes that could affect existing implementations.
+
+10. User Responsibility: Users are responsible for testing and validating the functions for their specific use cases before implementing them in production environments.
+]]
+
 -----------Validate Library-----------
 
 ---***SRG Custom Function***
@@ -829,6 +878,7 @@ end
 ---- Format: `time_high-time_mid-time_low_and_version-clock_seq_and_variant-random_node`
 ---- Uses random node ID instead of MAC address for privacy
 ---- Maintains v1 uniqueness with better database performance
+---@param v number
 ---@return string
 function random.uuid(v)
   if type(v) ~= "number" then errorMsg("Number", "v", v) end
@@ -966,61 +1016,169 @@ end
 ---***SRG Custom Variable***
 ---
 ---The OS the system is running on, or nil if it cannot be determined
+---@return string
 ---@nodiscard
 system.os = getOS()
 
 ---***SRG Custom Variable***
 ---
 ---true if the host system is running on Windows, false otherwise
+---@return boolean
 ---@nodiscard
 system.is_windows = system.os == "Windows"
 
 ---***SRG Custom Variable***
 ---
 ---true if the host system is running on MacOS, false otherwise
+---@return boolean
 ---@nodiscard
 system.is_mac = system.os == "MacOS"
 
 ---***SRG Custom Variable***
 ---
 ---true if the host system is running on Linux, false otherwise
+---@return boolean
 ---@nodiscard
 system.is_linux = system.os == "Linux"
 
 ---***SRG Custom Variable***
 ---
----true if the host system is running on Chrome OS, false otherwise
----@nodiscard
-system.is_chrome = system.os == "ChromeOS"
-
----***SRG Custom Variable***
----
 ---The system Unix Name, or nil if it cannot be determine
+---@return string?
 ---@nodiscard
 system.uname = getUname()
 
 ---***SRG Custom Variable***
 ---
 ---Amount of CPU Cores the host system has, or nil if it cannot be determined
+---@return number?
 ---@nodiscard
 system.cores = getNumCores()
 
 ---***SRG Custom Variable***
 ---
 ---The CPU architecture of the host system, or nil if it cannot be determined
+---@return string?
 ---@nodiscard
 system.architecture = getArchitecture()
 
 ---***SRG Custom Variable***
 ---
 ---true if the host system is built on Linux, false otherwise
+---@return boolean
 ---@nodiscard
 system.is_linux_based = io.popen("uname"):read() ~= nil
 
 ---***SRG Custom Variable***
 ---
 ---Returns the Mac Address of the host system, or nil if it cannot be determined
+---@return string
+---@nodiscard
 system.mac_address = getMac()
+
+---***SRG Custom Variable***
+---
+---Returns the hostname of the host system, or nil if it cannot be determined
+---@return string
+---@nodiscard
+system.hostname = getHostName()
+
+---***SRG Custom Variable***
+---
+---Returns the username of the host system, or nil if it cannot be determined
+---@return string
+---@nodiscard
+system.username = getUsername()
+
+---***SRG Custom Function***
+---
+---Returns the uptime of the host system in seconds, or nil if it cannot be determined
+---@return number?
+---@nodiscard
+function system.uptime()
+  if system.is_windows then
+    return tonumber(io.popen("powershell -Command \"((Get-Date) - (Get-CimInstance Win32_OperatingSystem).LastBootUpTime).TotalSeconds\""):read()) or nil
+  elseif system.is_linux then
+    return tonumber(io.popen("awk '{print $1}' /proc/uptime"):read()) or nil
+  elseif system.is_mac then
+    return tonumber(io.popen("sysctl -n kern.boottime | awk '{print $4}' | sed 's/,//'"):read()) or nil
+  end
+end
+
+---***SRG Custom Function***
+---
+---Returns the amount of free memory in bytes, or nil if it cannot be determined
+---@return number?
+---@nodiscard
+function system.mem_free()
+  if system.is_windows then
+    return tonumber(io.popen("powershell -Command \"((Get-CimInstance Win32_OperatingSystem).TotalVisibleMemorySize - (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory) * 1KB\""):read()) or nil
+  elseif system.is_linux then
+    return tonumber(io.popen("free -b | awk '/^Mem:/ {print $3}'"):read()) or nil
+  elseif system.is_mac then
+    return tonumber(io.popen("echo \"$(sysctl -n hw.memsize) - ($(vm_stat | awk '/Pages free/ {print $3}' | tr -d '.') * $(sysctl -n hw.pagesize))\" | bc"):read()) or nil
+  end
+end
+
+---***SRG Custom Function***
+---
+---Returns the amount of used memory in bytes, or nil if it cannot be determined
+---@return number?
+---@nodiscard
+function system.mem_used()
+  if system.is_windows then
+    return tonumber(io.popen("powershell -command \"$m=Get-CimInstance Win32_OperatingSystem; ($m.TotalVisibleMemorySize - $m.FreePhysicalMemory) * 1KB\""):read()) or nil
+  elseif system.is_linux then
+    return tonumber(io.popen("free -b | awk '/^Mem:/ {print $2 - $4}'"):read()) or nil
+  elseif system.is_mac then
+    return tonumber(io.popen("echo \"$(sysctl -n hw.memsize) - ($(vm_stat | awk '/Pages free/ {print $3}' | tr -d '.') * $(sysctl -n hw.pagesize))\" | bc"):read()) or nil
+  end
+end
+
+---***SRG Custom Function***
+---
+---Returns the total amount of memory in bytes, or nil if it cannot be determined
+---@return number?
+---@nodiscard
+function system.mem_total()
+  if system.is_windows then
+    return tonumber(io.popen("powershell -command \"(Get-CimInstance Win32_OperatingSystem).TotalVisibleMemorySize * 1KB\""):read()) or nil
+  elseif system.is_linux then
+    return tonumber(io.popen("free -b | awk '/^Mem:/ {print $2}'"):read()) or nil
+  elseif system.is_mac then
+    return tonumber(io.popen("sysctl -n hw.memsize"):read()) or nil
+  end
+end
+
+---***SRG Custom Function***
+---
+---Returns the CPU frequency in Hz, or nil if it cannot be determined
+---@return number?
+---@nodiscard
+function system.cpu_hz()
+  if system.is_windows then
+    return tonumber(io.popen("powershell -command \"(Get-CimInstance Win32_Processor).MaxClockSpeed * 1000000\""):read()) or nil
+  elseif system.is_linux then
+    return tonumber(io.popen("awk '/cpu MHz/ {print $4 * 1000000; exit}' /proc/cpuinfo"):read()) or nil
+  elseif system.is_mac then
+    return tonumber(io.popen("sysctl -n hw.cpufrequency"):read()) or nil
+  end
+end
+
+---***SRG Custom Function***
+---
+---Returns the CPU usage in percentage, or nil if it cannot be determined
+---@return number?
+---@nodiscard
+function system.cpu_usage()
+  if system.is_windows then
+    return tonumber(io.popen("powershell -Command \"(Get-CimInstance Win32_Processor | Measure-Object -Property LoadPercentage -Average).Average\""):read()) or nil
+  elseif system.is_linux then
+    return tonumber(io.popen("top -bn1 | grep \"Cpu(s)\" | awk '{print 100 - $8}'"):read()) or nil
+  elseif system.is_mac then
+    return tonumber(io.popen("top -l 1 | grep \"CPU usage\" | awk '{print $3 + $5}' | sed 's/%//'"):read()) or nil
+  end
+end
 
 ------------Binary Library------------
 
@@ -4959,6 +5117,29 @@ end
 
 ---***SRG Custom Function***
 ---
+---Reduces `t` using `func` and returns the result.
+---@param t table
+---@param func function
+---@param initial? number
+---@return number
+---@nodiscard
+function table.reduce(t, func, initial)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+  if type(func) ~= "function" then errorMsg("Function", "func", func) end
+  if #t == 0 then error("'t' is empty") end
+  if initial and type(initial) ~= "number" then errorMsg("Number", "initial", initial) end
+
+  local result = initial or t[1]
+  for i = initial and 1 or 2, #t do
+    local success, res = pcall(func, result, t[i])
+    if not success then error("'func' is not a valid function: " .. res) end
+    result = res
+  end
+  return result
+end
+
+---***SRG Custom Function***
+---
 ---Returns a table of each element in `t` with no duplicates.
 ---@param t table
 ---@return table
@@ -5276,8 +5457,6 @@ function http.post(url, data)
       data, url
     )):read()
     if not success then error("Failed to send POST request: " .. res) else result = res end
-  elseif system.is_chrome then
-    warn("Chrome OS is not supported for HTTP requests.")
   end
   return result
 end
@@ -5304,8 +5483,6 @@ function http.get(url)
       url
     )):read()
     if not success then error("Failed to send GET request: " .. res) else result = res end
-  elseif system.is_chrome then
-    warn("Chrome OS is not supported for HTTP requests.")
   end
   return result
 end
@@ -5332,8 +5509,6 @@ function http.delete(url)
       url
     )):read()
     if not success then error("Failed to send DELETE request: " .. res) else result = res end
-  elseif system.is_chrome then
-    warn("Chrome OS is not supported for HTTP requests.")
   end
   return result
 end
@@ -5362,8 +5537,6 @@ function http.put(url, data)
       data, url
     )):read()
     if not success then error("Failed to send PUT request: " .. res) else result = res end
-  elseif system.is_chrome then
-    warn("Chrome OS is not supported for HTTP requests.")
   end
   return result
 end
@@ -5392,8 +5565,6 @@ function http.patch(url, data)
       data, url
     )):read()
     if not success then error("Failed to send PATCH request: " .. res) else result = res end
-  elseif system.is_chrome then
-    warn("Chrome OS is not supported for HTTP requests.")
   end
   return result
 end
@@ -5422,6 +5593,22 @@ function http.unescape(s)
 
   s = s:gsub("%%(%x%x)", function(h) return string.char(tonumber(h, 16)) end)
   return s
+end
+
+---***SRG Custom Function***
+---
+---Opens a URL in the default browser.
+---@param url string
+function http.open(url)
+  if type(url) ~= "string" then errorMsg("String", "url", url) end
+
+  if system.is_windows then
+    os.execute(string.format("start \"\" \"%s\"", url))
+  elseif system.is_linux then
+    os.execute(string.format("xdg-open \"%s\"", url))
+  elseif system.is_mac then
+    os.execute(string.format("open \"%s\"", url))
+  end
 end
 
 -------------JSON Library-------------
@@ -5606,4 +5793,14 @@ function pretty(t)
   if type(t) ~= "table" then errorMsg("Table", "t", t) end
 
   return "{\n" .. prettyMain(t, 2, {}) .. "}"
+end
+
+---***SRG Custom Function***
+---
+---Prints a warning message in yellow.
+---@param s string
+function warn(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  print(terminal.style(s, "ty"))
 end
