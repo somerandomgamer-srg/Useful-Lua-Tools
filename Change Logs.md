@@ -30,7 +30,11 @@
     - Made the code slightly shorter by combining similar code into singular functions
   - ## Sep 5, 2025
     - Reformatted `Current Functions and Variables.md`
-    - 1 new library with 3 functions (remote)
+    - Added 1 new library:
+      - `remote`:
+        - `remote.register(name, ...)`
+        - `remote.call(name, ...)`
+        - `remote.list()`
       - Inspired by Roblox remote events in Roblox Studio
 
 # V1.3.0
@@ -43,19 +47,18 @@
     - Added 2 new `random` library functions: `random.number(min, max, decimals)` and `random.choice(t, amount)`
   - ## Sep 10, 2025
     - Added 3 new `random` library functions: `random.hex(len)`, `random.boolean()`, and `random.string(len, charset)`
-    - Added 1 new library
-      - `remote`:
-        - `remote.exists()`
-        - `remote.remove()`
-        - `remote.count()`
-    - Added 1 new `table` function:
+    - Added 3 new `remote` library functions:
+      - `remote.exists(name)`
+      - `remote.remove(name)`
+      - `remote.count()`
+    - Added 1 new `table` library function:
       - `table.index(t, value)`
 
 # V1.4.0
 - ## Date: Sep 18, 2025 - Sep 19, 2025
   - ## Sep 18, 2025
     - Added 3 new libraries
-      - Stack:
+      - `stack`:
         - `stack.new(name)`
         - `stack.add(name, value)`
         - `stack.take(name)`
@@ -63,7 +66,7 @@
         - `stack.size(name)`
         - `stack.empty(name)`
         - `stack.is_empty(name)`
-      - Queue:
+      - `queue`:
         - `queue.new(name)`
         - `queue.add(name, value)`
         - `queue.take(name)`
@@ -71,7 +74,7 @@
         - `queue.size(name)`
         - `queue.empty(name)`
         - `queue.is_empty(name)`
-      - Datetime:
+      - `datetime`:
         - `datetime.time(return_table)`
   - ## Sep 19, 2025
     - Added 4 new `datetime` library functions:
