@@ -30,11 +30,7 @@
     - Made the code slightly shorter by combining similar code into singular functions
   - ## Sep 5, 2025
     - Reformatted `Current Functions and Variables.md`
-    - Added 1 new library:
-      - `remote`:
-        - `remote.register(name, ...)`
-        - `remote.call(name, ...)`
-        - `remote.list()`
+    - 1 new library with 3 functions (remote)
       - Inspired by Roblox remote events in Roblox Studio
 
 # V1.3.0
@@ -47,18 +43,19 @@
     - Added 2 new `random` library functions: `random.number(min, max, decimals)` and `random.choice(t, amount)`
   - ## Sep 10, 2025
     - Added 3 new `random` library functions: `random.hex(len)`, `random.boolean()`, and `random.string(len, charset)`
-    - Added 3 new `remote` library functions:
-      - `remote.exists(name)`
-      - `remote.remove(name)`
-      - `remote.count()`
-    - Added 1 new `table` library function:
+    - Added 1 new library
+      - `remote`:
+        - `remote.exists(name)`
+        - `remote.remove(mame)`
+        - `remote.count()`
+    - Added 1 new `table` function:
       - `table.index(t, value)`
 
 # V1.4.0
 - ## Date: Sep 18, 2025 - Sep 19, 2025
   - ## Sep 18, 2025
     - Added 3 new libraries
-      - `stack`:
+      - Stack:
         - `stack.new(name)`
         - `stack.add(name, value)`
         - `stack.take(name)`
@@ -66,7 +63,7 @@
         - `stack.size(name)`
         - `stack.empty(name)`
         - `stack.is_empty(name)`
-      - `queue`:
+      - Queue:
         - `queue.new(name)`
         - `queue.add(name, value)`
         - `queue.take(name)`
@@ -74,7 +71,7 @@
         - `queue.size(name)`
         - `queue.empty(name)`
         - `queue.is_empty(name)`
-      - `datetime`:
+      - Datetime:
         - `datetime.time(return_table)`
   - ## Sep 19, 2025
     - Added 4 new `datetime` library functions:
@@ -95,9 +92,9 @@
 - ## Date: Sep 23, 2025 - Sep 25, 2025
   - ## Sep 23, 2025
     - Added 3 new `table` library functions:
-      - `table.lock()`
-      - `table.unlock()`
-      - `table.is_locked`
+      - `table.lock(t)`
+      - `table.unlock(t)`
+      - `table.is_locked(t)`
   - ## Sep 24, 2025
     - Updated some functions to accept multiple arguments. Effected functions include:
       - `table.contains(t, value)` --> `table.contains(value, ...)`
@@ -284,7 +281,7 @@
   - ## Jan 26, 2026
     - I forgot to release this version.
 
-# V2.4.0
+# V3.0.0!
 - ## Date: January 27, 2026 - ? ?, 2026
   - ## Jan 27, 2026
     - Added 1 new global function:
@@ -314,3 +311,26 @@
     - Added 1 new `table` function:
       - `table.reduce(t, func, initial)`
     - Reformatted the entire change logs markdown file.
+  - ## Feb 11, 2026
+    - Added 1 new `validate` funtion:
+      - `validate.bin(bin, x)`
+    - Added 3 new `stack` functions:
+      - `stack.current(name)`
+      - `stack.reverse(name)`
+      - `queue.shuffle(name)`
+    - Added 3 new `queue` functions:
+      - `queue.current(name)`
+      - `queue.reverse(name)`
+      - `queue.shuffle(name)`
+    - Added 3 new `random` functions:
+      - `random.color_hex(pre)`
+      - `random.color_rgb()`
+      - `random.color_hsv()`
+    - Added 2 new `string` functions:
+      - `string.chars(s)`
+      - `string.mask(s, char, visible)`
+    - Added 1 new `remote` function:
+      - `remote.once(...)`
+    - Deprecated `remote.unregister(name)` in favor of `remote.remove(...)`
+  - ## Feb 12, 2026
+    - 

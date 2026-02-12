@@ -857,6 +857,34 @@ function validate.url(url)
       url:match("^[%w%-%.]+%.%w+[%w%.%-_/#?&=]*$") ~= nil
 end
 
+---***SRG Custom Function***
+---
+---Validates whether or not `hex` is a valid hexadecimal string.
+---@param hex string
+---@return boolean
+---@nodiscard
+function validate.hex(hex)
+  if type(hex) ~= "string" then errorMsg("String", "hex", hex) end
+
+  return hex:match("^%x+$") ~= nil and #hex % 2 == 0
+end
+
+---***SRG Custom Function***
+---
+---Validates whether or not `bin` is a valid `x`-bit binary string.
+---@param bin string
+---@param x? number
+---@return boolean
+---@nodiscard
+function validate.bin(bin, x)
+  if type(bin) ~= "string" then errorMsg("String", "bin", bin) end
+  if x and type(x) ~= "number" then errorMsg("Number", "x", x) end
+
+  if x then return bin:match("^[01]+$") ~= nil and #bin == x end
+
+  return bin:match("^[01]+$") ~= nil
+end
+
 ------------Random Library------------
 
 ---Generates a uuid
@@ -1010,6 +1038,36 @@ function random.string(len, charset)
 
   return s
 end
+
+---***SRG Custom Function***
+---
+---Generates a random hex color code
+---
+---If `pre` is true, returns with `#` prefix. Otherwise, returns without `#` prefix
+---@param pre boolean?
+---@return string
+---@nodiscard
+function random.color_hex(pre)
+  if pre and type(pre) ~= "boolean" then errorMsg("Boolean", "pre", pre) end
+
+  local hex = random.hex(6)
+  if pre then return "#" .. hex end
+  return hex
+end
+
+---***SRG Custom Function***
+---
+---Generates a random RGB color code
+---@return table
+---@nodiscard
+function random.color_rgb() return { math.random(255), math.random(255), math.random(255) } end
+
+---***SRG Custom Function***
+---
+---Generates a random HSV color code
+---@return table
+---@nodiscard
+function random.color_hsv() return { math.random(360), math.random(), math.random() } end
 
 ------------System Library------------
 
@@ -3245,6 +3303,7 @@ end
 ---@param name string
 ---@param remove? boolean
 ---@return any
+---@nodiscard
 function stack.take(name, remove)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
@@ -3259,6 +3318,7 @@ end
 ---Checks if the stack with the specified `name` exists.
 ---@param name string
 ---@return boolean
+---@nodiscard
 function stack.exists(name)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
 
@@ -3271,6 +3331,7 @@ end
 ---Returns the amount of values in the stack with the specified `name`.
 ---@param name string
 ---@return number
+---@nodiscard
 function stack.size(name)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
@@ -3294,11 +3355,46 @@ end
 ---Checks if the stack with the specified `name` is empty.
 ---@param name string
 ---@return boolean
+---@nodiscard
 function stack.is_empty(name)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
 
   return #stacks[name] == 0
+end
+
+---***SRG Custom Function***
+---
+---Returns a copy of the stack with the specified `name`.
+---@param name string
+---@return any
+---@nodiscard
+function stack.current(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
+  return table.copy(stacks[name])
+end
+
+---***SRG Custom Function***
+---
+---Reverses the order of elements in the stack with the specified `name`.
+---@param name string
+function stack.reverse(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
+
+  stacks[name] = table.reverse(stacks[name])
+end
+
+---***SRG Custom Function***
+---
+---Shuffles the order of elements in the stack with the specified `name`.
+---@param name string
+function stack.shuffle(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not stacks[name] then error(string.format("Stack '%s' does not exist.", name)) end
+
+  stacks[name] = table.shuffle(stacks[name])
 end
 
 --------------Queue Library-------------
@@ -3332,6 +3428,7 @@ end
 ---@param name string
 ---@param remove? boolean
 ---@return any
+---@nodiscard
 function queue.take(name, remove)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
@@ -3346,6 +3443,7 @@ end
 ---Checks if the queue with the specified `name` exists.
 ---@param name string
 ---@return boolean
+---@nodiscard
 function queue.exists(name)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
 
@@ -3358,6 +3456,7 @@ end
 ---Returns the amount of values in the queue with the specified `name`.
 ---@param name string
 ---@return number
+---@nodiscard
 function queue.size(name)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
@@ -3381,11 +3480,46 @@ end
 ---Checks if the queue with the specified `name` is empty.
 ---@param name string
 ---@return boolean
+---@nodiscard
 function queue.is_empty(name)
   if type(name) ~= "string" then errorMsg("String", "name", name) end
   if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
 
   return #queues[name] == 0
+end
+
+---***SRG Custom Function***
+---
+---Returns a copy of the queue with the specified `name`.
+---@param name string
+---@return any
+---@nodiscard
+function queue.current(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
+  return table.copy(queues[name])
+end
+
+---***SRG Custom Function***
+---
+---Reverses the order of elements in the queue with the specified `name`.
+---@param name string
+function queue.reverse(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
+
+  queues[name] = table.reverse(queues[name])
+end
+
+---***SRG Custom Function***
+---
+---Shuffles the order of elements in the queue with the specified `name`.
+---@param name string
+function queue.shuffle(name)
+  if type(name) ~= "string" then errorMsg("String", "name", name) end
+  if not queues[name] then error(string.format("Queue '%s' does not exist.", name)) end
+
+  queues[name] = table.shuffle(queues[name])
 end
 
 ------------Datetime Library------------
@@ -3545,13 +3679,11 @@ end
 ---***SRG Custom Function***
 ---
 ---Removes the function registered under the given `name`, making it unavailable for `remote.call()`.
+---
+---Deprecated in favor of `remote.remove()`
 ---@param name string
-function remote.unregister(name)
-  if type(name) ~= "string" then errorMsg("String", "name", name) end
-  if not remotes[name] then error(string.format("Remote '%s' does not exist.", name)) end
-
-  remotes[name] = nil
-end
+---@deprecated
+function remote.unregister(name) remote.remove(name) end
 
 ---***SRG Custom Function***
 ---
@@ -3617,6 +3749,15 @@ end
 ---
 ---Removes every registered remote.
 function remote.clear() remotes = {} end
+
+---***SRG Custom Function***
+---
+---Calls all functions registered under the given remotes then removes them
+---@param ... string
+function remote.once(...)
+  remote.call(...)
+  remote.remove(...)
+end
 
 ---------Math Library Extension---------
 
@@ -4582,6 +4723,43 @@ function string.wrap(s, length)
   end
   wrapped = wrapped .. line
   return wrapped
+end
+
+---***SRG Custom Function***
+---
+---Returns a key-pair table in which the key is every character in `s` and the value is the amount of occurrences of that character in `s`.
+---@param s string
+---@return table
+---@nodiscard
+function string.chars(s)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+
+  local chars = {}
+
+  for i = 1, #s do
+    local char = s:sub(i, i)
+
+    chars[char] = (chars[char] or 0) + 1
+  end
+
+  return chars
+end
+
+---***SRG Custom Function***
+---
+---Masks `s` by replacing characters with `char`, leaving the last `visible` characters visible.
+---@param s string
+---@param char string
+---@param visible number
+---@return string
+---@nodiscard
+function string.mask(s, char, visible)
+  if type(s) ~= "string" then errorMsg("String", "s", s) end
+  if type(char) ~= "string" then errorMsg("String", "char", char) end
+  if type(visible) ~= "number" then errorMsg("Number", "visible", visible) end
+
+  if visible > #s then visible = #s end
+  return char:rep(#s - visible) .. s:sub(-visible)
 end
 
 ---------Table Library Extension---------
