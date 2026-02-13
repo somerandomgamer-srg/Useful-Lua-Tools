@@ -5144,6 +5144,52 @@ end
 
 ---***SRG Custom Function***
 ---
+---Freezes a table `t` so it cannot be modified or unlocked.
+---
+---Prevents ANY modification to the table, including nested tables. The only way to edit the table is rawset, which is completely unavoidable in pure Lua.
+---@param t table
+---@return table
+---@nodiscard
+function table.freeze(t)
+  if type(t) ~= "table" then errorMsg("Table", "t", t) end
+
+  local seen = {}
+
+  local function freezeInner(tbl)
+    if seen[tbl] then return seen[tbl] end
+
+    local proxy = {}
+    local frozen = setmetatable({}, {
+      __index = proxy,
+      __newindex = function() error("Attempted to modify a frozen table.") end,
+      __len = function() return #proxy end,
+      __pairs = function() return next, proxy, nil end,
+      __tostring = function() return pretty(proxy) .. " (frozen)" end,
+      __metatable = "Frozen"
+    })
+
+    seen[tbl] = frozen
+
+    for k, v in pairs(tbl) do proxy[k] = type(v) == "table" and freezeInner(v) or v end
+
+    return frozen
+  end
+
+  return freezeInner(t)
+end
+
+---***SRG Custom Function***
+---
+---Checks if the table `t` is frozen.
+---@param t table
+---@return boolean
+---@nodiscard
+function table.is_frozen(t)
+  return getmetatable(t) == "Frozen"
+end
+
+---***SRG Custom Function***
+---
 ---Serializes `t` to a string representation with customizable `sep`.
 ---@param t table
 ---@param sep? string

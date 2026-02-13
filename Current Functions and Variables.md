@@ -6,38 +6,39 @@
 
 # Summary
 
-- ## **Total Functions**: 213
+- ## **Total Functions**: 238
 |      Library      | Function Count |
 |:-----------------:|:--------------:|
 |       math        |       44       |
+|       table       |       34       |
 |   cryptography    |       31       |
-|       table       |       31       |
 |      bignum       |       13       |
-|      string       |       12       |
+|      string       |       14       |
+|      random       |       10       |
+|       stack       |       10       |
+|       queue       |       10       |
+|      remote       |       9        |
 |      binary       |       8        |
 |       file        |       8        |
-|      remote       |       8        |
-|       http        |       7        |
-|       queue       |       7        |
-|      random       |       7        |
-|       stack       |       7        |
+|       http        |       8        |
 |       color       |       6        |
 |       input       |       6        |
+|      system       |       6        |
 |     datetime      |       5        |
-|     validate      |       3        |
+|     validate      |       5        |
 |       json        |       2        |
 |     terminal      |       2        |
 
-- **Total Global Functions**: 6
+- **Total Global Functions**: 7
 
-- ## **Total Variables**: 17
+- ## **Total Variables**: 20
 |    Library    | Variable Count |
 |:-------------:|:--------------:|
-|    system     |       10       |
-|      ult      |       5        |
+|    system     |       11       |
+|      ult      |       7        |
 |     math      |       2        |
 
-- ## **Total Functions and Variables**: 230
+- ## **Total Functions and Variables**: 258
 
 ## 1. ULT Library Variables
 
@@ -66,6 +67,16 @@
 - **Returns**: `string`
 - **Description**: The current build of Useful Lua Tools (`Project` - `version` - `date of release` - `minimum lua version`).
 
+### 1.6 `ult.libraries`
+- **Type**: `variable`
+- **Returns**: `table`
+- **Description**: A table containing all libraries included in Useful Lua Tools.
+
+### 1.7 `ult.license`
+- **Type**: `variable`
+- **Returns**: `string`
+- **Description**: The license of Useful Lua Tools.
+
 ## 2. System Library Variables
 
 ### 2.1 `system.os`
@@ -88,35 +99,78 @@
 - **Returns**: `boolean`
 - **Description**: True if the host system is running on Linux, false otherwise.
 
-### 2.5 `system.is_chrome`
-- **Type**: `variable`
-- **Returns**: `boolean`
-- **Description**: True if the host system is running on Chrome OS, false otherwise.
-
-### 2.6 `system.uname`
+### 2.5 `system.uname`
 - **Type**: `variable`
 - **Returns**: `string` or `nil`
 - **Description**: The system Unix Name, or nil if it cannot be determined.
 
-### 2.7 `system.cores`
+### 2.6 `system.cores`
 - **Type**: `variable`
 - **Returns**: `number` or `nil`
 - **Description**: Amount of CPU Cores the host system has, or nil if it cannot be determined.
 
-### 2.8 `system.architecture`
+### 2.7 `system.architecture`
 - **Type**: `variable`
 - **Returns**: `string` or `nil`
 - **Description**: The CPU architecture of the host system, or nil if it cannot be determined.
 
-### 2.9 `system.is_linux_based`
+### 2.8 `system.is_linux_based`
 - **Type**: `variable`
 - **Returns**: `boolean`
 - **Description**: True if the host system is built on Linux, false otherwise.
 
-### 2.10 `system.mac_address`
+### 2.9 `system.mac_address`
 - **Type**: `variable`
 - **Returns**: `string` or `nil`
-- **Description**: The MAC address of the host system, or nil if it cannot be determined. Supported on Windows, macOS, and Linux. Cannot be determined on ChromeOS due to security restrictions.
+- **Description**: The MAC address of the host system, or nil if it cannot be determined. Supported on Windows, macOS, and Linux.
+
+### 2.10 `system.hostname`
+- **Type**: `variable`
+- **Returns**: `string` or `nil`
+- **Description**: The hostname of the host system, or nil if it cannot be determined.
+
+### 2.11 `system.username`
+- **Type**: `variable`
+- **Returns**: `string` or `nil`
+- **Description**: The username of the host system, or nil if it cannot be determined.
+
+## 2B. System Library Functions
+
+### 2B.1 `system.uptime()`
+- **Type**: `function`
+- **Arguments**: None
+- **Returns**: `number` or `nil`
+- **Description**: Returns the uptime of the host system in seconds, or nil if it cannot be determined. Supported on Windows, macOS, and Linux.
+
+### 2B.2 `system.mem_free()`
+- **Type**: `function`
+- **Arguments**: None
+- **Returns**: `number` or `nil`
+- **Description**: Returns the amount of free memory in bytes, or nil if it cannot be determined. Supported on Windows, macOS, and Linux.
+
+### 2B.3 `system.mem_used()`
+- **Type**: `function`
+- **Arguments**: None
+- **Returns**: `number` or `nil`
+- **Description**: Returns the amount of used memory in bytes, or nil if it cannot be determined. Supported on Windows, macOS, and Linux.
+
+### 2B.4 `system.mem_total()`
+- **Type**: `function`
+- **Arguments**: None
+- **Returns**: `number` or `nil`
+- **Description**: Returns the total amount of memory in bytes, or nil if it cannot be determined. Supported on Windows, macOS, and Linux.
+
+### 2B.5 `system.cpu_hz()`
+- **Type**: `function`
+- **Arguments**: None
+- **Returns**: `number` or `nil`
+- **Description**: Returns the CPU frequency in Hz, or nil if it cannot be determined. Supported on Windows, macOS, and Linux.
+
+### 2B.6 `system.cpu_usage()`
+- **Type**: `function`
+- **Arguments**: None
+- **Returns**: `number` or `nil`
+- **Description**: Returns the CPU usage in percentage, or nil if it cannot be determined. Supported on Windows, macOS, and Linux.
 
 # 3. Math Library Functions
 
@@ -516,6 +570,22 @@
 - **Returns**: `string`
 - **Description**: Wraps text `s` to the specified `length` characters per line, breaking at word boundaries when possible.
 
+### 4.13 `string.chars(s)`
+- **Type**: `function`
+- **Arguments**: 
+  - `s`: `string` (R)
+- **Returns**: `table`
+- **Description**: Returns a key-pair table in which the key is every character in `s` and the value is the amount of occurrences of that character in `s`.
+
+### 4.14 `string.mask(s, char, visible)`
+- **Type**: `function`
+- **Arguments**: 
+  - `s`: `string` (R)
+  - `char`: `string` (R)
+  - `visible`: `number` (R)
+- **Returns**: `string`
+- **Description**: Masks `s` by replacing characters with `char`, leaving the last `visible` characters visible.
+
 ## 5. Table Library Functions
 
 ### 5.1 `table.contains(value, ...)`
@@ -728,6 +798,29 @@
   - `n`: `number` (R)
 - **Returns**: `table`
 - **Description**: Splits `t` into chunks of size `n`. Returns a table of tables.
+
+### 5.29 `table.reduce(t, func, initial)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+  - `func`: `function` (R)
+  - `initial`: `number` (O)
+- **Returns**: `number`
+- **Description**: Reduces `t` using `func` and returns the result. If `initial` is provided, it is used as the starting value; otherwise, the first element of `t` is used.
+
+### 5.30 `table.freeze(t)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+- **Returns**: `table`
+- **Description**: Freezes a table `t` so it cannot be modified or unlocked. Recursively freezes nested tables. Handles circular references. Note: `rawset` can bypass the protection.
+
+### 5.31 `table.is_frozen(t)`
+- **Type**: `function`
+- **Arguments**: 
+  - `t`: `table` (R)
+- **Returns**: `boolean`
+- **Description**: Checks if the table `t` is frozen.
 
 ## 6. Input Library Functions
 
@@ -1005,12 +1098,12 @@
 - **Returns**: `boolean`
 - **Description**: **DEPRECATED - Use `validate.email()` instead.** Validates whether `email` is a valid email address.
 
-### 7.31 `cryptography.sha256(s)`
+### 7.31 `cryptography.hash(s)`
 - **Type**: `function`
 - **Arguments**: 
   - `s`: `string` (R)
 - **Returns**: `string`
-- **Description**: Computes the SHA-256 cryptographic hash of the input string `s`. Returns a 64-character hexadecimal string representing the 256-bit hash. Works with both Lua 5.3+ (native bit operators) and Lua 5.2 (bit32 library). Useful for file integrity checks, password hashing, and data verification.
+- **Description**: Computes the SHA-256 cryptographic hash of the input string `s`. Returns a 64-character hexadecimal string representing the 256-bit hash. Useful for file integrity checks, password hashing, and data verification.
 
 ## 8. Binary Library Functions
 
@@ -1094,6 +1187,21 @@
 - **Returns**: `boolean`
 - **Description**: Validates whether `url` is a valid URL. Accepts URLs with or without protocol (http:// or https://). Checks for proper domain structure, TLD, and optional paths/query parameters.
 
+### 9.4 `validate.hex(hex)`
+- **Type**: `function`
+- **Arguments**: 
+  - `hex`: `string` (R)
+- **Returns**: `boolean`
+- **Description**: Validates whether `hex` is a valid hexadecimal string with an even number of characters.
+
+### 9.5 `validate.bin(bin, x)`
+- **Type**: `function`
+- **Arguments**: 
+  - `bin`: `string` (R)
+  - `x`: `number` (O)
+- **Returns**: `boolean`
+- **Description**: Validates whether `bin` is a valid binary string. If `x` is provided, also checks that the string is exactly `x` bits long.
+
 ## 10. Color Library Functions
 
 ### 18.1 `color.rgb_to_hex(r, g, b)`
@@ -1156,12 +1264,12 @@
 - **Returns**: `nothing`
 - **Description**: Registers one or more functions under the given `name`. When `remote.call()` is called with this `name`, the registered function(s) will be executed.
 
-### 19.2 `remote.unregister(name)`
+### 19.2 `remote.unregister(name)` **(D)**
 - **Type**: `function`
 - **Arguments**: 
   - `name`: `string` (R)
 - **Returns**: `nothing`
-- **Description**: Removes the function(s) registered under the given `name`, making it unavailable for `remote.call()`.
+- **Description**: **DEPRECATED - Use `remote.remove()` instead.** Removes the function(s) registered under the given `name`, making it unavailable for `remote.call()`.
 
 ### 15.3 `remote.call(...)`
 - **Type**: `function`
@@ -1200,8 +1308,15 @@
 ### 11.8 `remote.clear()`
 - **Type**: `function`
 - **Arguments**: None
-- **Returns**: `table`
-- **Description**: Returns the list of all registered remote names.
+- **Returns**: `nothing`
+- **Description**: Removes every registered remote.
+
+### 11.9 `remote.once(...)`
+- **Type**: `function`
+- **Arguments**: 
+  - `...`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Calls all functions registered under the given remotes then removes them.
 
 ## 10. Random Library
 
@@ -1272,6 +1387,25 @@
 - **Returns**: `string`
 - **Description**: Generates a random string of specified length using provided character set. If no character set is provided, uses alphanumeric characters (a-z, A-Z, 0-9).
 
+### 16.8 `random.color_hex(pre)`
+- **Type**: `function`
+- **Arguments**: 
+  - `pre`: `boolean` (O)
+- **Returns**: `string`
+- **Description**: Generates a random hexadecimal color code. If `pre` is true, the result is prefixed with `#`.
+
+### 16.9 `random.color_rgb()`
+- **Type**: `function`
+- **Arguments**: None
+- **Returns**: `table`
+- **Description**: Generates a random RGB color code as a table of three values (0-255).
+
+### 16.10 `random.color_hsv()`
+- **Type**: `function`
+- **Arguments**: None
+- **Returns**: `table`
+- **Description**: Generates a random HSV color code as a table of three values (h: 0-360, s: 0-1, v: 0-1).
+
 ## 11. Stack Library
 
 ### 19.1 `stack.new(name)`
@@ -1325,6 +1459,27 @@
 - **Returns**: `boolean`
 - **Description**: Checks if the stack with the specified name is empty.
 
+### 13.8 `stack.current(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `table`
+- **Description**: Returns a copy of the stack with the specified name.
+
+### 13.9 `stack.reverse(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Reverses the order of elements in the stack with the specified name.
+
+### 13.10 `stack.shuffle(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Shuffles the order of elements in the stack with the specified name.
+
 # 12. Queue Library
 
 ### 18.1 `queue.new(name)`
@@ -1377,6 +1532,27 @@
   - `name`: `string` (R)
 - **Returns**: `boolean`
 - **Description**: Checks if the queue with the specified name is empty.
+
+### 16.8 `queue.current(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `table`
+- **Description**: Returns a copy of the queue with the specified name.
+
+### 16.9 `queue.reverse(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Reverses the order of elements in the queue with the specified name.
+
+### 16.10 `queue.shuffle(name)`
+- **Type**: `function`
+- **Arguments**:
+  - `name`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Shuffles the order of elements in the queue with the specified name.
 
 ## 13. Datetime Library
 
@@ -1552,6 +1728,13 @@
 - **Returns**: `string`
 - **Description**: Unescapes a percent-encoded URL string, converting %XX sequences back to their original characters. Complements `http.escape()` for decoding URL-encoded data.
 
+### 18.8 `http.open(url)`
+- **Type**: `function`
+- **Arguments**: 
+  - `url`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Opens a URL in the default browser. Supported on Windows, macOS, and Linux.
+
 ## 19. BigNum Library Functions
 
 ### 19.1 `bignum.new(value)`
@@ -1722,6 +1905,13 @@
 - **Returns**: `string`
 - **Description**: Converts a table to a human-readable string with proper indentation. Automatically handles both array elements and key-value pairs in mixed tables.
 
+### 21.7 `warn(s)`
+- **Type**: `function`
+- **Arguments**: 
+  - `s`: `string` (R)
+- **Returns**: `nothing`
+- **Description**: Prints a warning message in yellow.
+
 ## 22. Deprecated Functions
 
 The following functions are deprecated and may be removed in future versions. Please use the suggested alternatives.
@@ -1737,3 +1927,9 @@ The following functions are deprecated and may be removed in future versions. Pl
 - **Replacement**: `validate.email(email)`
 - **Description**: Validates whether `email` is a valid email address.
 - **Migration**: Replace `cryptography.is_email(email)` with `validate.email(email)`
+
+### 22.3 `remote.unregister(name)` **(D)**
+- **Deprecated in**: Version 3.0.0
+- **Replacement**: `remote.remove(...)`
+- **Description**: Removes the function(s) registered under the given `name`.
+- **Migration**: Replace `remote.unregister(name)` with `remote.remove(name)`

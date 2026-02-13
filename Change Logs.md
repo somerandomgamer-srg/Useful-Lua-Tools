@@ -234,8 +234,8 @@
     - Removed all conditional version checks and Lua 5.2 fallback code
     - Now uses native bitwise operators (`&`, `|`, `<<`, `>>`, `~`) exclusively
 
-# V2.3.0
-- ## Date: Oct 27, 2025 - Jan 26, 2026
+# V3.0.0!
+- ## Date: October 27, 2025 - Febuary 12, 2026
   - ## Oct 27, 2025
     - Functions now accept additional arguments to pass to their `func` parameter.
       - Affected functions:
@@ -278,11 +278,6 @@
       - `table.take(t, n)`
       - `table.drop(t, n)`
       - `table.chunk(t, n)`
-  - ## Jan 26, 2026
-    - I forgot to release this version.
-
-# V3.0.0!
-- ## Date: January 27, 2026 - ? ?, 2026
   - ## Jan 27, 2026
     - Added 1 new global function:
       - `pretty(t)`
@@ -333,4 +328,6 @@
       - `remote.once(...)`
     - Deprecated `remote.unregister(name)` in favor of `remote.remove(...)`
   - ## Feb 12, 2026
-    - 
+    - Added 2 new `table` functions:
+      - `table.freeze(t)`
+      - `table.is_frozen(t)`

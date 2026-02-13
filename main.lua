@@ -1,3 +1,5 @@
-local s = tonumber(io.popen("powershell -Command \"((Get-CimInstance Win32_OperatingSystem).TotalVisibleMemorySize - (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory) * 1KB\""):read())
-print(s)
-print(type(s))
+require("Useful Lua Tools")
+
+while true do
+  print(load("return " .. input.string("Enter equation")))
+end

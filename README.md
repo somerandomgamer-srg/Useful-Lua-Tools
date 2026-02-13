@@ -1,4 +1,4 @@
-# Useful Lua Tools (Version 2.3.0)
+# Useful Lua Tools (Version 3.0.0)
 ## (A message from the creator)
 ### About Me
 Hello, I am SRG (short for `Some Random Gamer`).
@@ -28,15 +28,15 @@ Nothing much to say here.
 ## Statistics
 
 ### Overall
-- **Total Functions**: 213
-- **Total Variables**: 17
-- **Total Functions/Variables**: 230
-- **Total Lines of Code**: 5,594
-- **File Size**: 149 KB
+- **Total Functions**: 238
+- **Total Variables**: 20
+- **Total Functions/Variables**: 258
+- **Total Lines of Code**: 6,029
+- **File Size**: 164 KB
 - **Language**: Lua 5.3+
 - **External Dependencies**: None (pure interpreted Lua)
 - **Total Libraries**: 20
-- **Global Functions**: 6
+- **Global Functions**: 7
 
 ### Libraries Included
 `bignum`, `binary`, `color`, `cryptography`, `datetime`, `file`, `http`, `input`, `json`, `math`, `queue`, `random`, `remote`, `stack`, `string`, `system`, `table`, `terminal`, `ult`, `validate`
@@ -45,29 +45,30 @@ Nothing much to say here.
 |      Library      | Function Count |
 |:-----------------:|:--------------:|
 |       math        |       44       |
+|       table       |       34       |
 |   cryptography    |       31       |
-|       table       |       31       |
 |      bignum       |       13       |
-|      string       |       12       |
+|      string       |       14       |
+|      random       |       10       |
+|       stack       |       10       |
+|       queue       |       10       |
+|      remote       |       9        |
 |      binary       |       8        |
 |       file        |       8        |
-|      remote       |       8        |
-|       http        |       7        |
-|       queue       |       7        |
-|      random       |       7        |
-|       stack       |       7        |
+|       http        |       8        |
 |       color       |       6        |
 |       input       |       6        |
+|      system       |       6        |
 |     datetime      |       5        |
-|     validate      |       3        |
+|     validate      |       5        |
 |       json        |       2        |
 |     terminal      |       2        |
 
 ### Variables per Library
 |    Library    | Variable Count |
 |:-------------:|:--------------:|
-|    system     |       10       |
-|      ult      |       5        |
+|    system     |       11       |
+|      ult      |       7        |
 |     math      |       2        |
 
 ## Contact
