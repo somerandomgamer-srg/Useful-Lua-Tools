@@ -1031,9 +1031,10 @@ function random.string(len, charset)
     charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
   end
 
+  local rng = math.random(#charset)
   local s = ""
   for _ = 1, len do
-    s = s .. charset:sub(math.random(#charset), math.random(#charset))
+    s = s .. charset:sub(rng, rng)
   end
 
   return s
