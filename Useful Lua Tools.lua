@@ -726,7 +726,7 @@ terminal = {}
 ---
 ---"Major Update"."Minor Update"."Patch/Very Minor Update"
 ---@nodiscard
-ult.version = "2.2.0"
+ult.version = "3.0.0"
 
 ---***SRG Custom Variable***
 ---
@@ -750,7 +750,7 @@ end
 ---
 ---The release date of the current ULT version
 ---@nodiscard
-ult.release_date = "10/23/2025"
+ult.release_date = "2/13/2026"
 
 ---***SRG Custom Variable***
 ---
@@ -765,7 +765,7 @@ ult.build = ("ult-%s-%s-%s"):format(ult.version, ult.release_date, ult.min_lua_v
 ---The libraries included in Useful Lua Tools
 ---@nodiscard
 ult.libraries = {
-  bignum, binary, color, cryptography, datetime, file, http, input, json, queue, random, remote, stack, system, terminal, ult, validate
+  bignum, binary, color, cryptography, datetime, file, http, input, json, math, queue, random, remote, stack, string, system, table, terminal, ult, validate
 }
 
 ---***SRG Custom Variable***

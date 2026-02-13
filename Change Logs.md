@@ -312,7 +312,7 @@
     - Added 3 new `stack` functions:
       - `stack.current(name)`
       - `stack.reverse(name)`
-      - `queue.shuffle(name)`
+      - `stack.shuffle(name)`
     - Added 3 new `queue` functions:
       - `queue.current(name)`
       - `queue.reverse(name)`
@@ -331,5 +331,3 @@
     - Added 2 new `table` functions:
       - `table.freeze(t)`
       - `table.is_frozen(t)`
-    - Added 1 new global function:
-      - `warn(s)`
