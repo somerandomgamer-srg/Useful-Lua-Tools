@@ -331,3 +331,5 @@
     - Added 2 new `table` functions:
       - `table.freeze(t)`
       - `table.is_frozen(t)`
+    - Added 1 new global function:
+      - `warn(s)`
