@@ -235,7 +235,7 @@
     - Now uses native bitwise operators (`&`, `|`, `<<`, `>>`, `~`) exclusively
 
 # V3.0.0!
-- ## Date: October 27, 2025 - Febuary 12, 2026
+- ## Date: October 27, 2025 - February 12, 2026
   - ## Oct 27, 2025
     - Functions now accept additional arguments to pass to their `func` parameter.
       - Affected functions:
@@ -307,7 +307,7 @@
       - `table.reduce(t, func, initial)`
     - Reformatted the entire change logs markdown file.
   - ## Feb 11, 2026
-    - Added 1 new `validate` funtion:
+    - Added 1 new `validate` function:
       - `validate.bin(bin, x)`
     - Added 3 new `stack` functions:
       - `stack.current(name)`
